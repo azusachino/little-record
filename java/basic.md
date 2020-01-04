@@ -36,3 +36,6 @@
 
 13. @transactional注解在什么情况下会失效，为什么。
 >
+
+14. java中锁的结构图
+> ![结构图](../resources/lock.png)
