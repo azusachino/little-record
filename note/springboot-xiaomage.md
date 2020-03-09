@@ -144,3 +144,24 @@ velocity解释执行 AST解析
 - 自动提交模式 (Auto-commit Mode) (触发时机: DML&DDL执行后,SELECT查询后结果集关闭后,存储过程执行后(返回结果集关闭后))
 - 事务隔离级别 (Transaction isolation level) (脏读, 不可重现读, 幻影读)
 - 保护点 (Savepoints) (部分事务回滚, 选择性释放)
+
+## 五. Mybatis
+
+### 1.配置(mybatis-config.xml)
+
+- 属性(properties)
+- 设置(settings)
+- 类型别名(typeAlias)
+- 类型处理器(typeHandlers)
+- 对象工厂(objectFactory)
+- 插件(plugins)
+- 环境(environments)
+- 数据库标识提供商(databaseIdProvider)
+- SQL映射文件(mappers)
+
+### 2.核心API
+
+- org.apache.ibatis.session.SqlSessionFactoryBuilder (Builder模式)
+- org.apache.ibatis.session.Configuration
+- org.apache.ibatis.session.SqlSessionFactory (工厂模式)
+- org.apache.ibatis.session.SqlSession (类似于JDBC中的Connection) (封装Connection, 屏蔽Statement的细节, 映射ResultSet到Java类型, 事务控制, 缓存, 代理映射(Mapper))
