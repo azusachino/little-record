@@ -165,3 +165,23 @@ velocity解释执行 AST解析
 - org.apache.ibatis.session.Configuration
 - org.apache.ibatis.session.SqlSessionFactory (工厂模式)
 - org.apache.ibatis.session.SqlSession (类似于JDBC中的Connection) (封装Connection, 屏蔽Statement的细节, 映射ResultSet到Java类型, 事务控制, 缓存, 代理映射(Mapper))
+
+## 六.JPA
+
+### 1.Java Persistence API
+
+- 实体(entity) -- 轻量级持久化域对象
+- 实体类(entity class) (实体类必须使用@Entity标注或XML描述, 至少包含一个默认构造器(public或protected),实体类必须是顶级类(非枚举&接口), 禁止是final类, 实体支持继承&多态关联和多态查询)
+- 实体的双向关系是指两个实体之间不仅存在拥有方, 也存在倒装方, 主方决定了更新级联关系到数据库
+- @OneToOne, @ManyToOne, @ManyToMany (mappedBy, cascadeType)
+- 实体继承 (实体继承抽象类 @Inheritance)
+
+### 2.Spring Data JPA
+
+### 3.SpringBoot & JPA
+
+- SimpleJpaRepository -> JpaRepositoryImplementation -> JpaRepository -> PagingAndSortingRepository -> CrudRepository -> Repository
+
+## 七.NoSql
+
+### 1.aa
