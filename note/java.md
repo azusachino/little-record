@@ -47,3 +47,13 @@
 ### 实现
 
 ![Driver实现](../resources/java/classLoader-practice.png)
+
+## 讲讲HashMap
+
+### 顺序
+
+- 1.7和1.8的数据结构
+- 构造方法引出几个参数
+- 1.7和1.8解决hash冲突的几种思路
+- resize和rehash
+- 用ConcurrentHashMap(线程安全性结尾)

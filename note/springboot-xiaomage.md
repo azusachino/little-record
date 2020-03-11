@@ -184,4 +184,109 @@ velocity解释执行 AST解析
 
 ## 七.NoSql
 
-### 1.aa
+### 1.NoSQL(通常表示NoSQL数据库, 提供一种存储和获取数据的机制. 数据模型化,非关系数据库中的扁平关系)
+
+- Non SQL
+- non relational
+- not only SQL
+
+#### 设计目的
+
+- 简化设计
+- 简单的水平伸缩
+- 细粒度控制
+
+#### 数据结构
+
+- 键值对(key-value) - Redis
+- 宽列(wide column) - Hbase
+- 图(gragh) - Neo4j
+- 文档(document) - Mongodb
+
+#### 相关原理
+
+- CAP: (一致性(Consistency), 可靠性(Availability), 区块容错性(Partition Tolerance))
+- ACID: (原子性(Atomicity), 一致性(Consistency), 隔离性(Isolation), 持久性(Durability))
+
+### 2.ElasticSearch
+
+FallOver 故障转移(容灾)
+
+#### Core APIs
+
+- ElasticsearchOperations
+- ElasticsearchTemplate
+- @EnableElasticsearchRepository
+- ElasticsearchRepository
+
+## 八.Java Cache & Redis
+
+### 1. JavaCahce(JSR-107)
+
+缓存是一种久经考验并且显著地提升应用性能以及伸缩性的技术。缓存用作临时存储信息复本，该复本未来可能被再次使用，减少再次加载或创建的成本。
+
+#### 1.非规范目标
+
+- 资源和内存限制配置
+- 缓存存储和拓扑结构
+- 管理
+- 安全
+- 外部资源同步
+
+#### 2.核心接口
+
+- CachingProvider
+- CacheManager
+- Cache
+- Entry
+- ExpiryPolicy
+
+#### 3.Cache & Map similarity
+
+- 缓存值均有关联键来存储
+- 每个值可能仅关联单个键
+- 特别注意key的可变性，可变的key可能会影响键的比较
+- 自定义Key类应该添加合适的Object.hashCode方法
+
+#### 4.Cache & Map difference
+
+- 缓存的键和值禁止为null
+- 缓存项可能会过期
+- 缓存项可能被移除
+- 缓存支持Compare-And-Swap（CAS）操作
+- 缓存的键和值可能需要某种方式的序列化
+
+#### 5.一致性
+
+- 非阻塞锁(nonBlocking) (无法保证, HappenBefore)
+- 乐观锁(optimistic locking) (保证, CAS)
+- 消极锁 (pessimistic locking) (保证, lock & mutex)
+
+### 2.SpringCache
+
+- org.springframework.cache.CacheManager
+- org.springframework.cache.Cache
+- @Cacheable
+- @CacheEvict
+- @CachePut
+- @Caching
+- @CacheConfig
+- @EnableCaching
+
+### Q&A
+
+>缓存更新和失效的策略  
+
+- @CacheEvict
+- CacheManager
+- Javax.cache.expiry.ExpiryPolicy
+
+>IOC存放BeanDefinition的地方,用的并发map, 为什么加锁  
+
+ConcurrentHashMap只能保证一次操作的原子性操作, 比如要判断大小, 同时获取或者比较等多次操作时, 需要加锁!
+
+>@NoRepositoryBean的作用
+
+SpringData的通用实现中, @NoRepositoryBean用作标记当前接口或类(抽象)不应该作为@RepositoryBean被注册到Spring上下文中, 是因为springData提供了自动代理@RepositoryBean的机制, 该机制的前提是接口或者类(抽象)必须实现Repository接口
+
+## 九. 消息

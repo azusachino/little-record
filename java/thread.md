@@ -9,8 +9,12 @@
 ## 线程池的参数有哪些, 在线程池创建一个线程的过程
 >
 
-## volitile关键字的作用, 原理
->
+## volatile关键字的作用, 原理
+
+保证cpu对变量的可见性
+lock-free 适合做开关, java关键字 volatile
+CAS适合做非阻塞数据交换
+LOCK是一系列的原子操作
 
 ## synchronized关键字的用法, 优缺点
 >
