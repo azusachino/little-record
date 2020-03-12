@@ -433,3 +433,37 @@ LocalValidatorFactoryBean 创建出一个Validator单例, 不存在多个同时�
 如果需要多个bean, 需要额外处理
 
 ## 十一.WebSocket
+
+### 为什么不使用http
+
+- Http起初被设计为文本传输协议
+- http是半双工, 一次单向通讯
+- http的限制, 实现实时, 双向web通讯非常麻烦
+- http请求头和响应头信息造成不必要的通讯负载
+
+### Java WebSocket API (JSR-356)
+
+- 端点 (Endpoint)
+- 连接 (Connection)
+- 对点 (Peer)
+- 会话 (Session)
+- 客户端端点, 服务端端点
+
+### Q&A(十一)
+
+WebSocket是长连接  
+
+> netty和WebSocket在nio实现上的区别
+
+基本上一致, 在事件
+
+> 排查问题
+
+首先找到ServerContainer.addEndPoint的调用点, 发现ServerEndPointExporter里面有相关的调用, 如registerEndPoint(class)方法
+再看看class参数如何获取的
+
+> 发送给服务器的内容, 如何保存文本格式, 如何发给指定的用户
+
+用字节流保存格式, 可以利用JMS设置目的路由
+
+## 十二.WebService
