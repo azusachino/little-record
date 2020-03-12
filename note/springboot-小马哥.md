@@ -273,7 +273,7 @@ FallOver 故障转移(容灾)
 - @CacheConfig
 - @EnableCaching
 
-### Q&A
+### Q&A(八)
 
 >缓存更新和失效的策略  
 
@@ -290,3 +290,146 @@ ConcurrentHashMap只能保证一次操作的原子性操作, 比如要判断大�
 SpringData的通用实现中, @NoRepositoryBean用作标记当前接口或类(抽象)不应该作为@RepositoryBean被注册到Spring上下文中, 是因为springData提供了自动代理@RepositoryBean的机制, 该机制的前提是接口或者类(抽象)必须实现Repository接口
 
 ## 九. 消息
+
+### 1.Java Message Service (JSR-914)
+
+面向消息中间件 - Message Oriented Middleware
+
+- JMS 提供方（Provider）：实现JMS 接口的MOM
+- JMS 客户端（Client）：生产或消费消息的应用或进程
+- JMS 生产者（Producer）：创建和发送消息的JMS客户端
+- JMS 消费者（Consumer）：接收消息的JMS客户端
+- JMS 消息    （Message）：JMS客户端之间的传输数据对象
+- JMS 队列    （Queue）：包含待读取消息的准备区域
+- JMS 主题    （Topic）：发布消息的分布机制
+
+RPC是同步的, JMS AMQP是异步的
+
+### AMQP (高级消息队列协议)
+
+Kafka 是一种分布式流式计算平台，用于构建实时的数据流水线以及流式计算应用，它是水平伸缩的、容错的、极其快速，并且运行在成千上万的公司的生产环境。
+
+- 发使用容错的方式来存储流式记录
+- 发布和订阅流式记录，类似于消息队列或企业消息系统
+- 处理流式记录
+
+优势
+
+- 比构建实时的流式计算数据流水线
+- 构建实时的流式计算应用
+
+基本概念
+
+- Kafka是集群式运行
+- Kafka集群分类存储流式记录，这种分类称为主题(Topic)
+- 每条记录包含键(Key), 值(Value)、以及时间戳(Timestamp)
+
+四类核心API
+
+- 生产者 API (能够让应用发布流式记录到一个或多个主题)
+- 消费者 API (能够让应用订阅流式记录到一个或多个主题，并且处理他们)
+- 流式 API (能够让应用充当流式处理器，消费一个或多个主题的输入流，生产一个或多个主题的输出流，并且高效地将输入流转化成输出流)
+- 连接器 API (构建生产者和消费者之间连接)
+
+### 实战
+
+1. 启动zookeeper (zkServer.sh)
+2. 启动kafka (kafka-server-start.sh [server.properties])
+3. 创建topic (kafka-topic.sh --create --zookeeper localhost:2181 --replication-factor 1 --partition 1 --topic xx)
+4. 启动producer (kafka-console-producer.sh --broker-list localhost:9092 --topic xx)
+5. 启动consumer (kafka-console-consumer.sh
+--bootstrap-server localhost:9092 --topic xx --from-beginning)
+
+通过不同的properties 可以启动不同的kafka
+
+### Q&A(九)
+
+> http invoke()是RPC吗?
+
+是的, 不过它用的HTTP协议, SOAP, WebServices也是HTTP
+
+> IllegalArgumentException & NPE
+
+IAE更能表达参数是非法的, NPQ更多的表达状态是null
+
+## 十.验证
+
+### 1.Apache commons-validator
+
+#### 功能特性
+
+- 可配置的校验引擎
+- 可重用的原生校验手段
+
+#### 第三方依赖
+
+- commons-beanutils:1.9.2 (Bean工具类)
+- commons-digester:1.8.1
+- commons-logging:1.2
+- commons-collections:3.2.2
+
+#### 设计模式
+
+- 单例模式（GoF23）
+- 校验器模式
+
+#### 验证器类型
+
+- Date 与 Time 校验器
+- 数值校验器
+- 正则表达式校验器
+- ISBN校验器
+- IP 地址校验器
+- 邮件地址校验器
+- URL 校验器
+- 域名校验器
+
+### 2.Spring Validator
+
+Spring Framework 提供了用于校验对象的Validator 接口，在校验过程中，与 Errors 对象配合。校验器可以通过Errors 对象报告校验失败的信息。
+
+```java
+public interface Validator {
+
+/**
+ * Can this {@link Validator} {@link #validate(Object, Errors) validate}
+ * instances of the supplied {@code clazz}?
+ * <p>This method is <i>typically</i> implemented like so:
+ *<pre class="code">return Foo.class.isAssignableFrom(clazz);</pre>
+ * (Where {@code Foo} is the class (or superclass) of the actual
+ * object instance that is to be {@link #validate(Object, Errors) validated}.)
+ * @param clazz the {@link Class} that this {@link Validator} is
+ * being asked if it can {@link #validate(Object, Errors) validate}
+ * @return {@code true} if this {@link Validator} can indeed
+ * {@link #validate(Object, Errors) validate} instances of the
+ * supplied {@code clazz}
+ */
+boolean supports(Class<?> clazz);
+
+/**
+ * Validate the supplied {@code target} object, which must be
+ * of a {@link Class} for which the {@link #supports(Class)} method
+ * typically has (or would) return {@code true}.
+ * <p>The supplied {@link Errors errors} instance can be used to report
+ * any resulting validation errors.
+ * @param target the object that is to be validated
+ * @param errors contextual state about the validation process
+ * @see ValidationUtils
+ */
+void validate(Object target, Errors errors);
+
+}
+```
+
+### Q&A(十)
+
+> 嵌套bean如何验证
+
+Bean Validation是自动感知嵌套的, 可以层层检测 进行validate
+
+> springboot 对于验证的优先级是怎样的?
+
+LocalValidatorFactoryBean 创建出一个Validator单例, 不存在多个同时校验  
+如果需要多个bean, 需要额外处理
+
+## 十一.WebSocket
