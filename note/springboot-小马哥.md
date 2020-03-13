@@ -467,3 +467,15 @@ WebSocket是长连接
 用字节流保存格式, 可以利用JMS设置目的路由
 
 ## 十二.WebService
+
+### WebService定义
+
+Web Service，是一种设计通过网络来支持相互协作的机器间交互的软件系统。它拥有被机器可处理的格式所描述的接口（如：WSDL），规定使用 SOAP消息的方式与其他系统交互，典型地以HTTP传输、XML序列化以及联合其他Web 相关标准。
+
+### SOAP
+
+Simple Object Access Protocol，一种在计算机网络中实现 Web Services的交换结构化信息的协议规范，它的目的在于促使可扩展性、中立性以及独立性。SOAP使用XML 信息集合作为它的消息格式，并且依赖于应用层协议，最常见的HTTP或者SMTP，用于消息协商和传输。
+
+### Q&A(十二)
+
+> REST是一种偏轻量级的RPC, 微服务里经常用到REST, SOA里面用到WebServices  
