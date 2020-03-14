@@ -479,3 +479,108 @@ Simple Object Access Protocol，一种在计算机网络中实现 Web Services�
 ### Q&A(十二)
 
 > REST是一种偏轻量级的RPC, 微服务里经常用到REST, SOA里面用到WebServices  
+
+## 十三. 安全
+
+### 1.客户端安全
+
+#### CSRF(跨站请求伪造)
+
+- CSRF Token (服务端为客户端生成令牌, 该令牌将用于合法性校验)
+- CSRF Token 仓库 (服务端组件, 用于从请求加载或生成CSRF Token)
+- CSRF 请求校验匹配器 (服务端组件, 用于判断请求是否需要CSRF校验)
+
+### 2.服务端安全
+
+-XSS (跨站脚本 Cross Size Scripting)
+
+### 3.SpringBoot Security Integration
+
+#### spring-boot-starter-security
+
+### Q&A(十三)
+
+## 十四. 日志
+
+### 日志框架
+
+log4j 曾经最为流行的java日志框架
+
+- 日志附加器（org.apache.log4j.Appender）
+  - 控制台实现：org.apache.log4j.ConsoleAppender
+  - 文件实现
+    - 普通方式：org.apache.log4j.FileAppender
+    - 滚动方式：org.apache.log4j.RollingFileAppender
+    - 每日规定方式：org.apache.log4j.DailyRollingFileAppender
+  - 网络实现
+    - Socket方式：org.apache.log4j.net.SocketAppender
+    - JMS方式：org.apache.log4j.net.JMSAppender
+    - SMTP方式：org.apache.log4j.net.SMTPAppender
+    - 异步实现：org.apache.log4j.AsyncAppender
+- 日志过滤器（org.apache.log4j.spi.Filter）
+  - 日志过滤器用于决策当前日志事件（org.apache.log4j.spi.LoggingEvent）是否需要在执行所关联的日志附加器（org.apache.log4j.Appender）中执行。
+  - 决策结果有三种：
+    - DENY：日志事件跳过日志附加器的执行
+    - ACCEPT：日志附加器立即执行日志事件
+    - NEUTRAL：跳过当前过滤器，让下一个过滤器决策
+
+### 统一日志API
+
+Java Logging 是Java 标准的日志框架，也称为 Java Logging API，即 JSR 47。从 Java 1.4 版本开始，Java Logging 成为 Java SE的功能模块，其实现类存放在“java.util.logging”包下。
+
+### 日志设计模式
+
+### springboot 整合
+
+### Q&A(十四)
+
+- DEBUG 记录一些上下文参数, 以及输出结果
+- INFO 记录一些操作成功或失败, 类似于黑盒结果
+- WARN 记录CPU, 一些阀值达到了, 或者不主要的错误输入输出
+
+## 十五.监管
+
+### JMX (Java Management Extensions)
+
+技术提供构建分布式、Web、模块化的工具，以及管理和监控设备和应用的动态解决方案。
+
+## 十六.配置
+
+### 外部配置
+
+Spring Boot 应用的外部配置资源，这些配置资源能够与代码相互配合，避免硬编码 方式，提供应用数据或行为变化的灵活性。
+
+- Properties 文件
+- YAML 文件
+- 环境变量
+- Java 系统属性
+- 命令行
+
+#### 加载顺序
+
+- 热加载
+- 测试
+- 命令行
+- Servlet 参数（ServletConfig、ServletContext）
+- JNDI
+- 先系统属性，再环境变量
+- application-{profile}.properties（先外后内）
+- application.properties（先外后内）
+- @PropertySource
+- SpringApplication.setDefaultProperties
+
+#### 配置引用
+
+- XML 文件
+- Annotation
+- Java Code
+
+### Q&A(十六)
+
+> 实现相同事件的监听器有执行顺序吗? 按照什么顺序来执行的?
+
+如果多个ApplicationListener在相同的spring.factories文件, 按照定义顺序执行  
+通过@Order或者实现Ordered接口  
+如果getOrder()相同, 比较classpath的顺序
+
+## 十七.测试
