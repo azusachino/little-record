@@ -584,3 +584,85 @@ Spring Boot 应用的外部配置资源，这些配置资源能够与代码相�
 如果getOrder()相同, 比较classpath的顺序
 
 ## 十七.测试
+
+### 单元测试
+
+#### 模拟对象
+
+- Environment
+- JNDI
+- Servlet API
+- Portlet API
+
+#### 支持类
+
+- 反射: ReflectionTestUtils
+- AOP: AopTestUtils
+
+### 集成测试
+
+- Spring TestContext Framework
+  - 上下文管理
+  - 依赖注入
+  - 事务管理
+JDBC 测试支持
+- Spring WebMVC Test Framework
+  - 服务端测试
+  - HtmlUnit 集成
+  - 客户端测试
+- 注解（Annotation）
+  - 上下文管理
+    - @ContextConfiguration
+    - @ContextHierarchy
+    - @WebAppConfiguration
+    - @DirtiesContext
+  - 事务管理
+    - @BeforeTransaction
+    - @AfterTransaction
+    - @Commit
+    - @Rollback
+  - 依赖注入
+    - @TestExecutionListeners
+  - JDBC 测试支持
+    - @Sql
+    - @SqlConfig
+    - @SqlGroup
+  - 配置相关
+    - @ActiveProfiles
+    - @TestPropertySource
+    - @SpringBootTest
+  - 配置属性
+    - Spring Bean配置
+    - Web 环境
+  - 自动装配测试
+    - JSON
+    - Spring WebMVC
+    - Data JPA
+    - JDBC
+    - RestClient
+
+### test framework
+
+- AssertJ
+- Mockito
+
+## 十八.自定义启动器
+
+### Spring Boot Starter
+
+Spring Boot Starter 又称作为Spring Boot 启动器，是 Spring Boot 框架中最核心的组件，其中可能包含以下组件：
+
+- 自动装配模块（Autoconfigure Module）
+  - 自动装配模块包含类库中的每种必要启动单元，它可能也包含配置键的定义，也可能包含任意用于未来自定义已初始化组件的回调接口。
+
+- 启动器模块（Starter Module）
+
+启动器模块是一个空 JAR 文件，仅提供辅助性依赖管理，这些依赖可能用于自动装配或者其他类库
+
+> 如何看spring源代码
+
+1. 从问题入手, 问题能够帮助定位源码
+2. 模块化思考, 比如Spring Web Mvc和JDBC, 它们背后的原理分别是Servlet规范和JDBC规范
+3. 同位化思考, 比如Spring框架实现一个功能, 首先通过文档学习, 分析它的命名套路, 可以揣测作者设计意图
+4. 多参考业界实现, 比如Apache的实现
+5. 平时多使用Spring内部的类, 比如Environment
