@@ -1,12 +1,12 @@
 # BASIC QUESTIONS
 
-## HashMap的源码，实现原理，JDK8中对HashMap做了怎样的优化
+> HashMap的源码，实现原理，JDK8中对HashMap做了怎样的优化
 
->
+a
 
-## HaspMap扩容是怎样扩容的，为什么都是2的N次幂的大小
+> HaspMap扩容是怎样扩容的，为什么都是2的N次幂的大小
 
->
+为了保证hash散列平稳
 
 ## HashMap，HashTable，ConcurrentHashMap的区别
 
@@ -22,7 +22,10 @@
 
 ## java中四种修饰符的限制范围
 
->
+- private 私有
+- 无修饰符 本类 + 本包
+- protected 本类 + 子类
+- public 都可以访问
 
 ## Object类中的方法
 
@@ -82,6 +85,6 @@ protected void finalize() throws Throwable { }
 
 >
 
-## @transactional注解在什么情况下会失效，为什么
+## @Transactional注解在什么情况下会失效，为什么
 
 >
