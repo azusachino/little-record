@@ -39,3 +39,140 @@ SpringCloud为开发人员提供了快速构建分布式系统的一些通用模
 ### Actuator Endpoints
 
 在SpringBoot使用场景中表示“为生成而准备的特性”, 通过http端口或JMX的形式, 帮助相关人员管理和监控应用.
+
+## 2.配置客户端
+
+### 技术回顾
+
+- Spring Environment
+  - Environment是一种在容器内以配置(profile)和属性(properties)为模型的应用环境抽象整合
+    - StandardEnvironment
+    - StandardServletEnvironment
+- Spring Profile
+  - 在Spring容器中, Profile是一种命名的Bean定义逻辑组
+  - 一个Spring应用可以同时激活多个Profile(应用部署环境(test, stage, prod), 单元测试)
+  - 通过调用ConfigurableEnvironment接口控制Profile的激活
+    - setActiveProfiles(String...)
+    - addActiveProfile(String)
+    - setDefaultProfiles(String...)
+- Spring Properties
+  - 属性又称之为配置项, key-value的形式(PropertySources, PropertySource)
+- Spring 时间监听器
+  - 事件 (ApplicationEvent)
+  - 事件监听器 (ApplicationListener)
+- ConfigFileApplicationListener
+  - 用于读取默认以及Profile关联的配置文件(application.properties)
+
+### Environment
+
+### Bootstrap
+
+参考`BootstrapApplicationListener`实现
+
+```java
+String configName = environment.resolvePlaceholders("${spring.cloud.bootstrap.name:bootstrap");
+```
+
+- Bootstrap配置文件
+
+```properties
+## application.properties
+## 通过调整 spring.cloud.bootstrap.enabled = false，尝试关闭 bootstrap 上下文
+## 实际测试结果，没有效果
+spring.cloud.bootstrap.enabled = false
+```
+
+>注意: `BootstrapApplicationListener` 加载实际早于 `ConfigFileApplicationListener`  
+>原因:  
+>`ConfigFileApplicationListener` 的DEFAULT_ORDER = Ordered.HIGHEST_PRECEDENCE + 10 (第十一位)
+>`BootstrapApplicationListener` 的DEFAULT_ORDER = Ordered.HIGHEST_PRECEDENCE + 5 (第六位)  
+
+如果需要调整控制Bootstrap上下文行为配置, 需要更高优先级, Order需要< `Ordered.HIGHEST_PRECEDENCE + 5` (越小越优先), 比如使用启动参数
+
+```properties
+--spring.cloud.bootstrap.enabled = false
+```
+
+- 调整Bootstrap配置文件路径
+- 覆盖远程配置属性
+- 自定义Bootstrap配置
+
+创建`META-INF/spring.factories`文件（类似于 Spring Boot 自定义 Starter）
+
+自定义 Bootstrap 配置 Configuration
+
+```java
+@Configuration
+public class MyConfiguration implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+    /**
+     * Initialize the given application context.
+     *
+     * @param applicationContext the application to configure
+     */
+    @Override
+    public void initialize(ConfigurableApplicationContext applicationContext) {
+        // 从 ConfigurableApplicationContext 获取 ConfigurableEnvironment 实例
+        ConfigurableEnvironment environment = applicationContext.getEnvironment();
+        // 获取 PropertySources
+        MutablePropertySources propertySources = environment.getPropertySources();
+        // 定义一个新的 PropertySource，并且放置在首位
+        propertySources.addFirst(createPropertySource());
+    }
+
+    private PropertySource<?> createPropertySource() {
+        Map<String, Object> source = new HashMap<>();
+        source.put("name", "小马哥");
+        return new MapPropertySource("my-property-source", source);
+
+    }
+}
+```
+
+配置`META-INF/spring.factories`文件，关联Key `org.springframework.cloud.bootstrap.BootstrapConfiguration`
+
+   ```properties
+   org.springframework.cloud.bootstrap.BootstrapConfiguration= \
+   cn.az.cloud.intro.config.MyConfiguration
+   ```
+
+- 自定义Bootstrap配置属性源
+
+ 实现`PropertySourceLocator`
+
+```java
+public class MyPropertySourceLocator implements PropertySourceLocator {
+
+    @Override
+    public PropertySource<?> locate(Environment environment) {
+        if (environment instanceof ConfigurableEnvironment) {
+            ConfigurableEnvironment configurableEnvironment = (ConfigurableEnvironment) environment;
+            // 获取 PropertySources
+            MutablePropertySources propertySources = configurableEnvironment.getPropertySources();
+            // 定义一个新的 PropertySource，并且放置在首位
+            propertySources.addFirst(createPropertySource());
+        }
+        return null;
+    }
+
+    private PropertySource<?> createPropertySource() {
+
+        Map<String, Object> source = new HashMap<>();
+
+        source.put("spring.application.name", "spring cloud programme");
+        // 设置名称和来源
+        return new MapPropertySource("over-bootstrap-property-source", source);
+    }
+
+}
+```
+
+配置`META-INF/spring.factories`
+
+   ```properties
+   org.springframework.cloud.bootstrap.BootstrapConfiguration= \
+   cn.az.cloud.intro.config.MyConfiguration,\
+   cn.az.cloud.intro.config.MyPropertySourceLocator
+   ```
+
+> 关于Spring Boot启动参数PropertySource处理 (Spring Framework)
