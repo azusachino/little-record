@@ -176,3 +176,45 @@ public class MyPropertySourceLocator implements PropertySourceLocator {
    ```
 
 > 关于Spring Boot启动参数PropertySource处理 (Spring Framework)
+
+## 3.配置服务器
+
+### 分布式配置
+
+- 分布式配置架构
+- SpringCloud配置服务器
+- 服务端Environment仓储
+- SpringCloud配置客户端
+
+### SpringCloud配置服务器
+
+- Spring Cloud Config Server
+  - SpringCloud配置服务器分布式, 动态化集中管理应用配置信息的能力
+  - @EnableConfigServer
+- {application} : 配置客户端应⽤名称，即配置项：`spring.application.name`
+- {profile}：  配置客户端应⽤当前激活的Profile，即配置项：`spring.profiles.active`
+- {label}：  配置服务端标记的版本信息，如Git 中的分⽀名
+
+### 服务端配置映射
+
+- /{application}/{profile}[/{label}]
+- /{application}-{profile}.yml
+- /{label}/{application}-{profile}.yml
+- /{application}-{profile}.properties
+- /{label}/{application}-{profile}.properties
+
+### 动态配置Bean
+
+post -> `http://localhost:8080/env`
+
+> spring-cloud-config-monitor integration
+---
+> 哪些配置应该写在bootstrap.yml里, 哪些在application.yml里面
+
+- bootstrap.yml配置SpringCloud属性
+- application.yml 配置当前springboot应用属性
+- 动态配置: 比如开关, 数据阈值, 可以配置在服务器
+
+> 如何理解endpoint
+
+endpoint是一种管理端点, 提供一种以http通讯方式的类似于JMX功能

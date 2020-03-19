@@ -12,9 +12,9 @@
 (java9之前)
 
 - public: all
-- protected: 继承 + 同包
+- protected: 继承 + 同包 (不能用于修饰最外层类)
 - (default): 同包
-- private: 当前类
+- private: 当前类 (不能用于修饰最外层类)
 
 ---
 
@@ -110,4 +110,40 @@
 
 ## Java 接口设计
 
+### 通⽤设计 - 可继承性
+
+### 具体类设计 -常⻅场景
+
+- 功能组件
+  - HashMap
+- 接⼝/抽象类实现
+  - HashMap <- AbstractMap <- Map
+- 数据对象
+  - POJO
+- ⼯具辅助
+  - *Utils
+  - ViewHelper
+  - Helper
+
+### 抽象类设计-常⻅场景
+
+- 接⼝通⽤实现（模板模式）
+
+  - AbstractList
+  - AbstractSet
+  - AbstractMap
+
+- 状态/⾏为继承
+
+### 接口设计
+
+- Serializable
+- Cloneable
+- AutoCloseable
+- EventListener
+
 ## Java枚举设计
+
+- 枚举(enum) 实际是 final class
+- 枚举(enum) 成员修饰符为 public static final
+- `values()` 是 Java 编译器做的字节码提升
