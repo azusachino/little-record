@@ -218,3 +218,26 @@ post -> `http://localhost:8080/env`
 > 如何理解endpoint
 
 endpoint是一种管理端点, 提供一种以http通讯方式的类似于JMX功能
+
+## 服务发现/注册
+
+### 服务发现 (Service Discovery)
+
+在计算机网络中, 一种自动发现设备或服务的技术, 通过服务发现协议(Service Discovery Protocol)实现
+
+### 服务注册(Service Registration)
+
+在计算机网络中, 为了更好地治理多个设备或服务, 这些设备或者服务主动或被动注册到管理中心, 以便服务被发现和消费
+
+- Apache Zookeeper (高一致性)
+- Netflix Eureka (高可用性)
+- Consul
+
+### 高可用性(High Availability)
+
+一种系统特性, 致力于确保可接受程度的操作执行, 通常采用上线时间作为基准
+
+- 基本原则
+  - 消灭单点故障
+  - 可靠性交迭
+  - 故障探测
