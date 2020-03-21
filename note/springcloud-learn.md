@@ -105,11 +105,11 @@ spring.cloud.bootstrap.enabled = false
 @Configuration
 public class MyConfiguration implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-    /**
-     * Initialize the given application context.
-     *
-     * @param applicationContext the application to configure
-     */
+    /--
+     - Initialize the given application context.
+     -
+     - @param applicationContext the application to configure
+     -/
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         // 从 ConfigurableApplicationContext 获取 ConfigurableEnvironment 实例
@@ -241,3 +241,136 @@ endpoint是一种管理端点, 提供一种以http通讯方式的类似于JMX功
   - 消灭单点故障
   - 可靠性交迭
   - 故障探测
+
+## 高可用服务器
+
+### Spring Cloud Eureka高可用
+
+- 高可用客户端
+
+多用于生产环境, 客户端应用关联或者配置注册中心服务集群, 避免注册中心单点故障
+
+- 多注册中心主机
+- 注册中心DNS
+- 广播
+
+---
+
+- 应用元信息
+  - 获取间隔 `eureka.client.registryFetchIntervalSeconds`
+  - 同步间隔 `eureka.client.instanceInfoReplicationIntervalSeconds`
+
+---
+
+- 高可用注册中心
+
+高可用注册中心不但需要提供集群环境, 解决单点故障的问题. 同时, 也优雅地处理注册中心之间信息同步的问题
+
+- 配置属性 (sync)
+  - `eureka.server.host1: eureka.client.serviceUrl,defaultZone=http//${eureka.server2.host}:${eureka.server2.port}/eureka`
+  - `eureka.server.host2: eureka.client.serviceUrl,defaultZone=http//${eureka.server1.host}:${eureka.server1.port}/eureka`
+
+### Spring Cloud Consul
+
+- Consul 组件
+  - 服务发现 (Service Discovery)
+  - 健康检查 (Health Check)
+  - 键值存储 (KV Store)
+  - 多数据中心 (Multi Data Center)
+
+## 4.负载均衡
+
+- 理论基础
+  - 客户端负载均衡
+  - 服务端负载均衡
+  - 调度算法
+    - 先来先服务(First Come First Served)
+    - 最早截止时间优先(Earliest deadline first)
+    - 最短保留时间优先(Shortest remaining time first)
+    - 固定优先级(Fixed Priority)
+    - 轮询(Round-Robin)
+    - 多级别队列(MultiLevel Queue)
+  - 特性
+    - 非对称负载(Aysmmetric load)
+    - 分布式拒绝服务攻击保护
+    - 直接服务返回
+    - 健康检查
+    - 优先级队列
+- 技术回顾
+  - Spring Framework (RestTemplate)
+    - 序列化/反序列化: HttpMessageConvertor
+    - 实现适配: ClientHttpRequestFactory
+    - 请求拦截: ClientHttpRequestInterceptor
+
+### Netflix Ribbon
+
+```java
+@SpringBootApplication
+// 多个 Ribbon 定义
+@RibbonClients({
+        @RibbonClient(name = "spring-cloud-service-provider")
+})
+public class SpringCloudLesson6Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringCloudLesson6Application.class, args);
+    }
+
+    //声明 RestTemplate
+    @Bean
+    @LoadBalance
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
+    }
+}
+```
+
+实际请求客户端
+
+- LoadBalancerClient
+  - RibbonLoadBalancerClient
+
+负载均衡上下文
+
+- LoadBalancerContext
+  - RibbonLoadBalancerContext
+
+负载均衡器
+
+- ILoadBalancer
+  - BaseLoadBalancer
+  - DynamicServerListLoadBalancer
+  - ZoneAwareLoadBalancer
+  - NoOpLoadBalancer
+
+负载均衡规则
+
+核心规则接口
+
+- IRule
+  - 随机规则：RandomRule
+  - 最可用规则：BestAvailableRule
+  - 轮训规则：RoundRobinRule
+  - 重试实现：RetryRule
+  - 客户端配置：ClientConfigEnabledRoundRobinRule
+  - 可用性过滤规则：AvailabilityFilteringRule
+  - RT权重规则：WeightedResponseTimeRule
+  - 规避区域规则：ZoneAvoidanceRule
+
+PING 策略
+
+核心策略接口
+
+- IPingStrategy
+
+PING 接口
+
+- IPing
+  - NoOpPing
+  - DummyPing
+  - PingConstant
+  - PingUrl
+
+Discovery Client 实现
+
+- NIWSDiscoveryPing
