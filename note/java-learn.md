@@ -194,3 +194,73 @@
 - 方法参数类型设计
 - 方法参数名称设计
 - 方法参数量设计
+
+## 函数式设计
+
+### 理解@FunctionInterface
+
+- 用于函数式接口类型声明的注解类型, 这些接口的实例被Lambda表达式, 方法引用或构造器应用创建.
+- 函数式接口只能有一个抽象方法, 并排除接口默认方法以及声明中覆盖Object的公开方法的同级.
+- 不能标注在注解, 类以及枚举上
+- 只要满足函数式接口的要求, 注解不是必须的
+
+---
+
+- 提供类型- `Supplier<T>`
+- 消费类型- `Consumer<T>`
+- 转换类型- `Function<T, R>`
+- 断定类型- `Predicate<T>`
+- 隐藏类型- `Action`
+
+### 函数式接口设计
+
+- Supplier - T get()
+- Consumer - void accept()
+- Function - R apply(T t)
+- Predicate - boolean test(T t)
+
+### 函数式在框架中的运用
+
+- Supplier - 数据来源, 代码替换接口
+- Consumer - 执行callback
+- Function - 类型转换, 业务处理
+- Predicate - 过滤, 对象比较
+
+### Stream API 设计
+
+- 转换: Stream#map(Function)
+- 过滤: Stream#filter(Predicate)
+- 排序: Stream#sorted()/(Comparator)
+- 串行: Stream(默认类型)
+- 并行: Stream#parallel() / isParallel()
+- Collect, 分组, 聚合, flatMap, reduce
+
+## 模块化设计
+
+### 1. Java 模块化基础回顾
+
+- 强封装的实施与精确的模块依赖声明使得大型应用和框架更好的维护
+- 安全提升
+- 增快应用模块中类型检测的速度, 提升应用性能
+- 瘦身JDK以及SE的体积, 有利于在小型计算设备使用和云端部署
+
+---
+
+```java
+module java.sql {
+  exports java.sql;
+  exports javax.sql;
+
+  requires transitive java.logging;
+
+  uses java.sql.Driver;
+}
+```
+
+### 2. Java 模块化核心概念
+
+### 3. 模块化迁移
+
+### 4. 模块化反射
+
+## Collections

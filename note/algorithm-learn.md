@@ -4,9 +4,9 @@
 
 ### 精通一个领域 (semantic tree)
 
-- chunk it up
-- deliberate practicing (练五遍)
-- feedback
+- chunk it up (chapter, part)
+- deliberately practicing (练五遍)
+- feedback (crack questions)
 
 ### 1.数据结构
 
@@ -113,16 +113,36 @@ int fib(int n) {
 
 O(n!): Factorial 阶乘
 
-```java
-for (int i =1; i<= n; i++) {
-    System.out.println("your input is: " + i);
-}
-```
-
 ### 递归
 
-画出递归树
+画出递归树 (找出重复部分 -> 做缓存)
 
 ### 主定理
 
 ![master](../resources/algorithm/master.png)
+
+## 数组, 链表, 跳表
+
+升维 -- 空间换时间
+
+- array
+  - prepend O(1)
+  - append O(1)
+  - lookup O(1)
+  - insert O(n)
+  - delete O(n)
+- linkedlist
+  - prepend O(1)
+  - append O(1)
+  - lookup O(n)
+  - insert O(1)
+  - delete O(1)
+- 跳表 (skip list)
+  - lookup O(logn)
+  - insert O(logn)
+  
+### 1.实战解析: 移动零
+
+1. 5-10分钟: 读题和思考
+2. 有思路: 自己开始做和写代码; 不然, 马上看题解
+3. 默写背诵, 熟练
