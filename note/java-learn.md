@@ -247,20 +247,155 @@
 ---
 
 ```java
-module java.sql {
-  exports java.sql;
-  exports javax.sql;
+module second.part {
+    // requires 内部依赖
+    // 命名模块
+    // artifact 资源根 package 存有 module-info.class（包含模块名称）
+    requires java.base; // 默认依赖
+    requires java.sql;  // 传递依赖 requires transitive
+    requires java.compiler;  // exports 控制可访问的 API 包
 
-  requires transitive java.logging;
+    // 非命名模块
+    requires transitive spring.context;
+    requires transitive org.apache.commons.lang3;  // 规律：
+    // Maven artifactId（jar或者war文件）中横划（画）线 "-"
+    // 在模块化名称使用 "."
+    requires transitive commons.collections;
 
-  uses java.sql.Driver;
+    // exports 供外部访问
+    exports cn.az.java.modular;
 }
 ```
 
 ### 2. Java 模块化核心概念
 
+- 模块路径可能是单个artifact,或者是多个artifacts的目录, 存在于宿主机器上
+- 模块路径的差异性
+  - 定位整个模块而非类型
+  - 运行时和编译时, 同一目录下不允许出现同名模块
+
 ### 3. 模块化迁移
+
+- 迁移分析
+  - 需要明确应用实现依赖的JDK模块
+  - 需要名曲二方或三方jar所依赖的JDK模块
+  - 需要微服务化应用
 
 ### 4. 模块化反射
 
-## Collections
+- 获取模块
+  - 获取模块 - Class#getModule()
+  - 模块接口 - Module
+  - 模块描述文件接口 - ModuleDescriptor
+
+## 集合框架基础运用
+
+### 1. 集合框架总览
+
+集合框架是一个用于展现和操作集合的同意框架, 其实现细节能够让集合独立地操作
+
+---
+
+- 主要优势
+  - Reduces programming effort
+  - Increase performance
+  - Provides interoperability between unrelated APIs
+  - Reduces the effort required to learn APIs
+  - Reduces the effort required to design and implement APIs
+  - Fosters software resue
+- 基本组成
+  - Collection interfaces
+  - Infrastructure
+  - General-purpose implementations
+  - Abstract implementations
+  - Legacy implementations
+  - Convenience implementations
+  - Wrapper implementations
+  - Special-purpose implementations
+  - Array Utilities
+  - Algorithms
+  - Concurrent implementations
+- 集合接口
+  - `java.util.Collection`
+    - List
+    - Set
+    - SortedSet
+    - NavigableSet
+    - Queue
+    - Deque
+  - `java.util.concurrent`
+    - BlockingQueue
+    - BlockingDeque
+    - TransferQueue
+    - ConcurrentMap
+    - ConcurrentNavigableMap
+  - `java.util.Map`
+    - SortedMap
+    - NavigableMap
+
+### 2. 集合框架内建实现
+
+- Legacy
+  - Vector
+  - Stack
+  - Hashtable
+  - Enumeration
+  - BitSet
+- Common
+  - HashSet, TreeSet, LinkedHashSet
+  - ArrayList, LinkedList
+  - ArrayDeque, LinkedList
+  - HashMap, TreeMap, LinkedHashMap
+- Concurrent
+  - BlockingQueue, TransferQueue, BlockingDeque, ConcurrentMap, ConcurrentNavigableMap
+  - LinkedBlockingQueue, ArrayBlockingQueue, PriorityBlockingQueue, DelayQueue, SynchronousQueue
+  - LinkedBlockingDeque, LinkedTransferQueue, CopyOnWriteArrayList, CopyOnWriteArraySet, ConcurrentSkipListSet
+  - ConcurrentHashMap, ConcurrentSkipListMap
+
+### 3. 集合框架抽象实现
+
+- AbstractCollection
+  - AbstractList
+  - AbstractSet
+  - AbstractQueue
+- Map
+  - AbstractMap
+
+### 4. 集合框架面试题
+
+> 为什么Collection没有继承Clonable和Serializable
+
+实例类自行选择是否实现cloneable和序列化
+
+### 5. Java集合遍历实现
+
+高性能的最小化实现接口
+
+Collections, Arrays, BitSet, EnumSet
+
+- 接口类型
+  - 单例集合接口 (Collections.singleton*)(List, Set, Map) -- 不变集合(Immutable)
+  - 空集合接口 (Collections.empty*)
+    - 枚举：Collections.emptyEnumeration()
+    - 迭代器：emptyIterator()、emptyListIterator()
+    - List：emptyList()
+    - Set: emptySet()、emptySortedSet()、emptyNavigableSet()
+    - Map：emptyMap()、emptySortedMap()、emptyNavigableMap()
+  - 转换集合接口 (Collections.*, Arrays.*)
+    - Enumeration: `Collections.enumeration(Collection)`
+    - List: `Collections.list(Enumeration<T>)`, `Arrays.asList(T…)`
+    - Set: `Collections.newSetFromMap(Map<E, Boolean>)`
+    - Queue: `Collections.asLifoQueue(Deque<T>)`
+    - HashCode: Arrays.hashCode(…)
+    - String: Arrays.toString(…)
+  - 列举集合接口 (*.of(...))
+
+### 6. 集合包装实现
+
+功能性添加, 比如同步以及其他实现: Wrapper模式原则, 入参集合类型与返回类型相同或其子类
+
+- 同步包装接口 (Collections.synchronized*)
+- 只读包装接口 (Collections.unmodifiable*)
+- 类型安全包装接口 (Collections.checked*)
+
+### 7. 集合特殊实现

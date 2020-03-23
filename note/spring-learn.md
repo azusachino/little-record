@@ -142,9 +142,9 @@
 
 ### 7.编程模型
 
-- 面向对象编程
-- 面向切面编程
-- 面向元编程
+- 面向对象编程 OOP
+- 面向切面编程 AOP
+- 面向元编程 METADATA
 - 函数驱动
 - 模块驱动
 
@@ -171,3 +171,50 @@ Spring makes it easy to create java enterprise applications. It provides everyth
 - spring-expression: Spring表达式语言模块
 
 > Spring Framework的优势和不足有哪些?
+
+## Spring Framework IOC
+
+### IOC主要实现策略, 和DI的关系
+
+- Using a service locator pattern
+- Using dependency injection(构造器注入, Setter注入, 属性注入, 接口注入)
+- Using a contextualized lookup
+- Using template method design pattern
+- Using strategy design pattern
+
+### IOC职责
+
+- 通用职责
+  - 依赖处理
+    - 依赖查找
+    - 依赖注入
+  - 生命周期管理
+    - 容器
+    - 托管的资源(JavaBeans或其他资源)
+  - 配置
+    - 容器
+    - 外部化配置
+    - 托管的资源
+
+### 传统 IoC 容器
+
+- Java Beans (`java.beans.PropertyEditor`)
+
+### 面试题
+
+> 什么是IOC?
+
+简单地说, IoC是反转控制, 类似于好莱坞原则, 主要有依赖查找和依赖注入实现
+> 依赖查找和依赖注入的区别?
+
+依赖查找是主动或手动的依赖查找方式, 通常需要依赖容器或标准API实现; 而依赖注入则是手动绑定或自动依赖绑定的方式, 无需依赖特定的容器和API.
+> Spring作为IoC容器有什么优势?
+
+- 典型的IoC管理, 依赖查找和依赖注入
+- AOP 抽象
+- 事件抽象
+- 事件机制
+- SPI 扩展
+- 强大的第三方整合
+- 易测试性
+- 更好的面向对象

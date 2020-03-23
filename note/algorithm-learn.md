@@ -146,3 +146,55 @@ O(n!): Factorial 阶乘
 1. 5-10分钟: 读题和思考
 2. 有思路: 自己开始做和写代码; 不然, 马上看题解
 3. 默写背诵, 熟练
+
+## 栈和队列
+
+- Stack (FILO); 添加, 删除皆为 O(1), 查询O(n)
+- Queue (FIFO); 添加, 删除皆为 O(1), 查询O(n)
+- Deque 添加, 删除皆为 O(1), 查询O(n)
+
+### Stack
+
+```java
+Stack<Integer> stack = new Stack<>();
+stack.push(1);
+stack.push(2);
+stack.search(1);
+stack.pop();
+stack.peek();
+```
+
+### Queue
+
+```java
+Queue<String> queue = new LinkedList<>();
+queue.size();
+queue.add("1");
+queue.offer("one");
+queue.remove();
+queue.poll();
+queue.element();
+queue.peek();
+```
+
+### Deque
+
+```java
+Deque<Integer> deque = new LinkedList<>();
+    deque.addFirst(1);
+    deque.addLast(2);
+    System.out.println(deque);
+
+    int a = deque.getFirst();
+    int b = deque.peekLast();
+
+    while (deque.size() > 0) {
+         System.out.println(deque.pollLast());
+    }
+```
+
+### PriorityQueue
+
+1. 插入操作: O(1)
+2. 取出操作: O(logN) -- 按照元素的优先级取出
+3. 底层具体实现的数据结构较为多样和复杂: heap, BST, treap
