@@ -418,3 +418,62 @@ Collections, Arrays, BitSet, EnumSet
 - 快速排序 (Quick Sort): 最佳O(nlogn), 平均O(nlogn), 最坏O(n^2)
 - 合并排序 (Merge Sort): 最佳O(nlogn), 平均O(nlogn), 最坏O(nlogn)
 - Tim 排序 (Tim Sort): 最佳O(n), 平均O(nlogn), 最坏O(nlogn)
+
+## 进程, 线程, 协程
+
+### 进程
+
+指计算机中已运⾏的程序。进程为曾经是分时系统的基本运作单位。在面向进程设计的系统中，进程是程序的基本执⾏实体;在⾯向线程设计的系统中，进程本身不不是基本运⾏单位，⽽是线程的容器器. 程序本身只是指令、数据及其组织形式的描述，进程才是程序的真正运⾏实例。
+
+### 线程
+
+操作系统能够进行运算调度的最小单位. 它被包含在进程之中, 是进程的实际运行单位.
+
+#### Java线程编程模型
+
+- 小于1.5: Thread, Runnable
+- 1.5: Executor, Callable, Future
+- 1.7: ForkJoin
+- 1.8: CompletionStage, CompletableFuture
+- 1.9: Flow (Publisher, Subscriber, Subscription, Processor)
+
+#### Java线程池
+
+- 小于1.5: 自定义Thread Pool
+- 1.5+: ExecutorService, ThreadPoolExecutor, ScheduledThreadPoolExecutor
+- 1.7: ForkJoinPool
+
+---
+
+- 同步: 最常见的编程手段, 指任务发起方和执行方在同一线程中完成
+- 异步: 常见的提升吞吐手段, 指任务发起方和执行方在不同线程中完成
+- 非阻塞: 一种编程模型, 由通知状态被动的回调执⾏，同步或异步执⾏均可.
+
+#### 线程状态
+
+- API - java.lang.Thread.State (Since 1.5)
+  - NEW: 线程已创建, 尚未启动
+  - RUNNABLE: 表示线程处于可运行状态, 不代表一定运行
+  - BLOCKED: 被Monitor锁阻塞, 表示当前线程在同步锁的场景运作
+  - WAITTING: 线程处于等待状态, 由Object#wait(), Thread#join()或LockSupport#park()引起
+  - TIMED_WAITTING: 线程处于规定时间内的等待状态
+  - TERMINATED: 线程执行结束
+- 使用场景
+  - 线程堆栈
+    - 工具 - jstack
+    - JMX - java.lang.management.ThreadMXBean#dumpAllThreads(boolean, boolean)
+    - API - java.lang.Thread#dumpStack()
+
+---
+
+> 为什么弃用stop, suspend 和 resume方法?
+
+stop会unlock Monitor, 导致了lock块中数据不再安全
+> 如何中止一个线程
+
+- private volatile boolean stop
+- 抛出异常
+
+> 如何理解线程“中止”方法
+
+interrupt()并不能中止线程, 但是可以传递interrupt状态 (在子线程start()之前调用没有效果)
