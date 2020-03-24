@@ -399,3 +399,22 @@ Collections, Arrays, BitSet, EnumSet
 - 类型安全包装接口 (Collections.checked*)
 
 ### 7. 集合特殊实现
+
+## 算法
+
+### 1.排序算法
+
+- 计算复杂度: 最佳, 最坏以及平均复杂度
+- 内存使用: 空间复杂度
+- 递归算法: 排序算法是否用到了递归
+- 稳定性: 当相同的键存在时, 经过排序后, 其值也保持相对的顺序
+- 比较排序: 集合中的两个元素进行比较排序
+- 串行或并行: 是否运用传销
+
+---
+
+- 冒泡排序 (Bubble Sort): 最佳O(n), 平均O(n^2), 最坏O(n^2)
+- 插入排序 (Insertion Sort): 最佳O(n), 平均O(n^2), 最坏O(n^2)
+- 快速排序 (Quick Sort): 最佳O(nlogn), 平均O(nlogn), 最坏O(n^2)
+- 合并排序 (Merge Sort): 最佳O(nlogn), 平均O(nlogn), 最坏O(nlogn)
+- Tim 排序 (Tim Sort): 最佳O(n), 平均O(nlogn), 最坏O(nlogn)
