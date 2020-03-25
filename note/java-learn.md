@@ -477,3 +477,81 @@ stop会unlock Monitor, 导致了lock块中数据不再安全
 > 如何理解线程“中止”方法
 
 interrupt()并不能中止线程, 但是可以传递interrupt状态 (在子线程start()之前调用没有效果)
+
+### Java 并发理论基础
+
+- 线程安全实现手段
+  - Reentrancy (重进入)
+  - Thread-local storage (线程本地存储)
+  - Immutable objects (不可变对象)
+  - Mutual exclusion (互斥)
+  - Atomic Operations (原子操作)
+- 同步引入的问题
+  - 死锁 (Dead Lock)
+  - 饥饿 (Starvation)
+  - 优先级倒转 (Priority Inversion)
+  - 繁忙等待 (Busy Waiting)
+- 同步实现
+  - 信号量 (Semaphores)
+  - 屏障 (Barriers)
+  - 互斥 (Mutex)
+  - 条件变量 (Condition Variables)
+  - 自旋锁 (SpinLock)
+  - 读写锁 (Reader-Writer Lock)
+
+### Java synchronized
+
+- 锁定对象: 对象(Object) 和类 (Class)
+- 修饰范围: 方法(Method), 代码块(Block)
+- 特点: 重新进入(Reentant)
+- 方法flags: ACC_SYNCHRONIZED
+- 字节码: monitorenter 和 monitorexit
+- 锁实现: Thin Lock, Inflated, HeavyWeight
+
+### Java volatile
+
+- 底层: 内存屏障 (Memory Barrier)
+- 语义: 可见性
+
+### Java CAS (Compare And Swap)
+
+- 底层: 原子信号指令 (Atomic Semaphore Instructions)
+- 语义: 原子性
+
+### Java 并发锁
+
+- 重进入锁 - ReentrantLock
+  - 与 synchronized 的类似点
+    - 互斥 (Mutal Exclusion)
+    - 重进入 (Reentrancy)
+    - 隐形 Monitor 机制
+  - 与 synchronized 的不同点
+    - 获得顺序 (公平锁和非公平)
+    - 限制锁定 (tryLock)
+    - 条件对象支持 (Condition Support)
+    - 运维方法
+- 重进入读写锁 - ReentrantReadWriteLock
+- 邮票锁 - StampedLock
+  - 写 (Writing)
+  - 读 (Reading)
+  - 优化读 (Optimistic Reading)
+
+### Java 原子操作
+
+- `java.util.concurrent.atomic.Atomic*`
+- `java.util.concurrent.atomic.*Adder`
+
+### Java 并发限制
+
+- CountDownLatch
+- CyclicBarrier
+- Semaphore
+
+### Java 线程池
+
+- ThreadPoolExecutor
+- ScheduledThreadPoolExecutor
+- Runnable VS Callable
+- Future
+
+### 面试题
