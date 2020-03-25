@@ -92,3 +92,15 @@ public class HelloChannelHandler extends SimpleChannelInboundHandler<HttpObject>
 - eventTriggered
 - WritablitityChanged
 - exceptionCaught
+
+### 实时通讯
+
+- Ajax 轮询
+- Long pull
+- WebSocket
+
+### WebSocket API
+
+- `let socket = new WebSocket("ws://[ip]:[port]")`
+- 生命周期: onopen() onmessage() onerror() onclose()
+- 主动方法: Socket.send() Socket.close()

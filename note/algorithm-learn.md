@@ -198,3 +198,8 @@ Deque<Integer> deque = new LinkedList<>();
 1. 插入操作: O(1)
 2. 取出操作: O(logN) -- 按照元素的优先级取出
 3. 底层具体实现的数据结构较为多样和复杂: heap, BST, treap
+
+## 哈希表 映射 集合
+
+哈希表(Hash Table), 也叫散列表, 根据关键码值(Key value)而直接进行访问的数据结构  
+映射函数叫散列函数(Hash Function), 存放记录的数组叫做哈希表
