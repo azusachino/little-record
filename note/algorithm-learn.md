@@ -2,6 +2,10 @@
 
 ## 数据结构与算法总览
 
+![data-structure](../resources/algorithm/data-structure.png)
+
+![algorithm](../resources/algorithm/algorithm.png)
+
 ### 精通一个领域 (semantic tree)
 
 - chunk it up (chapter, part)

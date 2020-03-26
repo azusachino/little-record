@@ -309,3 +309,112 @@ FactoryBean是创建Bean的一种方式, 帮助实现复杂的初始化逻辑
 > Spring IoC容器启动时做了哪些准备?
 
 IoC配置元信息读取和解析, IoC容器生命周期, Spring事件发布, 国际化等.
+
+## Spring Bean 基础
+
+### 1. 定义 Spring Bean
+
+> 什么是Bean Definition?
+
+BeanDefinition是Spring Framework中定义Bean的配置元信息接口, 包含:
+
+- Bean的类名
+- Bean行为配置元素, 如作用域, 自动绑定的模式, 生命周期回调等
+- 其他Bean引用, 又可称为合作者或依赖
+- 配置设置, 如Bean属性
+
+### 2. BeanDefinition 元信息
+
+- BeanDefinition元信息:
+  - Class Bean全类名, 必须是具体类(不能用抽象类或接口)
+  - Name Bean的名称或ID
+  - Scope Bean的作用域(Singleton, prototype)
+  - Constructor arguments Bean构造器参数(用于依赖注入)
+  - Properties Bean属性设置(用于依赖注入)
+  - Autowiring mode Bean自动绑定模式(如:byName)
+  - Lazy initailization mode Bean延迟初始化模式(延迟和非延迟)
+  - Initialization method Bean初始化回调方法名称
+  - Destruction method Bean销毁回调方法名称
+- BeanDefinition构建
+  - 通过BeanDefinitionBuilder
+  - 通过AbstractBeanDefinition以及派生类
+
+### 3. 命名 Spring Bean
+
+每个 Bean 拥有一个或多个标识符(identifiers)，这些标识符在 Bean 所在的容器必须是唯一 的。通常，一个 Bean 仅有一个标识符，如果需要额外的，可考虑使用别名(Alias)来扩充  
+在基于 XML 的配置元信息中，开发人员可用 id 或者 name 属性来规定 Bean 的 标识符。通常 Bean 的 标识符由字母组成，允许出现特殊字符。如果要想引入 Bean 的别名的话，可在 name 属性使用半角逗号(“,”)或分号(“;”) 来间隔  
+Bean 的 id 或 name 属性并非必须制定，如果留空的话，容器会为 Bean 自动生成一个唯一的 名称。Bean 的命名尽管没有限制，不过官方建议采用驼峰的方式，更符合 Java 的命名约定  
+
+### 4. Spring Bean 的别名
+
+- Bean 别名(Alias)的价值
+  - 复用现有的 BeanDefinition
+  - 更具有场景化的命名方法
+
+### 5. 注册 Spring Bean
+
+- XML 配置元信息
+  - `<bean name=”...” ... />`
+- Java 注解配置元信息
+  - @Bean
+  - @Component
+  - @Import
+- Java API 配置元信息
+  - 命名方式: `BeanDefinitionRegistry#registerBeanDefinition(String,BeanDefinition)`
+  - 非命名方式: `BeanDefinitionReaderUtils#registerWithGeneratedName(AbstractBeanDefinition,BeanDefinitionRegistry)`
+- 配置类方式: `AnnotatedBeanDefinitionReader#register(Class...)`
+
+`SingletonBeanRegistry#registerSingleton`
+
+### 6. 实例化 Spring Bean
+
+- 常规方式
+  - 通过构造器(配置元信息:XML、Java 注解和 Java API )
+  - 通过静态工厂方法(配置元信息:XML 和 Java API )
+  - 通过 Bean 工厂方法(配置元信息:XML和 Java API )
+  - 通过 FactoryBean(配置元信息:XML、Java 注解和 Java API )
+- 特殊方式
+  - 通过 ServiceLoaderFactoryBean(配置元信息:XML、Java 注解和 Java API )
+  - 通过 AutowireCapableBeanFactory#createBean(java.lang.Class, int, boolean)
+  - 通过 BeanDefinitionRegistry#registerBeanDefinition(String,BeanDefinition)
+
+### 7. 初始化 Spring Bean
+
+- @PostConstruct 标注方法
+- 实现 InitializingBean 接口的 afterPropertiesSet() 方法
+- 自定义初始化方法
+  - XML 配置: `<bean init-method=”init” ... />`
+  - Java 注解: `@Bean(initMethod=”init”)`
+  - Java API: `AbstractBeanDefinition#setInitMethodName(String)`
+
+### 8. 延迟初始化 Spring Bean
+
+- XML 配置: `<bean lazy-init=”true” ... />`
+- Java 注解: `@Lazy(true)`
+
+### 9. 销毁 Spring Bean
+
+- @PreDestroy 标注方法s
+- 实现 DisposableBean 接口的 destroy() 方法
+- 自定义销毁方法
+  - XML 配置: `<bean destroy=”destroy” ... />`
+  - Java 注解: `@Bean(destroy=”destroy”)`
+  - Java API: `AbstractBeanDefinition#setDestroyMethodName(String)`
+
+### 10. 垃圾回收 Spring Bean
+
+1. 关闭 Spring 容器(应用上下文)
+2. 执行GC
+3. Spring Bean 覆盖的 finalize() 方法被回调
+
+### 11. 面试题
+
+> 如何注册一个Spring Bean?
+
+通过BeanDefinition和外部单体对象来注册 (`SingletonBeanRegistry`)
+> 什么是Spring BeanDefinition?
+
+参照上面的笔记
+>Spring 容器是怎样管理注册Bean
+
+IoC配置元信息读取和解析, 依赖查找和注入以及Bean生命周期
