@@ -536,6 +536,26 @@ interrupt()并不能中止线程, 但是可以传递interrupt状态 (在子线�
   - 读 (Reading)
   - 优化读 (Optimistic Reading)
 
+公平锁 -> 保证执行顺序  
+t1, t2, t3 -> t1.unlock() -> 若t3获得执行权 -> LockSupport.park(t3) -> t2.lock() -> t2.unlock() -> LockSupport.unpark(t3) -> t3.lock()
+
+---
+
+```java
+class X {
+  private final ReentrantLock lock = new ReentrantLock();
+  
+  public void m() {
+    lock.lock();
+    try {
+      System.out.println("xxx");
+    } finally {
+      lock.unlock();
+    }
+  }
+}
+```
+
 ### Java 原子操作
 
 - `java.util.concurrent.atomic.Atomic*`
@@ -543,9 +563,9 @@ interrupt()并不能中止线程, 但是可以传递interrupt状态 (在子线�
 
 ### Java 并发限制
 
-- CountDownLatch
-- CyclicBarrier
-- Semaphore
+- CountDownLatch -> latch.countdown() -> latch.await()
+- CyclicBarrier -> cb.await() -> cb.reset()
+- Semaphore -> s.acquire()
 
 ### Java 线程池
 
