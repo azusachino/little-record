@@ -418,3 +418,109 @@ Bean 的 id 或 name 属性并非必须制定，如果留空的话，容器会�
 >Spring 容器是怎样管理注册Bean
 
 IoC配置元信息读取和解析, 依赖查找和注入以及Bean生命周期
+
+## Spring IoC 依赖查找
+
+### 1. 依赖查找的今生前世
+
+- 单一类型依赖查找
+  - JNDI -> `javax.naming.Context#lookup(javax.naming.Name)`
+  - JavaBeans -> `java.beans.beancontext.BeanContext`
+- 集合类型依赖查找
+  - `java.beans.beancontext.BeanContext`
+- 层次性依赖查找
+  - `java.beans.beancontext.BeanContext`
+
+### 2. 单一类型依赖查找
+
+- 单一类型依赖查找接口 - BeanFactory
+  - 根据 Bean 名称查找
+    - getBean(String)
+    - Spring 2.5 覆盖默认参数:getBean(String,Object...)
+  - 根据 Bean 类型查找
+    - Bean 实时查找
+      - Spring 3.0 getBean(Class)
+      - Spring 4.1 覆盖默认参数:getBean(Class,Object...)
+    - Spring 5.1 Bean 延迟查找
+      - getBeanProvider(Class)
+      - getBeanProvider(ResolvableType)
+  - 根据 Bean 名称 + 类型查找:getBean(String,Class)
+
+### 3. 集合类型依赖查找
+
+- 集合类型依赖查找接口 - ListableBeanFactory
+  - 根据 Bean 类型查找
+    - 获取同类型 Bean 名称列表
+      - getBeanNamesForType(Class)
+      - Spring 4.2 getBeanNamesForType(ResolvableType)
+    - 获取同类型 Bean 实例列表
+      - getBeansOfType(Class) 以及重载方法
+  - 通过注解类型查找
+    - Spring 3.0 获取标注类型 Bean 名称列表
+      - getBeanNamesForAnnotation(Class<? extends Annotation>)
+    - Spring 3.0 获取标注类型 Bean 实例列表
+      - getBeansWithAnnotation(Class<? extends Annotation>)
+    - Spring 3.0 获取指定名称 + 标注类型 Bean 实例
+      - findAnnotationOnBean(String,Class<? extends Annotation>)
+
+### 4. 层次性依赖查找
+
+- 层次性依赖查找接口 - HierarchicalBeanFactory
+  - 双亲 BeanFactory:getParentBeanFactory()
+  - 层次性查找
+    - 根据 Bean 名称查找
+      - 基于 containsLocalBean 方法实现
+    - 根据 Bean 类型查找实例列表
+      - 单一类型:BeanFactoryUtils#beanOfType
+      - 集合类型:BeanFactoryUtils#beansOfTypeIncludingAncestors
+    - 根据 Java 注解查找名称列表
+      - BeanFactoryUtils#beanNamesForTypeIncludingAncestors
+
+### 5. 延迟依赖查找
+
+- Bean 延迟依赖查找接口
+  - org.springframework.beans.factory.ObjectFactory
+  - org.springframework.beans.factory.ObjectProvider
+    - Spring 5 对 Java 8 特性扩展
+      - 函数式接口
+      - getIfAvailable(Supplier)
+      - ifAvailable(Consumer)
+      - Stream 扩展 - stream()
+
+### 6. 安全依赖查找
+
+- 不安全: `BeanFactory.getBean(), ObjectFactory.getObject()`
+- 安全: `ObjectProvider.getIfAvailable(),ListableBeanFactory.getBeansOfType(),  ObjectProvider.stream()`
+
+层次性依赖查找的安全性取决于其扩展的单一或集合类型的 BeanFactory 接口
+
+### 7. 内建可查找的依赖
+
+- ConfigurationAnnotationProcessor
+- AutowiredAnnotationBeanPostProcessor
+- CommonAnnotationBeanPostProcessor
+- EventListenerMethodProcessor
+- DefaultEventListenerFactory
+- PersistenceAnnotationBeanPostProcessor
+
+### 8. 依赖查找中的经典异常
+
+- NoSuchBeanDefinitionException
+- NoUniqueBeanDefninitonException
+- BeanInstantiationException
+- BeanCreationException
+- BeanDefinitionStoreException
+
+### 9. 面试题精选
+
+> ObjectFactory与BeanFactory的区别?
+
+ObjectFactory 与 BeanFactory 均提供依赖查找的能力。  
+不过 ObjectFactory 仅关注一个或一种类型的 Bean 依赖查找，并且自身不具备依赖查找的能力，能力则由 BeanFactory 输出。  
+BeanFactory 则提供了单一类型、集合类型以及层次性等多种依赖查找方式。
+> BeanFactory.getBean操作是否线程安全?
+
+BeanFactory.getBean方法的执行是线程安全的, 操作过程中会增加互斥锁
+> Spring 依赖查找和注入在来源上的区别?
+
+IoC
