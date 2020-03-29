@@ -44,3 +44,12 @@ class App extends React.Component {
     }
 }
 ```
+
+## React衍生的思考
+
+- 声明式开发
+- 可以与其他框架并存
+- 组件化
+- 单向数据流
+- 视图层框架
+- 函数式编程

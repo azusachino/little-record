@@ -84,10 +84,10 @@
   - 泛型 ApplicationListener
 - 1.6 `@Override`接口
 - 1.7 Diamond语法, 多个catch, try(resource)
-  - Diamond DefaultListableBeanFactory
-  - try ResourceBundleMessageSource
+  - Diamond `DefaultListableBeanFactory`
+  - try `ResourceBundleMessageSource`
 - 1.8 Lambda语法, 可重复注解, 类型注解
-  - Lambda PropertyEditorRegitrySupport
+  - Lambda `PropertyEditorRegistrySupport`
 - 1.9 模块化, 接口私有方法
 - 1.10 局部变量类型推断
 
@@ -95,17 +95,17 @@
 
 - 小于Java5 API
   - 反射 MethodMatcher
-  - Java Beans CachedIntrospectionResults
-  - 动态代理(Dynamic Proxy) JdkDynamicAopProxy
+  - Java Beans `CachedIntrospectionResults`
+  - 动态代理(Dynamic Proxy) `JdkDynamicAopProxy`
 - Java5 API
-  - XML处理 XmlBeanDefinitionReader
-  - Java管理扩展 @ManagedResource
-  - Instrumentation InstrumentationSavingAgent
-  - 并发框架 ThreadPoolTaskScheduler
-  - 格式化 DataFormatter
+  - XML处理 `XmlBeanDefinitionReader`
+  - Java管理扩展 `@ManagedResource`
+  - Instrumentation `InstrumentationSavingAgent`
+  - 并发框架 `ThreadPoolTaskScheduler`
+  - 格式化 `DataFormatter`
 - Java6 API
-  - JDBC4.0 JdbcTemplate
-  - Common Annotations CommonAnnotationBeanPostProcessor
+  - JDBC4.0 `JdbcTemplate`
+  - Common `Annotations` CommonAnnotationBeanPostProcessor
   - JAXB2.0 Jaxb2Marshaller
   - Scripting in JVM StandardScriptFactory
   - 可插拔注解处理 API @Indexed
@@ -523,4 +523,164 @@ BeanFactory 则提供了单一类型、集合类型以及层次性等多种依�
 BeanFactory.getBean方法的执行是线程安全的, 操作过程中会增加互斥锁
 > Spring 依赖查找和注入在来源上的区别?
 
-IoC
+## Spring IoC 依赖注入
+
+### 1. 依赖注入的模式和类型
+
+- 手动模式 - 配置或编程的方式, 提前安排注入规则
+  - XML 资源配置元信息
+  - Java 注解元信息
+  - API 配置元信息
+- 自动模式 - 实现方提供依赖自动关联的方式, 按照内建的注入规则
+  - Autowiring
+- `<property name="user" ref="userBean"/>`
+- `<constructor-arg name="user" ref="userBean"/>`
+- `@Autowired User user`;
+- `@Autowired public void user(User user){...}`
+- `class MyBean implements BeanFactoryAware{...}`
+
+### 2. 自动绑定(Autowiring)
+
+The Spring container can autowire relationships between collaborating beans. You can let Spring resolve collaborators (other beans) automatically for your bean by inspecting the contents of the ApplicationContext.
+
+### 3. 自动绑定模式
+
+- no, 未激活自动绑定
+- byName
+- byType
+- constructor
+
+### 4. 自动绑定的限制和不足
+
+### 5. Setter方法依赖注入
+
+- 手动模式
+  - XML 资源配置元信息
+  - Java 注解配置元信息
+  - API 配置元信息
+- 自动模式
+  - byName
+  - byType
+
+### 6. 构造器依赖注入
+
+- 手动模式
+  - XML 资源配置元信息
+  - Java 注解配置元信息
+  - API 配置元信息
+- 自动模式
+  - constructor
+
+### 7. 字段注入
+
+`@Autowired` 会忽略掉静态字段
+
+- Java 注解配置元信息
+  - @Autowired
+  - @Resource
+  - @Inject(可选)
+
+### 8. 方法注入
+
+- Java 注解配置元信息
+  - @Autowired
+  - @Resource
+  - @Inject(可选)
+  - @Bean
+
+### 9. 回调注入
+
+- BeanFactoryAware: 获取 IoC 容器 - BeanFactory
+- ApplicationContextAware: 获取 Spring 应用上下文 - ApplicationContext 对象
+- EnvironmentAware: 获取 Environment 对象
+- ResourceLoaderAware: 获取资源加载器 对象 - ResourceLoader
+- BeanClassLoaderAware: 获取加载当前 Bean Class 的 ClassLoader
+- BeanNameAware: 获取当前 Bean 的名称
+- MessageSourceAware: 获取 MessageSource 对象，用于 Spring 国际化
+- ApplicationEventPublisherAware: 获取 ApplicationEventPublishAware 对象，用于 Spring 事件
+- EmbeddedValueResolverAware: 获取 StringValueResolver 对象，用于占位符处理
+
+### 10. 依赖注入类型选择
+
+- 低依赖: 构造器注入
+- 多依赖: Setter注入
+- 便利性: 字段注入
+- 声明类: 方法注入
+
+### 11. 基础类型注入
+
+### 12. 集合类型注入
+
+- Array
+- Collection: List, Set
+- Map: Properties
+
+### 13. 限定注入
+
+### 14. 延迟依赖注入
+
+- @Lazy
+- ObjectFactory
+- ObjectProvider
+
+### 15. 依赖处理过程
+
+- 入口 - DefaultListableBeanFactory#resolveDependency
+- 依赖描述符 - DependencyDescriptor
+- 自定绑定候选对象处理器
+
+### 16. @Autowired 注入原理 `AutowiredAnnotationBeanPostProcessor`
+
+- 元信息解析
+- 依赖查找
+- 依赖注入 (字段, 方法)
+
+### 17. JSR-330 @Inject 注入原理
+
+```java
+public AutowiredAnnotationBeanPostProcessor() {
+    this.autowiredAnnotationTypes.add(Autowired.class);
+    this.autowiredAnnotationTypes.add(Value.class);
+    try {
+        this.autowiredAnnotationTypes.add((Class<? extends Annotation>)
+        ClassUtils.forName("javax.inject.Inject", AutowiredAnnotationBeanPostProcessor.class.getClassLoader()));
+        logger.trace("JSR-330 'javax.inject.Inject' annotation found and supported for autowiring");
+    } catch (ClassNotFoundException ex) {
+    // JSR-330 API not available - simply skip.
+    }
+}
+  ```
+
+### 18. Java 通用注解注入原理 `CommonAnnotationBeanPostProcessor`
+
+- javax.xml.ws.WebServiceRef
+- javax.ejb.EJB
+- javax.annotation.Resource
+- javax.annotation.PostConstruct
+- javax.annotation.PreDestroy
+
+### 19. 自定义依赖注入注解
+
+- 生命周期处理
+  - InstantiationAwareBeanPostProcessor
+  - MergedBeanDefinitionPostProcessor
+- 元数据
+  - InjectedElement
+  - InjectionMetadata
+
+### 20. 面试题精选
+
+> 有多少种依赖注入的方式?
+
+- 构造器注入
+- Setter注入
+- 字段注入
+- 方法注入
+- 接口回调注入
+
+> 你偏好构造器注入还是Setter注入?
+
+两种依赖注入的方式均可使用, 如果是必须依赖的话, 那么推荐使用构造器注入, Setter注入用于可选依赖
+> Spring依赖注入的来源有哪些?
+
+resolveDependency()

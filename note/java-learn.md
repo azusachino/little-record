@@ -575,3 +575,97 @@ class X {
 - Future
 
 ### 面试题
+
+### Java并发集合框架
+
+- CopyOnWrite*: (CopyOnWriteArrayList, CopyOnWriteArraySet)
+  - 并发特征:
+    - 读: 无锁(volatile), O(1)
+    - 写: 同步(synchronized), 复制(较慢, 内存消耗)
+- ConcurrentSkipList*: (ConcurrentSkipListMap, ConcurrentSkipListSet)
+  - 并发特征: 无锁
+  - 数据结构: 有序(ConcurrentNavigableMap), 跳表 (SkipList)变种
+  - 时间复杂度: 平均log(n) - containsKey, get, put和remove方法
+  - 特征: 空间换时间
+- 跳表(SkipList)
+  - 时间复杂度: 搜索,插入 O(log(n))
+- ConcurrentSkipListMap
+  - size()方法非O(c)操作
+  - 批量操作无法保证原子性: putAll, equals, toArray, containsValue, clear
+  - Iterator, Spliterators: 弱一致性, 非fast-fail
+  - 非null约束: key和value都不能为null
+- ConcurrentHashMap
+  - 并发特征
+    - 1.5-1.6: 读锁(部分), 写锁
+    - 1.7, 1.8: 读无锁, 写锁
+  - 数据机构
+    - 1.8之前: 桶(bucket)
+    - 1.8: 桶(bucket), 平衡树(红黑树)
+- BlockingQueue (ArrayBlockingQueue, LinkedBlockingQueue, SynchronousQueue)
+  - 并发特征: 读锁, 写锁
+  - 子接口/实现: LinkedBlockingDeque, LinkedTransferQueue
+
+### Fork/Join框架
+
+- 编程模型
+  - ExecutorService扩展 - ForkJoinPool
+  - Future扩展 - ForkJoinTask, RecursiveTask, RecursiveAction
+
+### CompletableFuture
+
+- Future的限制
+  - 阻塞式结果返回
+  - 无法链式多个Future
+  - 无法合并多个Future结果
+  - 缺少异常处理
+
+### Flow框架
+
+- Reactive Streams
+  - Publisher
+  - Subscriber
+  - Subscription
+  - Processor
+
+## POSIX Thread
+
+### 1. 简介
+
+Portable Operating System Interface for UNIX
+
+- 线程基础
+  - 同进程中的线程
+    - 进程指令
+    - 打开的文件描述
+    - 信号和信号处理
+    - 当前工作目录
+  - 线程特有的
+    - 线程ID
+    - 寄存器集合, 栈指针
+    - 局部变量栈和返回地址
+    - 信号掩码
+    - 优先级
+    - 返回值
+
+### 2. 基础API
+
+- 创建线程
+  - pthread_create
+    - Java API - new Thread(Runnable)
+  - pthread_attr_*
+    - 状态: 是否可join, 默认值PTHREAD_CREATE_JOINABLE
+    - 调度策略: 是否实时, 默认值
+    - 范围: 内核(PTHREAD_SCOPE_SYSTEM), 用户(PTHREAD_SCOPE_PROCESS)
+    - 栈: 地址和大小
+  - pthread_join
+    - Java API - Thread.join()
+- 中止线程
+  - 等待函数执行完成
+  - void pthread_exit(void* value)
+  - int pthread_cancel(pthread_t thread)
+
+### 3. 同步API
+
+- 互斥(Mutex)
+- 条件变量(Conditio Variable)
+- 屏障(Barrier)

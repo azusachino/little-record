@@ -1,6 +1,6 @@
 # SpringBoot 2.0
 
-## 系列总览
+## 第一章 系列总览
 
 ### 1.要点
 
@@ -90,7 +90,7 @@ tomcat, jetty, undertow, webflux
 - 健康检查: Health, HealthIndicator
 - 指标: 内建 Metrics, 自定义 Metrics
 
-## 自动装配
+## 第二章 自动装配
 
 ### 1.手动装配
 
@@ -116,7 +116,7 @@ tomcat, jetty, undertow, webflux
 - 装配: 模式注解, @Enable 模块, 条件装配, 工厂加载机制
 - 实现: 激活自动装配, 实现自动装配, 配置自动装配实现
 
-## SpringApplication
+## 第三章 SpringApplication
 
 ### 1. What is SpringApplication
 
@@ -264,3 +264,47 @@ Spring Boot 事件
 
 ---
 拓展SpringBoot注意Ordered接口(加载顺序)
+
+## 第四章 Web MVC 核心
+
+- 理解 Spring Web MVC 架构
+  - Servlet
+    - 请求/响应式
+    - 屏蔽网络通讯的细节
+    - 面向HTTP协议
+    - 完整生命周期
+  - 指责
+    - 处理请求 (DispatcherServlet)
+    - 资源管理 (数据库连接, 消息连接, 其他)
+    - 视图渲染 (ViewResolver)
+
+- 认识 Spring Web MVC
+
+- 实现Controller
+- 配置WebMVC组件
+- 配置DispatcherServlet
+- 使用可执行Tomcat Maven插件
+
+```java
+@Controller
+public class HelloWorldController {
+    @RequestMapping("")
+    public String index() {
+        return "index";
+    }
+}
+```
+
+- 简化 Spring Web MVC
+
+## 第五章 Web MVC 视图应用
+
+## 第六章 Web MVC REST 应用
+
+## 第七章 Servlet
+
+## 第八章 Reactive到WebFlux
+
+## 第九章 WebFlux核心
+
+## 第十章 超越外部化配置
