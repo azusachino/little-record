@@ -667,5 +667,64 @@ Portable Operating System Interface for UNIX
 ### 3. 同步API
 
 - 互斥(Mutex)
-- 条件变量(Conditio Variable)
+- 条件变量(Condition Variable)
 - 屏障(Barrier)
+
+## Java 内存模型
+
+### 共享变量(Shared Variables)
+
+Memory that can be shared between threads is called shared memory or heap memory.  
+All instance fields, *static* fields, and array elements are stored in heap memory.
+
+```java
+private static final jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();
+// 计算对象中变量的绝对地址(偏移量)
+private static final long VALUE = U.objectFieldOffset(AtomicInteger.class, "value");
+
+private volatile int value;
+
+public final int getAndSet(int newValue) {
+    return U.getAndSetInt(this, VALUE, newValue);
+}
+```
+
+Local variables, formal method parameters and exception handler parameters are never shared between threads and are unaffected by the memory model.
+
+### 动作(Actions)
+
+- Read(normal, or non-volatile). Reading a variable
+- Write(normal, or non-volatile). Writing a variable
+- Synchronization actions:
+  - Volatile read.
+  - Volatile write.
+  - Lock. Locking a monitor.
+  - Unlock. Unlocking a monitor.
+  - The (synthetic) first and last action of a thread.
+  - Actions that start a thread or detect that a thread has terminated.(start() | isAlive())
+
+### 顺序(Order)
+
+#### Programs and Program Order
+
+- Sequential consistency is a very strong guarantee
+- If a program has no data races, then all executions of the program will appear to be sequentially consistent (无数据竞争时)
+
+#### Synchrinization Order
+
+the synchronization order of the synchronization actions in `t` is consistent with the program order of `t`.
+
+- An unlock action on monitor m *synchronizes-with* all subsequent lock actions on m(where "sebsequent" is defined according to the synchronization order).
+- A write to a volatile variable `v` *synchronizes-with* all subsequent reads of v by any thread(where "sebsequent" is defined according to the synchronization order).
+- An action that starts a thread *synchronizes-with* the first action in the thread it starts.
+- The write of the default value (zero, false or null) to each variable *synchronizes-with* the first action in every thread.
+- The final action in a thread T1 *synchronizes-with* any action in another thread T2 that detects that T1 has terminated.
+- If thread T1 interrupts thread T2, the interrupt by T1 *synchronizes-with* any point where any other thread(including T2) determines that T2 has been interrupted(by having an `IntterruptedException` thrown or by invoking `Thread.interrupted` or `Thread.isInterrupted`)
+
+The source of a *synchronizes-with* edge is called a release, and the destination is called an acquire.
+
+#### Happens-before Order
+
+Two actions can be ordered by a happens-before relationship. If one action happens-before another, then the first is visible to and ordered before the second.
+
+### 执行(Executions)

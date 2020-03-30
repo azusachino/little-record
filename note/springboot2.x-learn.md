@@ -299,6 +299,90 @@ public class HelloWorldController {
 
 ## 第五章 Web MVC 视图应用
 
+### 新一代服务端模板引擎 Thymeleaf
+
+```html
+<tr>
+<th th:text="#{name}">Name</th>
+<th th:text="#{msg}">Msg</th>
+</tr>
+```
+
+#### 核心要素
+
+- 资源定位: 模板来源
+  - 通用资源抽象
+    - 文件资源: File
+    - ClassPath资源: ClassLoader
+    - 统一资源: URL
+    - Web资源: ServletContext
+  - Spring资源抽象
+    - Spring资源: Resource
+- 渲染上下文: 变量来源
+  - Context: Thymeleaf渲染上下文
+  - Model: SpringWebMVC模型
+  - Attribute: Servlet上下文
+- 模板引擎: 模板渲染
+  - ITemplateEngine实现
+    - TemplateEngine: Thymeleaf原生实现
+    - SpringTemplateEngine: Spring实现
+    - SpringWebFluxTemplateEngine: Spring WebFlux实现
+
+```java
+    public static void main(String[] args) {
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        // 渲染上下文
+        Context context = new Context();
+
+        context.setVariable("message", "hello world");
+
+        String result = "<p th:text=\"${message}\"></p>";
+
+        System.out.println(templateEngine.process(result, context));
+    }
+```
+
+#### 视图处理
+
+- SpringWebMVC视图组件
+  - ViewResolver: ThymeleafViewResolver
+  - View: ThymeleafView
+  - DispatcherServlet
+  - ITemplateEngine: SpringTemplateEngine
+
+#### 核心组件
+
+- 视图解析
+  - ContentNegotiatingViewResolver
+    - InternalResourceViewResolver
+    - BeanNameViewResolver
+    - ThymeleafViewResolver
+- 配置策略
+  - 配置Bean: WebMvcConfigurer
+  - 配置对象: ContentNegotiationConfigurer
+- 策略管理
+  - Bean: ContentNegotiationManager
+  - FactoryBean: ContentNegotiationManagerFactoryBean
+- 策略实现
+  - ContentNegotationStrategy
+    - 固定`MediaType`: FixedContentNEgotiationStrategy
+    - "Accept"请求头: HeaderContentNegotiationStrategy
+    - 请求参数: ParameterCOntentNegotiationStrategy
+    - 路径拓展名: PathExtensionContentNegotiationStrategy
+
+---
+
+- 理解  BeanNameViewResolver
+- 理解HTTP Accept 请求头 与  View Content-Type 匹配
+- 理解最佳  View  匹配规则
+  - ViewResolver  优先规则
+    - 自定义  InternalResourceViewResolver
+    - ThymeleafViewResolver
+    - 默认  InternalResourceViewResolver
+  - MediaType  匹配规则
+    - Accept 头策略(Accept:text/html)
+    - 请求参数策略(format=text/xml)
+
 ## 第六章 Web MVC REST 应用
 
 ## 第七章 Servlet
