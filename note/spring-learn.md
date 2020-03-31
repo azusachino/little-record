@@ -684,3 +684,90 @@ public AutowiredAnnotationBeanPostProcessor() {
 > Spring依赖注入的来源有哪些?
 
 resolveDependency()
+
+## Spring IoC 依赖来源
+
+### 1. 依赖查找的来源
+
+- Spring BeanDefinition
+  - `<bean id="user" class="..." />`
+  - `@Bean`
+  - BeanDefinitionBuilder
+- Singleton
+  - API
+- 非Spring容器管理对象
+
+---
+
+- Spring内建BeanDefinition
+  - ConfigurationClassPostProcessor: 处理Spring配置类
+  - AutowiredAnnotationBeanProcessor: 处理@Autowired和@Value
+  - CommonAnnotationBeanPostProcessor: (Conditional) 处理JSR-250注解(@PostConstruct)
+  - EventListenerMethodProcessor: 处理标注@EventListener的Spring事件监听方法
+- Spring内建单例对象
+  - (environment)Environment: 外部化配置和Profiles
+  - (systemProperties)Properties: Java系统属性
+  - (systemEnvironment)Map: 操作系统环境变量
+  - (messageSource)MessageSource: 国际化文案
+  - (lifecycleProcessor)LifecycleProcessor: LifecycleBean处理器
+  - (applicationEventMulticaster)ApplicationEventMulticaster: Spring广播器
+
+### 2. 依赖注入的来源
+
+- BeanDefinition
+- 单例对象
+- 非Spring容器管理对象作为依赖来源
+
+### 3. Spring 容器管理和游离对象
+
+### 4. Spring BeanDefinition 作为依赖来源
+
+- 元数据:BeanDefinition
+- 注册:BeanDefinitionRegistry#registerBeanDefinition
+- 类型:延迟和非延迟
+- 顺序:Bean 生命周期顺序按照注册顺序
+
+### 5. 单例对象作为依赖来源
+
+- 来源:外部普通 Java 对象(不一定是 POJO)
+- 注册:SingletonBeanRegistry#registerSingleton
+- 无生命周期管理
+- 无法实现延迟初始化 Bean
+
+### 6. 非 Spring 容器管理对象作为依赖来源
+
+- 注册: `ConfigurableListableBeanFactory#registerResolvableDependency`
+- 无生命周期管理
+- 无法实现延迟初始化 Bean
+- 无法通过依赖查找
+
+### 7. 外部化配置作为依赖来源
+
+- 非常规 Spring 对象依赖来源
+- 无生命周期管理
+- 无法实现延迟初始化 Bean
+- 无法通过依赖查找
+
+### 8. 面试题精选
+
+> 依赖注入和依赖查找的来源是否相同?
+
+否，依赖查找的来源仅限于 Spring BeanDefinition 以及单例对 象，而依赖注入的来源还包括 Resolvable Dependency 以及 @Value 所标注的外部化配置。
+> 单例对象能在IoC容器启动后注册吗?
+
+可以的，单例对象的注册与 BeanDefinition 不同，BeanDefinition 会 被 ConfigurableListableBeanFactory#freezeConfiguration() 方法影响， 从而冻结注册，单例对象则没有这个限制。
+
+```java
+@Override
+public void freezeConfiguration() {
+    this.configurationFrozen = true;
+    this.frozenBeanDefinitionNames = StringUtils.toStringArray(this.beanDefinitionNames);
+}
+```
+
+> Spring依赖注入的来源有哪些?
+
+- Spring BeanDefinition
+- 单例对象
+- Resolvable Dependency
+- @Value 外部化配置

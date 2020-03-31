@@ -385,6 +385,65 @@ public class HelloWorldController {
 
 ## 第六章 Web MVC REST 应用
 
+### REST简介
+
+REST = RESTful = Representational State Transfer，is one way of providing interoperability between computer
+systems on the Internet.
+
+#### 架构约束
+
+- 统一接口 (Uniform Interface)
+- C/S架构 (Client/Server)
+- 无状态 (Stateless)
+- 可缓存 (Cacheable)
+- 封层系统 (Layered System)
+- 按需代码 (Code On Demand)
+
+统一接口(Uniform interface):
+
+- 资源识别(Identification of resources)
+  - URI(Uniform Resource Identifier )
+- 资源操作(Manipulation of resources through representations)
+  - HTTP verbs:GET、PUT、POST、DELETE
+- 自描述消息(Self-descriptive messages)
+  - Content-Type
+  - MIME-Type
+  - Media Type: application/javascript、 text/html
+- 超媒体(HATEOAS)
+  - Hypermedia As The Engine Of Application State
+
+### Web MVC REST支持
+
+- 定义: `@Controller`, `@RestController`
+- 映射: `@RequestMapping`, `@*Mapping`
+- 请求: `@RequestParam`, `@RequestHeader`, `@CookieValue`, `@RequestBody`, `@PathVariable`, `RequestEntity`
+- 相应: `@ResponseBody`, `ResponseEntity`, `ResponseCookie`
+- 拦截: `@RestControllerAdvice`, `HandlerInterceptor`
+- 跨域: `@CrossOrigin`, `CorsFilter`, `WebMvcConfigurer#addCorsMappings`
+
+### Rest 内容协商
+
+- 内容协商管理器: ContentNegotiationManager
+- 媒体类型: MediaType
+- 消费媒体类型: @RequestMapping#consumes
+- 生产媒体类型: @RequestMapping#produces
+- HTTP消息转换器: HttpMessageConverter
+- Web MVC 配置器: WebMvcConfigurer
+- 处理方法: HandlerMethod
+- 处理方法参数解析器: HandlerMethodArgumentResolver
+- 处理方法返回值解析器: HandlerMethodReturnValueHandler
+
+![mvc](../resources/spring/web_mvc.png)
+
+---
+
+![converter](../resources/spring/converter.png)
+
+### CORS
+
+- `@CorssOrigin`
+- `WebMvcConfiguer#addCorsMappings`
+
 ## 第七章 Servlet
 
 ## 第八章 Reactive到WebFlux
