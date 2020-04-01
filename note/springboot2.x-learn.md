@@ -446,6 +446,79 @@ systems on the Internet.
 
 ## 第七章 Servlet
 
+### Servlet简介
+
+核心组件API
+
+- javax.servlet.Servlet - DispatcherServlet
+- javax.servlet.Filter - CharacterEncodingFilter
+- javax.servlet.ServletContext
+- javax.servlet.AsyncContext
+- javax.servlet.ServletContentListener
+- javax.servlet.ServletRequestListener
+- javax.servlet.HttpSessionListener
+- javax.servlet.AsyncListener
+- javax.servlet.ServletContainerIntializer
+
+Servlet组件注册
+
+- Servlet
+  - web.xml -> `<servlet> + <servlet-mapping>`
+  - `@WebServlet`
+  - `ServletContext#addServlet`
+- Filter
+  - web.xml -> `<filter> + <filter-mapping>`
+  - `@WebFilter`
+  - `ServletContext#addFilter`
+- *Listener
+  - web.xml -> `<listener>`
+  - `@WebListener`
+  - `ServletContext#addListener`
+
+### Spring Servlet Web
+
+Servlet生命周期
+
+1. 初始化: init(ServletConfig)
+2. 服务: service(ServletRequest, ServletResponse)
+3. 销毁: destroy()
+
+Filter生命周期
+
+1. 初始化: init(FilterConfig)
+2. 服务: doFilter(ServletRequest,ServletResponse,FilterChain)
+3. 销毁: destroy()
+
+ServletContext生命周期
+
+1. 初始化: contextInitialized(ServletContextEvent)
+2. 销毁: contextInitialized(ServletContextEvent)
+
+Servlet异步支持
+
+- DeferredResult
+- Callable
+- CompletionStage
+
+### Spring Boot Servlet Web
+
+- ServletContextInitializer
+  - RegistrationBean
+    - ServletListenerRegistrationBean
+      - @WebListener
+    - FilterRegistrationBean
+      - @WebFilter
+    - ServletRegistrationBean
+      - @WebServlet
+
+@ServletComponentScan  扫描package ->  @Web* ->  RegistrationBean Bean 定义->  RegistrationBean Bean
+
+### Servlet容器部署Spring Boot
+
+- 基础接口：WebApplicationInitializer
+- 编程驱动：AbstractDispatcherServletInitializer
+- 注解驱动：AbstractAnnotationConfigDispatcherServletInitializer
+
 ## 第八章 Reactive到WebFlux
 
 ## 第九章 WebFlux核心

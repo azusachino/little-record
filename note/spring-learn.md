@@ -771,3 +771,65 @@ public void freezeConfiguration() {
 - 单例对象
 - Resolvable Dependency
 - @Value 外部化配置
+
+## Spring Bean 作用域
+
+### 1. Spring Bean 作用域
+
+### 2. singleton
+
+默认作用域, 一个BeanFactory有且仅有一个实例
+
+### 3. prototype
+
+原型作用域, 每次依赖查找和依赖注入生成新Bean对象, Spring容器没有办法管理prototypeBean的完整生命周期, 也没有办法记录实例的存在. 销毁回调方法不会执行, 可以利用BeanPostProcessor进行清扫工作.
+
+### 4. request
+
+将SpringBean存储在ServletRequest上下文中
+
+- XML - `<bean class="..." scope="request" />`
+- Java - `@RequestScope` | `@Scope(WebApplicationContext.SCOPE_REQUEST)`
+
+### 5. session
+
+将SpringBean存储在HttpSession中
+
+- XML - `<bean class="..." scope="session" />`
+- Java - `@SessionScope` | `@Scope(WebApplicationContext.SCOPE_SESSION)`
+
+### 6. application
+
+将SpringBean存储在ServletContext中
+
+- XML - `<bean class="..." scope="application" />`
+- Java - `@ApplicationScope` | `@Scope(WebApplicationContext.SCOPE_APPLICATION)`
+
+### 7. 自定义Bean作用域
+
+- 实现Scope: `org.springframework.beans.factory.config.Scope`
+- 注册Scope
+  - API: `org.springframework.beans.factory.config.ConfigurableBeanFactory#registerScope`
+  - XML:
+
+  ```xml
+  <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+  <property name="scopes">
+  <map>
+  <entry key="..."> </entry>
+  </map>
+  </property>
+  </bean>
+  ```
+
+### 8.面试题
+
+> Spring内建Bean的作用域有几种?
+
+Singleton, prototype, request, session, application, websocket
+> Sinleton Bean是否在一个应用是唯一的?
+
+否, singleton bean仅在当前Spring IoC容器中是单例对象
+> 'Application' Bean 是否有其他方案替代?
+
+可以, 实际上, 'application' 和 'singleton' 的Bean没有本质区别
