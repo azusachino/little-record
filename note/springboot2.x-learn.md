@@ -521,6 +521,82 @@ Servlet异步支持
 
 ## 第八章 Reactive到WebFlux
 
+- 反应堆模式 (Reactor)
+- Proactor模式
+- 观察者模式
+- 迭代器模式 (Iterator)
+- Java并发模型
+
+### 理解Reactive
+
+- Reactive 是异步非阻塞编程
+- Reactive 能够提升程序性能
+- Reactive 解决传统编程模型遇到的困境
+
+---
+
+- Java9 Flow API
+- RxJava
+- Reactor
+
+Future#get() 方法不得不等待任务执行完成，换言之，如果多个任务提交后，返回的多个 Future 逐一调用 get() 方法时，将会依次 blocking，任务的执行从并行变为串行。
+
+### Reactive Programming 定义
+
+- 响应的 (Responsive)
+- 适应性强的 (Resilient)
+- 弹性的 (Elastic)
+- 消息驱动的 (Message Driven)
+- 数据流 (Data Stream)
+- 传播变化 (Propagation of Change)
+- 变化响应 (Reacting to change)
+- 非阻塞 (Non-Blocking)
+- 观察者模式(Observer pattern )
+- 数据/事件序列(Sequences of data and/or events )
+- 序列操作符(Opeators)
+- 屏蔽并发细节(abstracting away...)
+- 观察者模式(Observer pattern )
+- 响应流模式(Reactive streams pattern )
+- 迭代器模式(Iterator pattern)
+- 拉模式(pull-based)
+- 推模式(push-based)
+- 异步(asynchronous )
+- 数据流(data streams)
+- 并非新鲜事物(not anything new)
+- 过于理想化(idea on steroids)
+
+Reactive Programming:同步或异步非阻塞执行，数据传播被动通知  
+Imperative programming:同步阻塞执行，数据主动获取
+
+---
+
+### 设计模式
+
+- 扩展模式:观察者(Observer)
+  - 推模式(push-based)
+- 混合模式:反应堆(Reactor)、Proactor
+- 对立模式:迭代器(Iterator)
+  - 拉模式(pull-based)
+
+---
+
+Reactive Programming 作为观察者模式(Observer) 的延伸，不同于传统的命令编程方式( Imperative programming)同步拉取数据的方式，如迭代器模式(Iterator) 。而是采用数据发布者同步或异步地推 送到数据流(Data Streams)的方案。当该数据流(Data Steams)订阅者监听到传播变化时，立即作出 响应动作。在实现层面上，Reactive Programming 可结合函数式编程简化面向对象语言语法的臃肿性， 屏蔽并发实现的复杂细节，提供数据流的有序操作，从而达到提升代码的可读性，以及减少 Bugs 出现的 目的。同时，Reactive Programming 结合背压(Backpressure)的技术解决发布端生成数据的速率高于 订阅端消费的问题。
+
+### React Streams
+
+Reactive Streams is a standard and specification for Stream-oriented libraries for the JVM that process a potentially unbounded number of elementsin sequence, asynchronously passing elements between components, with mandatory non-blocking backpressure.
+
+- Publisher
+- Subscriber
+- Subscription
+- Processor
+
+### Reactor API
+
+- Mono: 0-1的非阻塞结果
+- Flux: 0-N的非阻塞序列
+- Scheduler: Reactor调度线程池
+
 ## 第九章 WebFlux核心
 
 ## 第十章 超越外部化配置
