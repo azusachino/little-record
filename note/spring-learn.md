@@ -833,3 +833,146 @@ Singleton, prototype, request, session, application, websocket
 > 'Application' Bean 是否有其他方案替代?
 
 可以, 实际上, 'application' 和 'singleton' 的Bean没有本质区别
+
+## Spring Bean 生命周期
+
+### 1. Spring Bean 元信息配置阶段
+
+- 面向资源
+  - XML配置
+  - Properties 资源配置
+- 面向注解
+- 面向API
+
+### 2. Spring Bean 元信息解析阶段
+
+- 面向资源BeanDefinition解析
+  - BeanDefinitionReader
+  - XML 解析器 - BeanDefinitionParser
+- 面向注解BeanDefinition解析
+  - AnnotatedBeanDefinitionReader
+
+### 3. Spring Bean 注册阶段
+
+- BeanDefinition注册接口
+  - BeanDefinitionRegistry
+
+### 4. Spring BeanDefinition 合并阶段
+
+- BeanDefinition合并
+  - 父子 BeanDefinition 合并
+  - 当前 BeanFactory 查找
+  - 层次性 BeanFactory 查找
+
+### 5. Spring Bean Class 加载阶段
+
+- ClassLoader类加载
+- JavaSecurity安全控制
+- ConfigurableBeanFactory临时ClassLoader
+
+### 6. Spring Bean 实例化前阶段
+
+`InstantiationAwareBeanPostProcessor#postProcessBeforeInstantiation`
+
+### 7. Spring Bean 实例化阶段
+
+- 传统实例化方式
+  - 实例化策略 - InstantiationStrategy
+- 构造器依赖注入
+
+### 8. Spring Bean 实例化后阶段
+
+`InstantiationAwareBeanPostProcessor#postProcessAfterInstantiation`
+
+### 9. Spring Bean 属性赋值前阶段
+
+- Bean属性值元信息
+  - PropertyValues
+- Bean属性赋值前回调
+  - Spring 1.2 - 5.0:InstantiationAwareBeanPostProcessor#postProcessPropertyValues
+  - Spring 5.1:InstantiationAwareBeanPostProcessor#postProcessProperties
+
+### 10. Spring Bean Aware接口回调阶段
+
+- SpringAware接口 (先后次序)
+  - BeanNameAware
+  - BeanClassLoaderAware
+  - BeanFactoryAware
+  - EnvironmentAware
+  - EmbeddedValueResolverAware
+  - ResourceLoaderAware
+  - ApplicationEventPublisherAware
+  - MessageSourceAware
+  - ApplicationContextAware
+
+### 11. Spring Bean 初始化前阶段
+
+- 已完成
+  - Bean 实例化
+  - Bean 属性赋值
+  - Bean Aware 接口回调
+- 方法回调
+  - `BeanPostProcessor#postProcessBeforeInitialization`
+
+### 12. Spring Bean 初始化阶段
+
+- Bean 初始化(Initialization)
+  - @PostConstruct 标注方法
+  - 实现 InitializingBean 接口的 afterPropertiesSet() 方法
+  - 自定义初始化方法
+
+### 13. Spring Bean 初始化后阶段
+
+`BeanPostProcessor#postProcessAfterInitialization`
+
+### 14. Spring Bean 初始化完成阶段
+
+Spring4.1+: `SmartInitializingSingleton#afterSingletonsInstantiated`
+
+### 15. Spring Bean 销毁前阶段
+
+`DestructionAwareBeanPostProcessor#postProcessBeforeDestruction`
+
+### 16. Spring Bean 销毁阶段
+
+- Bean 销毁(Destroy)
+  - @PreDestroy 标注方法
+  - 实现 DisposableBean 接口的 destroy() 方法
+  - 自定义销毁方法
+
+### 17. Spring Bean 垃圾收集
+
+- Bean 垃圾回收(GC)
+  - 关闭 Spring 容器(应用上下文)
+  - 执行 GC
+  - Spring Bean 覆盖的 finalize() 方法被回调
+
+### 18. 面试题
+
+> BeanPostProcessor的使用场景有哪些?
+
+BeanPostProcessor提供SpringBean初始化前后的生命周期回调, 分别对应postProcessBeforeInitialization以及postProccessorAfterInitialization方法, 允许对关心的Bean进行扩展, 甚至是替换  
+其中, ApplicationContext相关的Aware回调也是基于BeanPostProcessor实现, 即ApplicationContextAwareProcessor
+> BeanFactoryPostProcessor与BeanPostProcessor的区别
+
+BeanFactoryPostProcessor 是 Spring BeanFactory(实际为 ConfigurableListableBeanFactory) 的后置处理器，用于扩展 BeanFactory，或通过 BeanFactory 进行依赖查找和依赖注入。  
+加分项:BeanFactoryPostProcessor 必须有 Spring ApplicationContext 执行，BeanFactory 无法与其直接交互。  
+而 BeanPostProcessor 则直接与BeanFactory 关联，属于 N 对 1 的关系。
+> BeanFactory是怎样处理Bean的生命周期?
+
+BeanFactory 的默认实现为 DefaultListableBeanFactory，其中 Bean生命周期与方法映射如下:
+
+- BeanDefinition 注册阶段 - registerBeanDefinition
+- BeanDefinition 合并阶段 - getMergedBeanDefinition
+- Bean 实例化前阶段 - resolveBeforeInstantiation
+- Bean 实例化阶段 - createBeanInstance
+- Bean 初始化后阶段 - populateBean
+- Bean 属性赋值前阶段 - populateBean
+- Bean 属性赋值阶段 - populateBean
+- Bean Aware 接口回调阶段 - initializeBean
+- Bean 初始化前阶段 - initializeBean
+- Bean 初始化阶段 - initializeBean
+- Bean 初始化后阶段 - initializeBean
+- Bean 初始化完成阶段 - preInstantiateSingletons
+- Bean 销毁前阶段 - destroyBean
+- Bean 销毁阶段 - destroyBean
