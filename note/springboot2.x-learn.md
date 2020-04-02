@@ -1,4 +1,4 @@
-# SpringBoot 2.0
+# SpringBoot 2.x
 
 ## 第一章 系列总览
 
@@ -70,7 +70,7 @@ asyncContext.complete();
 
 ### 7.WebServer
 
-tomcat, jetty, undertow, webflux
+tomcat, jetty, undertow, netty
 
 ### 8.Data
 
@@ -599,4 +599,150 @@ Reactive Streams is a standard and specification for Stream-oriented libraries f
 
 ## 第九章 WebFlux核心
 
+### 编程模型
+
+- 注解驱动
+- 函数式端点
+
+映射路由接口 - RouterFunction
+
+```java
+RouterFunction<ServerResponse> route = route()
+    .GET("/person/{id}", accept(APPLICATION_JSON), handler::getPerson)
+    .GET("/person", accept(APPLICATION_JSON), handler::listPeople)
+    .POST("/person", handler::createPerson)
+    .build();
+```
+
+### 核心组件 API
+
+HttpHandler
+
+```java
+public interface HttpHandler {
+
+  /**
+   * Handle the given request and write to the response.
+   * @param request current request
+   * @param response current response
+   * @return indicates completion of request handling
+   */
+    Mono<Void> handle(ServerHttpRequest request, ServerHttpResponse response);
+
+}
+}
+```
+
+WebHandler
+
+```java
+public interface WebHandler {
+
+    /**
+     * Handle the web server exchange.
+     * @param exchange the current server exchange
+     * @return {@code Mono<Void>} to indicate when request handling is complete
+     */
+    Mono<Void> handle(ServerWebExchange exchange);
+}
+```
+
+### 使用场景
+
+#### 性能使用性
+
+Performance has many characteristics and meanings. Reactive and non-blocking generally do not make applications run faster. They can, in some cases, (for example, if using the WebClient to execute remote calls in parallel). On the whole, it requires more work to do things the non-blocking way and that can increase slightly the required processing time.
+
+#### 编程模型适用性
+
+#### 并发模型适用性
+
 ## 第十章 超越外部化配置
+
+### 理解"外部化配置"
+
+- XML Bean定义的属性占位符
+- @Value注入
+- Environment读取
+- @ConfigurationProperties绑定
+- @ConditionalOnProperty判断
+
+### PropertySource顺序
+
+1. Devtools global settings properties in the $HOME/.config/spring-boot folder when devtools is active.
+2. `@TestPropertySource` annotations on your tests.
+3. properties attribute on your tests. Available on `@SpringBootTest` and the test annotations for testing a particular slice of your application.
+4. Command line arguments.
+5. Properties from SPRING_APPLICATION_JSON (inline JSON embedded in an environment variable or system property).
+6. ServletConfig init parameters.
+7. ServletContext init parameters.
+8. JNDI attributes from java:comp/env.
+9. Java System properties (System.getProperties()).
+10. OS environment variables.
+11. A RandomValuePropertySource that has properties only in random.*.
+12. Profile-specific application properties outside of your packaged jar (application-{profile}.properties and YAML variants).
+13. Profile-specific application properties packaged inside your jar (application-{profile}.properties and YAML variants).
+14. Application properties outside of your packaged jar (application.properties and YAML variants).
+15. Application properties packaged inside your jar (application.properties and YAML variants).
+16. `@PropertySource` annotations on your @Configuration classes. Please note that such property sources are not added to the Environment until the application context is being refreshed. This is too late to configure certain properties such as logging.* and spring.main.* which are read before refresh begins.
+17. Default properties (specified by setting SpringApplication.setDefaultProperties).
+
+### XML Bean定义属性占位符
+
+### @Value
+
+- @Value字段注入
+- @Value方法注入
+- @Value默认值支持
+
+### Environment读取
+
+- 获取EnvironmentBean
+- Environment方法/构造器注入
+- Environment @Autowired依赖注入
+- EnvironmentAware接口回调
+- BeanFactory依赖查找Environment
+
+执行顺序:  
+
+1. @Autowired
+2. BeanFactoryAware
+3. EnvironmentAware
+
+### @ConfigurationProperties Bean 绑定
+
+```java
+    @Bean
+    @ConfigurationProperties("user")
+    public Person p4() {
+        return new Person();
+    }
+```
+
+### @ConditionalOnProperty
+
+`@ConditionalOnProperty(value = "person.id", matchIfMissing = true, havingValue = "123433")`
+
+### Test相关
+
+1. `@TestPropertySource#properties`
+2. `@SpringBootTest#properties`
+3. `@TestPropertySource#locations`
+
+### PropertySource
+
+带有名称的属性源, Properties文件, Map, YAML文件
+
+### Environment抽象
+
+Environment和PropertySource是1对1, PropertySources与PropertySource是1对N
+
+### 拓展外部化配置属性源
+
+1. `org.springframework.boot.SpringApplicationRunListener#environmentPrepared()`
+2. `org.springframework.boot.SpringApplicationRunListener#contextPrepared()`
+3. `org.springframework.boot.SpringApplicationRunListener#contextLoaded()`
+4. `org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent`
+5. `org.springframework.boot.env.EnvironmentPostProcessor`
+6. `org.springframework.context.ApplicationContextInitializer`
+7. `org.springframework.boot.context.event.ApplicationPreparedEvent`
