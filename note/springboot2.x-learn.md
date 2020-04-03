@@ -365,7 +365,7 @@ public class HelloWorldController {
   - FactoryBean: ContentNegotiationManagerFactoryBean
 - 策略实现
   - ContentNegotationStrategy
-    - 固定`MediaType`: FixedContentNEgotiationStrategy
+    - 固定`MediaType`: FixedContentNegotiationStrategy
     - "Accept"请求头: HeaderContentNegotiationStrategy
     - 请求参数: ParameterCOntentNegotiationStrategy
     - 路径拓展名: PathExtensionContentNegotiationStrategy
@@ -387,8 +387,7 @@ public class HelloWorldController {
 
 ### REST简介
 
-REST = RESTful = Representational State Transfer，is one way of providing interoperability between computer
-systems on the Internet.
+REST = RESTful = Representational State Transfer，is one way of providing interoperability between computer systems on the Internet.
 
 #### 架构约束
 

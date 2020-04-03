@@ -181,3 +181,53 @@
 - 注意任务堆积
 - 避免线程数过度增加
 - 排查线程泄露
+
+## ThreadLocal
+
+### 两大使用场景
+
+1. 每个线程需要一个独享的对象(工具类 -> `SimpleDataFormat` & `Random`)
+2. 每个线程内需要保存全局变量(在拦截器中获取用户信息, 可以让不同方法直接使用, 避免参数传递)
+
+### 两个作用
+
+1. 让某个需要用到的对象在线程间隔离(每个线程都有自己独立的对象)
+2. 在任何方法中都能轻易取得对象
+
+---
+
+1. 线程安全
+2. 不需要加锁, 提高执行效率
+3. 更加高效利用内存, 节省开销
+4. 免去传参的繁琐
+
+### API
+
+- `T initialValue()`
+- `void set(T t)`
+- `T get()`
+- `void remove()`
+
+### 三个类
+
+- Thread
+- ThreadLocal
+- ThreadLocalMap
+
+### 注意点
+
+某个对象不再有用, 但占用的内存却不能回收
+
+#### value泄漏
+
+ThreadLocalMap的每个entry都是一个对key的弱引用, 对value的强引用. 如果线程不终止,那么key对应的value就无法回收  
+Thread -> ThreadLocalMap -> Entry(key==null) -> value  
+调用remove方法, 就会删除对应的entry对象, 可以避免内存泄漏
+
+#### ThreadLocal空指针
+
+对于包装类型, get前需要set,装箱开箱的过程可能会造成空指针
+
+#### 共享对象
+
+如果ThreadLocal封装的是static对象, 无法保证线程安全

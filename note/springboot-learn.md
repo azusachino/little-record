@@ -1,4 +1,4 @@
-# Learn springboot from xiaomage
+# Learn spring boot from MercyBlitz
 
 ## 一.关于微服务
 
@@ -180,6 +180,8 @@ velocity解释执行 AST解析
 
 ### 3.SpringBoot & JPA
 
+@NoRepositoryBean -> 在做项目时创建对象的功能会交给Spring去管理在扫描Repository层包时会扫描到BaseRepository接口; 所有对象类接口都会继承此接口, 为了告诉JPA不要创建对应接口的bean对象, 就在类上加注解@NoRepositoryBean, 这样spring容器中就不会有BaseReposytory接口的bean对象
+
 - SimpleJpaRepository -> JpaRepositoryImplementation -> JpaRepository -> PagingAndSortingRepository -> CrudRepository -> Repository
 
 ## 七.NoSql
@@ -281,11 +283,11 @@ FallOver 故障转移(容灾)
 - CacheManager
 - Javax.cache.expiry.ExpiryPolicy
 
->IOC存放BeanDefinition的地方,用的并发map, 为什么加锁  
+> IoC存放BeanDefinition的地方,用的并发map, 为什么加锁  
 
-ConcurrentHashMap只能保证一次操作的原子性操作, 比如要判断大小, 同时获取或者比较等多次操作时, 需要加锁!
+ConcurrentHashMap只能保证一次操作的原子性操作, 比如要判断大小, 同时获取或者比较等多次操作时, 需要加锁
 
->@NoRepositoryBean的作用
+> @NoRepositoryBean的作用
 
 SpringData的通用实现中, @NoRepositoryBean用作标记当前接口或类(抽象)不应该作为@RepositoryBean被注册到Spring上下文中, 是因为springData提供了自动代理@RepositoryBean的机制, 该机制的前提是接口或者类(抽象)必须实现Repository接口
 
@@ -455,7 +457,7 @@ WebSocket是长连接
 
 > netty和WebSocket在nio实现上的区别
 
-基本上一致, 在事件
+基本上一致, 区别于事件
 
 > 排查问题
 

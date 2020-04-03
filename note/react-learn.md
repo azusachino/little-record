@@ -53,3 +53,29 @@ class App extends React.Component {
 - 单向数据流
 - 视图层框架
 - 函数式编程
+
+## PropTypes 与 DefaultProps
+
+```javascript
+Class.propTypes = {
+    name: string,
+    age: number
+}
+
+Class.DefaultProps = {
+    name: 'aa'
+}
+```
+
+## Props, State, render()
+
+当props和state改变时, render函数会重新执行
+
+---
+state -> 当前画面的render()  
+props -> 子组件的render()
+
+## 虚拟dom
+
+虚拟DOM就是JS对象, 可以描述真实DOM  
+`['div', {id: 'abc'}, ['span', {}, 'hello world']]`
