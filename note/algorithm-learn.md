@@ -207,3 +207,40 @@ Deque<Integer> deque = new LinkedList<>();
 
 哈希表(Hash Table), 也叫散列表, 根据关键码值(Key value)而直接进行访问的数据结构  
 映射函数叫散列函数(Hash Function), 存放记录的数组叫做哈希表
+
+## Tree
+
+### Binary Tree
+
+LinkedList是特殊化的Tree  
+Tree是特殊化的Graph
+
+### 二叉树遍历
+
+1. 前序（PreOrder）： 根左右
+2. 中序（InOrder): 左根右
+3. 后序（PostOrder）： 左右根
+
+### 二叉搜索树（BST）
+
+二叉搜索树, 也称有序二叉树, 排序二叉树, 是指一颗空树或者具有下列性质的二叉树:
+
+- 左子树上所有节点的值均小于它的根节点的值
+- 右子树上所有节点的值均大于它的根节点的值
+- 以此类推: 左, 右子树也分别为二叉查找树.
+
+中序遍历： 升序遍历
+
+---
+
+1. 查询
+2. 插入新节点
+3. 删除
+
+### 相关面试题
+
+- binary-tree-inorder-traversal
+- binary-tree-preorder-traversal
+- n-ary-tree-postorder-traversal
+- n-ary-tree-preorder-traversal
+- n-ary-tree-level-order-traversal
