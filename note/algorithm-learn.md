@@ -244,3 +244,44 @@ Tree是特殊化的Graph
 - n-ary-tree-postorder-traversal
 - n-ary-tree-preorder-traversal
 - n-ary-tree-level-order-traversal
+
+### python代码模板
+
+```python
+def recursion(level, param1, param2,...):
+    # recursion terminator (跳出递归)
+    if level > MAX_LEVEL:
+        process_result
+        return
+    # process logic in current level (处理当前层逻辑)
+    process(level, data...)
+
+    # drill down (到下一层)
+    self.recursion(level+1, param1,...)
+
+    # reverse the current level status if needed (清理当前层)
+```
+
+### 思维要点
+
+1. 不要人肉进行递归 (误区)
+2. 找到最近最简方法, 将其拆解成可重复解决的问题(重复子问题)
+3. 数学归纳法思维
+
+### 递归题目
+
+- 70.climb statirs
+- 22.generate parenthesis
+- invert-binary-tree
+- validate-binary-search-tree
+- maximum-depth-of-binary-tree
+- minimum-depth-of-binary-tree
+- serialize-and-deserialize-binary-tree
+
+### 递归作业
+
+- lowest-common-ancestor-of-a-binary-tree
+- construct-binary-tree-from-preorder-and-inorder-traversal
+- combinations
+- permutations
+- permutations-II

@@ -310,3 +310,53 @@ synchronized：
 2. 将对象的引用保存到volatile类型域或者AtomicReference对象中
 3. 将对象的引用保存到某个正确构造对象的final类型域中
 4. 将对象的引用保存到一个由锁保护的域中
+
+## 原子类
+
+### 原子类, 作用
+
+- 不可分割
+- 一个操作是不可中断的
+- java.util.concurrent.atomic.*
+
+---
+
+- 粒度更细
+- 效率更高(除高度竞争情况下)
+
+---
+
+把普通变量升级成具有原子功能的变量
+
+- AtomicIntegerFieldUpdater对普通变量进行升级
+- 使用场景: 偶尔需要一个原子get/set操作
+
+## CAS
+
+### CAS概念
+
+```java
+    public synchronized int compareAndSwap(int expectedValue, int newValue) {
+        int oldValue = value;
+        if (oldValue == expectedValue) {
+            value = newValue;
+        }
+        return oldValue;
+    }
+```
+
+### CAS应用场景
+
+- 乐观锁
+- 并发容器
+- 原子类
+  - AtomicInteger加载Unsafe工具, 用来直接操作内存数据
+  - 用Unsafe来实现底层操作
+  - 用volatile修饰value字段, 保证可见性
+
+```java
+    private static final jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();
+    private static final long VALUE = U.objectFieldOffset(AtomicInteger.class, "value");
+
+    private volatile int value;
+```
