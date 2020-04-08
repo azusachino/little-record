@@ -217,3 +217,90 @@ key -.- score value
 ### Python: redis-py
 
 ### Go: Redigo
+
+## 第四章 Redis瑞士军刀
+
+### 慢查询
+
+- 生命周期
+  1. 发送命令
+  2. 排队
+  3. 执行命令
+  4. 返回结果
+- 两个配置
+  - slowlog-max-len (128)
+    1. 先进先出队列
+    2. 固定长度
+    3. 保存至内存中
+  - slowlog-log-slower-than (10000)
+    1. 慢查询阈值(MS)
+  - 修改配置文件重启
+- 三个命令
+  1. slowlog get [n]
+  2. slowlog len
+  3. slowlog reset
+- 运维经验
+  1. slowlog-max-len不要设置过大, 默认10ms, 通常设置1ms
+  2. slowlog-log-slower-than不要设置过小, 通常设置1000左右
+  3. 理解命令生命周期
+  4. 定期持久化慢查询
+
+### pipeline
+
+建议
+
+1. 注意每次pipeline携带数据量
+2. pipeline每次只能作用在一个Redis节点上
+3. M*操作与pipeline区别
+
+### 发布订阅
+
+#### 角色
+
+- 发布者(publisher)
+- 订阅者(subscriber)
+- 频道(channel)
+
+#### 模型
+
+redis-cli -> redis-server
+
+#### 发布订阅 API
+
+- publish channel message
+- subscribe [channel]
+- unsubscribe [channel]
+
+### BitMap
+
+#### 位图
+
+#### BitMap API
+
+- setbit key offset value
+- getbit key offset
+- bitcount key [start end]
+- bitop op destkey key [key...] (op, and, or, not, xor)
+- bitpos key targetBit [start][end]
+
+### HyperLogLog
+
+基于HyperLogLog算法: 极小空间完成独立数量统计, 本质上还是字符串
+
+#### HyperLogLog API
+
+- pfadd key element [element...]
+- pfcount key [key...]
+- pfmerge destkey sourcekey [sourcekey...]
+
+### GEO
+
+GEO(地理信息定位): 存储经纬度, 计算两地距离, 范围计算等
+
+应用场景: 摇一摇, 周围餐馆
+
+#### GEO API
+
+- geo key longitude latitude member
+- getpos key member [member...]
+- georadius key longitude latitude radius m\km\ft\mi

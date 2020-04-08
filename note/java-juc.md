@@ -360,3 +360,47 @@ synchronized：
 
     private volatile int value;
 ```
+
+## 线程安全策略
+
+### 不可变对象
+
+- 对象创建以后其状态不能修改
+- 对象所有域都是final类型
+- 对象是正确创建的
+
+---
+
+- final关键字: 类, 方法, 变量
+  - 修饰类: 不能被继承
+  - 修饰方法: 1.锁定方法不能被继承类修改; 2.效率
+  - 修饰变量: 基本数据类型变量, 引用类型变量
+
+---
+
+- Collections.unmodifiable*
+- Guava: Immutable*
+
+### 线程封闭
+
+- Ad-hoc线程封闭: 程序控制实现, 最糟糕
+- 堆栈封闭: 局部变量, 无并发问题
+- ThreadLocal线程封闭
+
+### 线程不安全类与写法
+
+- StringBuilder(不安全) <--> StringBuffer(安全)
+- SimpleDateFormat
+- ArrayList, HashSet, HashMap
+
+### 线程安全 - 同步容器
+
+- ArrayList -> Vector, Stack
+- HashMap -> Hashtable (key, value not null)
+- Collections.synchronized*
+
+### JUC
+
+- ArrayList -> CopyOnWriteArrayList
+- HashSet, TreeSet -> CopyOnWriteArraySet, ConcurrentSkipListSet
+- HashMap, TreeMap -> ConcurrentHashMap, ConcurrentSkipListMap
