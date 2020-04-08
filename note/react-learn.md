@@ -112,3 +112,75 @@ React.createElement('div', {}, React.createElement('span', {}, 'Hello World'))
   - componentDidUpdate
 - Unmounting
   - componentWillUnmount
+
+## 组件
+
+- 容器组件
+- UI组件
+- 无状态组件 (纯函数, 性能较高)
+
+```javascript
+const TodoListUI = (props) => {
+  return (
+    <div>{props.value} </div>
+  )
+}
+```
+
+## Redux
+
+### Redux 异步请求
+
+```javascript
+componentDidMount() {
+  axios.get('/list.json')
+  .then((res) => {
+    const data = res.data
+    const action = initListAction(data)
+    store.dispatch(action)
+  })
+  .catch((e) => {
+    console.err(e)
+  })
+}
+```
+
+### Redux-thunk
+
+```js
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from './reducers/index';
+
+// Note: this API requires redux@>=3.1.0
+const store = createStore(rootReducer, applyMiddleware(thunk));
+```
+
+updated version
+
+```js
+import { createStore, applyMiddleware, compose } from 'redux'
+import thunkMiddleware from 'redux-thunk'
+import rootReducer from '../reducers'
+
+const composeEnhancers = typeof window === 'object' &&
+(window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) : compose
+
+const middleWares = [thunkMiddleware]
+
+if ('development' === process.env.NODE_ENV) {
+  middleWares.push(require('redux-logger').createLogger())
+}
+
+const enhancer = composeEnhancers(
+  applyMiddleware(...middleWares)
+)
+
+export default function configStore() {
+  return createStore(rootReducer, enhancer)
+}
+
+```
+
+redux-thunk 是对`dispatch()`方法的封装

@@ -404,3 +404,20 @@ synchronized：
 - ArrayList -> CopyOnWriteArrayList
 - HashSet, TreeSet -> CopyOnWriteArraySet, ConcurrentSkipListSet
 - HashMap, TreeMap -> ConcurrentHashMap, ConcurrentSkipListMap
+
+## AQS
+
+- 使用Node实现FIFO队列, 可以用于构建锁或者其他同步装置的基础框架
+- 使用了int类型表示状态(state)(暗示重入的最大次数)
+- 使用方法: 继承
+- 子类通过继承并通过实现它的方法, 管理其状态(acquire和release)
+- 可以同时实现排他锁和共享锁(Elusive和Shared)
+
+---
+
+- CountDownLatch
+- Semaphore
+- CylicBarrier
+- ReentrantLock
+- Condition
+- FutureTask
