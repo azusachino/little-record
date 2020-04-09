@@ -441,8 +441,70 @@ synchronized：
 
 HashMap(1.7及之前版本)会发生死循环 (头插入, 造成闭环)
 
+#### putVal流程
+
+1. 计算key value不为空
+2. 计算hash值
+3. 根据对应位置节点的类型来赋值,或者helpTransfer,或者增长链表,或者给红黑树增加节点
+4. 检查是否需要树化(8&64)
+5. 返回oldVal
+
+#### get流程
+
+1. 计算hash值
+2. 找到对应的位置
+3. 直接取值
+4. 或者红黑树取值
+5. 或者遍历链表取值
+6. 返回找到的结果
+
+> 1.8相对于1.7的区别
+
+1. 数据结构上的区别(链表+红黑树 -- segment)
+2. 1.7 分段锁 -- 1.8 CAS+synchronized
+3. 1.7 O(n)  -- 1.8 红黑树 O(logN)
+
+> 为什么树化的阈值是8?
+
+默认的链表占用空间较小, 红黑树的每个节点占用的内存空间是链表node的两倍, 根据泊松分布, 链表长度达到8的概率在千万分之一
+
+> ConcurrentHashMap 线程不安全的情况?
+
+```java
+Map<String, Integer> map = new ConcurrentHashMap<>(8);
+map.put("az", 0);
+// 组合操作会造成线程不安全
+for (int i = 0; i < 1000; i++) {
+    Integer score = map.get("az");
+    // composite operation(thread unsafe)
+    map.put("az", score+1);
+    // cas (thread safe)
+    map.replace("az", score, score+1);
+}
+```
+
 ### CopyOnWriteArrayList
 
+适用场景:
+
+- 读操作可以尽可能快, 写即使慢一些也没有关系
+- 读多写少: 黑名单, 每日更新, 监听器: 迭代操作远多于修改操作
+
+#### 设计理念&数据过期
+
+创建新副本, 读写分离; “不可变”原理, 迭代用的是原始数组(可能会过期)
+
+---
+
+数据一致性问题: COW只能保证数据的最终一致性, 不能保证数据的实时一致性  
+内存占用问题: 因为COW的写是复制机制, 所以会占用双份的内存
+
 ### 并发队列Queue
+
+- Queue -> BlockingQueue
+  - ArrayBlockingQueue
+  - LinkedBlockingQueue
+  - PriorityBlockingQueue
+  - SynchronousQueue
 
 ### 并发容器总结
