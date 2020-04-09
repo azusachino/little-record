@@ -304,3 +304,96 @@ GEO(地理信息定位): 存储经纬度, 计算两地距离, 范围计算等
 - geo key longitude latitude member
 - getpos key member [member...]
 - georadius key longitude latitude radius m\km\ft\mi
+
+## Redis 持久化
+
+### 持久化的作用
+
+- 什么是持久化
+  - redis将所有数据保持在内存中, 对数据的更新异步保存到磁盘中
+- 持久化方式
+  - 快照 SNAPSHOT (Redis#RDB, Mysql#Dump)
+  - 日志 (Mysql#Binlog, Redis#AOF, Hbase#HLog)
+
+### RDB
+
+- 什么是RDB
+  - RedisDataBase(二进制文件)
+- 触发机制
+  - save (同步)
+  - bgsave (异步)
+    - 文件策略: 替换旧的文件
+    - 复杂度: O(n)
+  - 自动
+    - 900s -> 1 changes
+    - 300s -> 10 changes
+    - 60s -> 10000 changes
+- 试验
+
+1. RDB是Redis内存到硬盘的快照, 用于持久化
+2. save通常会阻塞Redis
+3. bgsave不会阻塞Redis, 但会fork新进程
+4. save自动配置满足任一就会被执行
+5. 有些触发机制不容忽视
+
+### AOF
+
+#### RDB现存问题
+
+1. 耗时, 耗性能
+2. 不可控, 丢失数据
+
+#### AOF定义
+
+将每条执行命令记录到log中
+
+#### AOF三种策略
+
+- always (记录每条命令)
+- everysec (每秒记录一次)
+- no (OS决定记录频率)
+
+#### AOF重写
+
+```lua
+set hello world
+set hello java
+set hello redis
+---
+set hello redis
+```
+
+1. 减少硬盘占用量
+2. 加速恢复速度
+
+---
+
+1. bgrewriteaof
+2. aof重写配置
+
+### RDB <> AOF
+
+1. 启动优先级
+2. 体积
+3. 恢复速度
+4. 数据安全性
+5. 轻重
+
+#### RDB最佳策略
+
+1. "关闭"
+2. 集中管理
+3. 主从, 从开?
+
+#### AOF最佳策略
+
+1. "开": 缓存和存储
+2. AOF重写集中管理
+3. everysec
+
+#### 最佳策略
+
+1. 小分片
+2. 缓存或者存储
+3. 监控(硬盘, 内存, 负载, 网络)
+4. 足够的内存

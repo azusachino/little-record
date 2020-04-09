@@ -421,3 +421,28 @@ synchronized：
 - ReentrantLock
 - Condition
 - FutureTask
+
+## 并发容器
+
+### 并发容器概览
+
+- ConcurrentHashMap: 线程安全
+- CopyOnWriteArrayList: 线程安全
+- BlockingQueue: 阻塞队列
+- ConcurrentLinkedQueue: 高效非阻塞并发队列
+- ConcurrentSkipListMap
+
+### 集合类的历史
+
+- Vector
+- Hashtable
+
+### ConcurrentHashMap
+
+HashMap(1.7及之前版本)会发生死循环 (头插入, 造成闭环)
+
+### CopyOnWriteArrayList
+
+### 并发队列Queue
+
+### 并发容器总结

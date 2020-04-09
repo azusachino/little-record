@@ -314,3 +314,64 @@ def divide_conquer(problem, param1, param2...):
 - majority-element
 - letter-combinations-of-a-phone-number
 - n-queens
+
+## 深度优先搜索/广度优先搜索
+
+- 每个节点都要访问一次
+- 每个节点仅仅访问一次
+
+深度优先搜索
+
+```python
+def dfs(node: TreeNode):
+    if node in visited:
+        # already visited
+        return
+    visited.add(node)
+
+    # process current node
+    process(node)
+    dfs(node.left)
+    dfs(node.right)
+
+visited = set()
+def dfs(node, visited):.
+    if node in visited:
+        # already visited
+        return
+    visited.add(node)
+    for next_node in node.children():
+        if not next_node in visited:
+            dfs(next_node, visited)
+```
+
+广度优先搜索
+
+```py
+def BFS(graph, start, end):
+    queue = []
+    queue.append(start)
+    visited.add(start)
+
+    while queue:
+        node = queue.pop()
+        visited.add(node)
+        process(node)
+        nodes = generate_related_nodes(node)
+        queue.push(nodes)
+    # other processes
+```
+
+## 题目
+
+- binary-tree-level-order-traversal
+- minimun-genetic-mutation
+- generate-parentheses
+- find-largest-value-in-each-tree-row
+
+---
+
+- word-ladder
+- word-ladder-II
+- number-of-islands
+- minesweeper
