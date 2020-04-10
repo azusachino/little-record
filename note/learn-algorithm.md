@@ -362,7 +362,7 @@ def BFS(graph, start, end):
     # other processes
 ```
 
-## 题目
+### dfs/bfs题目
 
 - binary-tree-level-order-traversal
 - minimun-genetic-mutation
@@ -375,3 +375,25 @@ def BFS(graph, start, end):
 - word-ladder-II
 - number-of-islands
 - minesweeper
+
+## 贪心Greedy
+
+贪心算法是一种在每一步选择中都采取在当前状态下最好或最优的选择, 从而希望结果是全局最好或最优的算法
+
+- 贪心: 当下做局部最优判断
+- 回溯: 能够回退
+- 动态规划: 最优判断 + 回退
+
+---
+
+贪心法可以解决一些最优化问题: 求图中的最小生成树, 求哈夫曼编码等
+
+### 贪心相关题目
+
+- coin change
+- lemonade-change
+- best-time-to-buy-and-sell-stock-II
+- assign-cookies
+- walking-robot-simulation
+- jump-game
+- jump-game-II

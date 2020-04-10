@@ -397,3 +397,106 @@ set hello redis
 2. 缓存或者存储
 3. 监控(硬盘, 内存, 负载, 网络)
 4. 足够的内存
+
+### 开发运维常见问题
+
+#### fork操作
+
+1. 同步操作
+2. 与内存大小密切相关
+3. info: latest_fork_usec
+
+---
+
+1. 优先使用物理机或者高效支持fork操作的虚拟化技术
+2. 控制Redis实例最大可用内存: maxmemory
+3. 合理控制Linux内存分配策略: vm.overcommit_memory=1
+4. 降低fork频率: 例如放宽AOF重写自动触发时机, 不必要的全量复制
+
+#### 子进程开销和优化
+
+- CPU:
+  - 开销: RDB和AOF文件生成, 属于CPU密集型
+  - 优化: 不做CPU绑定, 不和CPU密集型部署
+- 内存:
+  - 开销: fork内存开销, copy-on-write
+  - 优化: echo never > /sys/kernel/mm/transparent_hugepage/enabled
+- 硬盘:
+  - 开销: AOF和RDB文件写入, 可以结合iostae,iotop分析
+  - 优化: 不要和高硬盘负载服务部署在一起: 存储服务,消息队列等
+  - no-appendfsync-on-rewrite=yes
+  - 根据写入量决定磁盘类型: ssd
+  - 单机多实例持久化文件目录可以考虑分盘
+
+#### AOF追加阻塞
+
+### 主从复制
+
+> 单机有什么问题?
+
+- 机器故障
+- 容量瓶颈
+- QPS瓶颈
+
+#### 主从复制概念
+
+- 数据副本
+- 拓展读性能
+
+#### 复制的配置
+
+- `slaveof` + ip port
+- 配置 => 'slaveof ip port // slave-read-only yes'
+
+取消复制: `slaveof no one`
+
+查看主从关系,偏移量(offset) `info replication`  
+查看run_id以及其他信息 `info server`
+
+#### 全量复制
+
+1. psync ? -1
+2. +FULLRESYNC {runId}{offset}
+3. save masterInfo
+4. bgsave
+5. send RDB
+6. send buffer
+7. flush old data
+
+- 开销
+  1. bgsave时间
+  2. RDB文件网络传输时间
+  3. 从节点清空数据时间
+  4. 从节点加载RDB的时间
+  5. 可能的AOF重写时间
+
+#### 部分复制
+
+1. Connection lost
+2. master -> write -> repl_back_buffer
+3. connecting to master
+4. psync {offset} {runId}
+5. continue
+6. send partial data
+
+#### 故障处理
+
+- 自动故障转移
+  - slave宕机
+  - master宕机
+
+#### 开发运维中的问题
+
+- 读写分离
+  1. 复制数据延迟
+  2. 读到过期数据
+  3. 从节点故障
+- 主从配置不一致
+  1. maxmemory不一致: 丢失数据
+  2. 数据结构优化参数(hash-max-ziplist-entries): 内存不一致
+- 规避全量复制
+  1. 第一次全量复制无法避免
+  2. 节点运行ID不匹配
+  3. 复制积压缓冲区不足
+- 避免复制风暴
+  - 机器宕机后, 大量全量复制

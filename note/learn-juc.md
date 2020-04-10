@@ -508,3 +508,177 @@ for (int i = 0; i < 1000; i++) {
   - SynchronousQueue
 
 ### 并发容器总结
+
+## 线程池相关
+
+### new Thread弊端
+
+1. 性能差
+2. 线程缺乏统一管理, 可能无限制新建线程, 相互竞争, 有可能占用过多系统资源导致死机或者OOM
+3. 缺少功能, 如更多执行, 定期执行, 线程中断
+
+### 线程池的好处
+
+1. 重用存在的线程, 减少对象创建,消亡的开销, 性能佳
+2. 可有效控制最大并发线程数, 提高系统资源利用率, 同时避免过多资源竞争, 避免阻塞
+3. 提供定时,定期执行, 单线程, 并发数控制等功能
+
+### 多线程并发最佳实践
+
+1. 使用本地变量
+2. 使用不可变类
+3. 减小锁的粒度: S=1/(1-a + a/n)
+4. 使用线程池
+5. 宁可使用同步也不要使用线程的wait和notify
+6. 使用BlockingQueue实现生产-消费模式
+7. 使用并发集合而不是同步集合(加synchronized集合)
+8. 使用Semaphore创建有界的访问
+9. 宁可使用同步代码块, 也不使用同步方法
+10. 避免使用静态变量
+
+## 高并发处理思路和手段
+
+### 扩容
+
+- 垂直扩容(纵向扩展): 提高系统部件能力
+- 水平扩容(横向扩展): 增加更多系统成员来实现
+- 读操作扩展: memcache, redis, CDN等缓存
+- 写操作扩展: Cassandra, HBase
+
+## 控制并发流程
+
+### CountDownLatch
+
+典型用法: 一等多, 多等一
+
+```java
+    public static void main(String[] args) throws InterruptedException {
+        CountDownLatch begin = new CountDownLatch(1);
+
+        CountDownLatch end = new CountDownLatch(5);
+        ExecutorService service = Executors.newFixedThreadPool(5);
+        for (int i = 0; i < 5; i++) {
+            final int no = i + 1;
+            Runnable runnable = () -> {
+                System.out.println("No." + no + "准备完毕，等待发令枪");
+                try {
+                    begin.await(); //先阻塞在这个地方, 等待begin.countdown()
+                    System.out.println("No." + no + "开始跑步了");
+                    Thread.sleep((long) (Math.random() * 10000));
+                    System.out.println("No." + no + "跑到终点了");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    end.countDown();
+                }
+            };
+            service.submit(runnable);
+        }
+        //裁判员检查发令枪...
+        Thread.sleep(5000);
+        System.out.println("发令枪响，比赛开始！");
+        begin.countDown();
+
+        end.await(); //再阻塞在这里, 等待end.countdown()
+        System.out.println("所有人到达终点，比赛结束");
+
+        service.shutdown();
+    }
+```
+
+### Semaphore
+
+```java
+ public Semaphore(int permits, boolean fair) {
+        sync = fair ? new FairSync(permits) : new NonfairSync(permits);
+    }
+
+    static Semaphore semaphore = new Semaphore(5, true);
+    public static void main(String[] args) {
+        ExecutorService service = Executors.newFixedThreadPool(50);
+        for (int i = 0; i < 100; i++) {
+            service.submit(new Task());
+        }
+        service.shutdown();
+    }
+
+    static class Task implements Runnable {
+        @Override
+        public void run() {
+            try {
+                semaphore.acquire(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(Thread.currentThread().getName() + "拿到了许可证");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(Thread.currentThread().getName() + "释放了许可证");
+            semaphore.release(2);
+        }
+    }
+```
+
+### Condition
+
+```java
+void method1() throws InterruptedException {
+        lock.lock();
+        try {
+            System.out.println("条件不满足，开始await");
+            condition.await();
+            System.out.println("条件满足了，开始执行后续的任务");
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    void method2() {
+        lock.lock();
+        try {
+            System.out.println("准备工作完成，唤醒其他的线程");
+            condition.signal();
+        } finally {
+            lock.unlock();
+        }
+    }
+```
+
+### CyclicBarrier
+
+粒度更细, 针对每个线程进行wait()
+
+```java
+ public static void main(String[] args) {
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(5, () -> System.out.println("5人都到场了， 统一出发！"));
+        for (int i = 0; i < 10; i++) {
+            new Thread(new Task(i, cyclicBarrier)).start();
+        }
+    }
+
+    static class Task implements Runnable {
+        private int id;
+        private CyclicBarrier cyclicBarrier;
+
+        public Task(int id, CyclicBarrier cyclicBarrier) {
+            this.id = id;
+            this.cyclicBarrier = cyclicBarrier;
+        }
+
+        @Override
+        public void run() {
+            System.out.println("线程" + id + "现在前往集合地点");
+            try {
+                Thread.sleep((long) (Math.random() * 10000));
+                System.out.println("线程" + id + "到了集合地点，开始等待其他人到达");
+                cyclicBarrier.await();
+                System.out.println("线程" + id + "出发了");
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+```
