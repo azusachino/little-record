@@ -374,3 +374,63 @@ PING 接口
 Discovery Client 实现
 
 - NIWSDiscoveryPing
+
+## 负载均衡客户端
+
+### LoadBalanceClient
+
+- 主要职责
+  - 转化URI: 将含应用名称URI转化成具体主机+端口的形式
+  - 选择服务实例: 通过负载算法, 选择指定服务中的一台机器实例
+  - 请求执行回调: 针对选择后服务实例, 执行具体的请求回调操作
+- 默认实现: RibbonLoadBalancerClient
+- 自动装配源: `RibbonAutoConfiguration#loadBalancerClient()`
+
+### 负载均衡器上下文 - LoadBalancerContext
+
+- 主要职责
+  - 转化URI: 将含应用名称URI转化成具体主机+端口的形式
+  - 组件关联: 关联RetryHandler, ILoadBalancer等
+  - 记录服务统计信息: 记录请求相应时间, 错误数量等
+- 默认实现: `RibbonLoadBalancerContext`
+- 自动装配源: `RibbonClientCOnfiguration#ribbonLoadBalancerContext(...)`
+
+### 负载均衡器 - ILoadBalancer
+
+- 主要职责
+  - 增加服务器
+  - 获取服务器: 通过关键key获取(所有服务列表, 可用服务列表)
+  - 服务器状态: 标记服务器宕机
+- 默认实现: `ZoneAwareLoadBalancer`
+- 自动装配源: `RibbonClientCOnfiguration#ribbonLoadBalancer(...)`
+
+### 规则接口 - IRule
+
+- 主要职责
+  - 选择服务器: 根据负载均衡器以及关联key获取候选的服务器
+- 默认实现: `ZoneAvoidanceRule`
+- 自动装配源: `RibbonClientCOnfiguration#ribbonRule(...)`
+
+### Ping策略 - IPing
+
+- 主要职责
+  - 活动检测: 根据指定的服务器, 检测其是否活动
+- 默认实现: `DummyPing`
+- 自动装配源: `RibbonClientCOnfiguration#ribbonPing(...)`
+
+### 服务器列表 - ServerList
+
+- 主要职责
+  - 获取初始化服务器列表
+  - 获取更新服务器列表
+- 默认实现: `ConfigurationBasedServerList` | `DiscoveryEnabledNIWSServerList`
+- 自动装配源: `RibbonClientCOnfiguration#ribbonServerList(...)`
+
+### Ribbon 自动装配
+
+- RibbonAutoConfiguration
+  - LoadBalancerClient
+  - PropertiesFactory
+- LoadBalancerAutoConfiguration
+  - @LoadBalanced
+  - RestTemplate
