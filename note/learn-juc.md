@@ -682,3 +682,146 @@ void method1() throws InterruptedException {
         }
     }
 ```
+
+## AbstractQueuedSynchronizer
+
+- Sync
+- NonSync
+
+### 内部原理 (主要还是看源码)
+
+- state
+- 控制线程抢锁和配合的FIFO队列(CLH)
+- 期望协作工具类去实现的获取/释放等重要方法(acquire/release)
+
+## Future/Callable
+
+### Runnable的缺陷
+
+- 没有返回值
+- 不能抛出checked异常
+
+### Callable接口
+
+### Future类
+
+```java
+    /**
+     * Waits if necessary for the computation to complete, and then
+     * retrieves its result.
+     *
+     * @return the computed result
+     * @throws CancellationException if the computation was cancelled
+     * @throws ExecutionException if the computation threw an
+     * exception
+     * @throws InterruptedException if the current thread was interrupted
+     * while waiting
+     */
+    V get() throws InterruptedException, ExecutionException;
+
+```
+
+### FutureTask类
+
+`FutureTask<?> ft = new FutureTask<>(() -> {});`
+
+## 缓存
+
+### 缓存特征
+
+- 命中率: 命中数/(命中数 + 没有命中数)
+- 最大元素(空间)
+- 清空策略: FIFO, LFU, LRU, 过期时间, 随机等
+
+### 缓存命中率影响因素
+
+- 业务场景和业务需求
+- 缓存的设计(粒度和策略)
+- 缓存容量和基础设施
+
+### 缓存分类和应用场景
+
+- 本地缓存: 编程实现(成员变量, 局部变量, 静态变量), Guava Cache
+- 分布式缓存: Memcache, Redis
+
+### 缓存常见问题
+
+#### 缓存一致性(Consistent)
+
+缓存和数据库的数据不一致
+
+#### 缓存并发问题
+
+#### 缓存穿透问题
+
+#### 缓存雪崩问题
+
+## 消息队列
+
+### 消息队列特性
+
+- 业务无关: 只做消息分发
+- FIFO: 先投递先到达
+- 容灾: 节点的动态增删和消息的持久化
+- 性能: 吞吐量提升, 系统内部通信效率提高
+
+> 为什么使用消息队列?
+
+- [生产]和[消费]的速度或稳定性等因素不一致
+
+### 消息队列好处
+
+- 业务解耦
+- 最终一致性
+- 广播
+- 错峰与流控
+
+## 应用拆分
+
+### 应用拆分 - 原则
+
+- 业务优先
+- 循序渐进
+- 兼顾技术: 重构, 分层
+
+### 应用拆分 - 思考
+
+- 应用间通信: RPC(dubbo等), 消息队列
+- 应用间数据库设计: 每个应用都有独立的数据库
+- 避免事务操作跨应用
+
+## 应用限流
+
+### 应用限流 - 算法
+
+- 计数器法
+- 滑动窗口
+- 漏桶算法 (Leaky Bucket)
+- 令牌桶算法 (Token Bucket)
+
+## 服务降级和熔断
+
+- 共同点: 目的, 最终表现, 粒度, 自治
+- 区别: 触发原因, 管理目标层次, 实现方式
+
+### 服务降级
+
+- 自动降级: 超时, 失败次数, 故障, 限流
+- 主动降级: 秒杀
+
+### 服务熔断
+
+## 数据库切库, 分库, 分表
+
+### 切库
+
+- 切库的基础及实际运用: 读写分离
+- 自定义注解完成数据库切库
+
+### 分表
+
+## 高可用
+
+- 任务调度系统分布式: elastic-job + zookeeper
+- 主备切换: apache curator + zookeeper分布式锁实现
+- 监控报警机制

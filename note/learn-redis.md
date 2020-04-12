@@ -15,6 +15,12 @@
 - 基于键值的存储服务系统
 - 多种数据结构
 
+---
+RedisObject:
+
+- type: string, hash, list, set, sorted set
+- encoding: raw, int, ht, zipmap, linkedlist, ziplist, intset
+
 ### 特性回顾
 
 - 速度快 (10w OPS)
