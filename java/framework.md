@@ -26,4 +26,28 @@
 
 ## Spring如何维护它拥有的bean
 
->
+> 简单讲讲tomcat结构以及其类加载流程, 线程模型等
+
+- 模块组成结构:
+  - Container
+  - Connector
+
+> tomcat如何调优, 涉及哪些参数
+
+主要从四个方面考虑: 吞吐量, ResponseTime, CPU Load, MemoryUsage
+
+```sh
+export JAVA_OPTS="-server -Xms1400M -Xmx1400M -Xss512k -XX:+AggressiveOpts -XX:+UseBiasedLocking
+-XX:PermSize=128M -XX:MaxPermSize=256M -XX:+DisableExplicitGC -XX:MaxTenuringThreshold=31
+-XX:+UseConcMarkSweepGC -XX:+UseParNewGC  -XX:+CMSParallelRemarkEnabled
+-XX:+UseCMSCompactAtFullCollection -XX:LargePageSizeInBytes=128m  -XX:+UseFastAccessorMethods
+-XX:+UseCMSInitiatingOccupancyOnly
+-Djava.awt.headless=true"
+
+```
+
+> 讲讲Spring加载流程
+
+初始化环境 -- 加载配置文件 -- 实例化Bean -- 调用Bean显示信息
+> SpringAOP的实现原理
+
