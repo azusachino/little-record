@@ -822,3 +822,75 @@ public static void main(String[] args) {
 > Atomic*CAS的底层是如何实现的
 
 - compare and exchange
+
+> 多线程的几种实现方式, 什么是线程安全?
+
+- implements Runnable
+- extends Thread
+- ExecutorService, Callable, Future
+
+当多个线程访问某个方法时，不管你通过怎样的调用方式或者说这些线程如何交替的执行，我们在主程序中不需要去做任何的同步，这个类的结果行为都是我们设想的正确行为，那么我们就可以说这个类时线程安全的。
+
+> volatile的原理, 作用, 能替代锁吗?
+
+- 内存可见性
+  - read、load、use动作必须连续出现。
+  - assign、store、write动作必须连续出现。
+- 防止指令重排
+  - 在每个volatile写操作的前面插入一个StoreStore屏障。
+  - 在每个volatile写操作的后面插入一个StoreLoad屏障。
+  - 在每个volatile读操作的后面插入一个LoadLoad屏障。
+  - 在每个volatile读操作的后面插入一个LoadStore屏障。
+
+> sleep和wait的区别
+
+sleep() 方法是线程类（Thread）的静态native方法，让调用线程进入睡眠状态，让出执行机会给其他线程，等到休眠时间结束后，线程进入就绪状态和其他线程一起竞争cpu的执行时间。
+因为sleep() 是static静态的方法，他不能改变对象的锁，当一个synchronized块中调用了sleep() 方法，线程虽然进入休眠，但是对象的机锁没有被释放，其他线程依然无法访问这个对象。
+
+wait()是Object类的方法，当一个线程执行到wait方法时，它就进入到一个和该对象相关的等待池，同时释放对象的机锁，使得其他线程能够访问，可以通过notify，notifyAll方法来唤醒等待的线程
+
+sleep() 和 wait() 的区别就是 调用sleep方法的线程不会释放对象锁，而调用wait() 方法会释放对象锁
+
+> sleep() 和 sleep(0)的区别
+
+在线程没退出之前，线程有三个状态，就绪态，运行态，等待态。sleep(n)之所以在n秒内不会参与CPU竞争，是因为，当线程调用sleep(n)的时候，线程是由运行态转入等待态，线程被放入等待队列中，等待定时器n秒后的中断事件，当到达n秒计时后，线程才重新由等待态转入就绪态，被放入就绪队列中，等待队列中的线程是不参与cpu竞争的，只有就绪队列中的线程才会参与cpu竞争，所谓的cpu调度，就是根据一定的算法（优先级，FIFO等。。。），从就绪队列中选择一个线程来分配cpu时间。
+
+而sleep(0)之所以马上回去参与cpu竞争，是因为调用sleep(0)后，因为0的原因，线程直接回到就绪队列，而非进入等待队列，只要进入就绪队列，那么它就参与cpu竞争
+
+Thread.Sleep(0) 并非是真的要线程挂起0毫秒，意义在于这次调用Thread.Sleep(0)的当前线程确实的被冻结了一下，让其他线程有机会优先执行。Thread.Sleep(0) 是你的线程暂时放弃cpu，也就是释放一些未用的时间片给其他线程或进程使用，就相当于一个让位动作。
+
+> Lock 和 Synchronized 的区别
+
+可重入锁：Synchronized和ReentrantLook都是可重入锁，锁的可重入性标明了锁是针对线程分配方式而不是针对方法。例如调用Synchronized方法A中可以调用Synchronized方法B，而不需要重新申请锁。
+
+读写锁：按照数据库事务隔离特性的类比读写锁，在访问统一个资源（一个文件）的时候，使用读锁来保证多线程可以同步读取资源。ReadWriteLock是一个读写锁，通过readLock()获取读锁，通过writeLock()获取写锁。
+
+可中断锁：可中断是指锁是可以被中断的，Synchronized内置锁是不可中断锁，ReentrantLock可以通过lockInterruptibly方法中断显性锁。例如线程B在等待等待线程A释放锁，但是线程B由于等待时间太久，可以主动中断等待锁。
+
+公平锁：公平锁是指尽量以线程的等待时间先后顺序获取锁，等待时间最久的线程优先获取锁。synchronized隐性锁是非公平锁，它无法保证等待的线程获取锁的顺序，ReentrantLook可以自己控制是否公平锁。
+
+Synchronized：底层使用指令码方式来控制锁的，映射成字节码指令就是增加来两个指令：monitorenter和monitorexit。当线程执行遇到monitorenter指令时会尝试获取内置锁，如果获取锁则锁计数器+1，如果没有获取锁则阻塞；当遇到monitorexit指令时锁计数器-1，如果计数器为0则释放锁。
+
+Lock：底层是CAS乐观锁，依赖AbstractQueuedSynchronizer类，把所有的请求线程构成一个CLH队列。而对该队列的操作均通过Lock-Free（CAS）操作。
+
+- Synchronized是关键字，内置语言实现，Lock是接口。
+- Synchronized在线程发生异常时会自动释放锁，因此不会发生异常死锁。Lock异常时不会自动释放锁，所以需要在finally中实现释放锁。
+- Lock是可以中断锁，Synchronized是非中断锁，必须等待线程执行完成释放锁。
+- Lock可以使用读锁提高多线程读效率。
+
+> synchronized的原理是什么, 一般用在什么地方(加在静态方法和非静态方法的区别, 同时执行的时候会有影响吗?)解释以下名词: 重排序, 自旋锁, 偏向锁, 轻量级锁, 可重入锁, 公平锁, 非公平锁, 乐观锁, 悲观锁
+
+Synchronized：底层使用指令码方式来控制锁的，映射成字节码指令就是增加来两个指令：monitorenter和monitorexit。当线程执行遇到monitorenter指令时会尝试获取内置锁，如果获取锁则锁计数器+1，如果没有获取锁则阻塞；当遇到monitorexit指令时锁计数器-1，如果计数器为0则释放锁。
+
+> 用过哪些原子类, 它们的原理是什么?
+
+- AtomicInteger -> Unsafe.compareAndSwapInt()
+
+> JUC下研究过哪些并发工具, 讲讲原理
+
+- ConcurrentHashMap -- CAS+synchronized
+
+> 用过线程池吗? 请说明原理, 并说说newCached和newFixed有什么区别, 构造函数的各个参数的含义是什么.
+
+newCachedThreadPool 创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程。  
+newFixedThreadPool 创建一个定长线程池，可控制线程最大并发数，超出的线程会在队列中等待。
