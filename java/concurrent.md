@@ -290,7 +290,7 @@ public static void main(String[] args) {
 基本上没什么区别  
 看字节码(class)  
 方法 -> ACC_SYNCHRONIZED  
-代码块 -> monitorenter  
+代码块 -> monitorenter, monitorexit
 
 >请说明synchronized关键字与ReentrantLock之间的关系
 

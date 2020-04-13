@@ -10,33 +10,39 @@
 
 ### 线程池介绍
 
-- 反复创建线程开销大
-- 过多的线程会占用太多线程
+- new Thread()的缺陷
+  - 反复创建线程开销大
+  - 过多的线程会占用太多线程
 
 ---
-优点:
+线程池的优点:
 
 - 加快响应速度
-- 合理利用cpu和内存
+- 合理利用cpu和内存(I/O密集型和CPU密集型 -> 合适的线程数)
 - 方便管理
 
 ### 创建和停止线程池
 
 #### 线程池构造函数的参数
 
-- corePoolSIze 核心线程数
+- corePoolSize 核心线程数
 - maxPoolSize 最大线程数
 - keepAliveTime 保持存活时间
 - unit 时间单位
 - workQueue 工作队列
 - threadFactory 线程工厂
 - handler 拒绝策略
+  - CallerRunsPolicy
+  - AbortPolicy
+  - DiscardPolicy
+  - DiscardOldestPolicy
 
 是否新增线程的判断顺序:
 
 1. corePoolSize
 2. workQueue
 3. maxPoolSize
+4. handler 拒绝策略
 
 ---
 
@@ -228,6 +234,13 @@ Thread -> ThreadLocalMap -> Entry(key==null) -> value
 
 对于包装类型, get前需要set,装箱开箱的过程可能会造成空指针
 
+```java
+    public long get() {
+        // threadLocal 返回null, 接收值是原始类型long -> 产生空指针异常
+        return threadLocal.get();
+    }
+```
+
 #### 共享对象
 
 如果ThreadLocal封装的是static对象, 无法保证线程安全
@@ -242,9 +255,11 @@ lock -> read -> load -> use  -> assign -> store -> write -> unlock
 
 synchronized：
 
-- 效率低： 锁的释放情况少， 试图获得锁时不能设定超时， 不能中断一个正在试图获得锁的线程。
+- 效率低: 锁的释放情况少, 试图获得锁时不能设定超时, 不能中断一个正在试图获得锁的线程。
 - 不够灵活：加锁和释放的实际单一， 每个锁仅有单一的条件（某个对象）
-- 无法知道是否成功获取锁
+- 无法知道是否成功获取锁(由JVM控制)
+
+JDK1.6版本之后, 引入了偏向锁, synchronized性能获得了巨大的提升
 
 ### APIs
 
@@ -268,9 +283,9 @@ synchronized：
 
 ### 读写锁
 
-- 同时可以有多个线程读
+- 可以有多个线程同时读操作(Shared)
 - 现在有读线程在执行， 写线程需要等待
-- 现有写线程在执行， 读写线程都需等待
+- 现有写线程在执行， 读写线程都需等待(Exclusive)
 
 ### 读锁插队策略
 

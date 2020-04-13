@@ -434,3 +434,67 @@ Discovery Client 实现
 - LoadBalancerAutoConfiguration
   - @LoadBalanced
   - RestTemplate
+
+## 服务短路
+
+### 核心概念
+
+系统整体性保护
+
+- 服务容错(Fault Tolerance): 强调容忍错误, 不至于整体故障
+- 服务降级(DownGrade): 强调服务非强依赖, 不影响主要流程
+
+### Spring Cloud Netflix Hystrix
+
+- 整合Spring
+  - @EnableHystrix
+- 编程模型
+  - 注解模式: @HystrixCommand
+  - 编程模式: HystrixCommand
+- 整合Spring Cloud
+  - 激活：@EnableCircuitBreaker
+  - 依赖：org.springframework.cloud:spring-cloud-starter-hystrix
+- 端点
+  - Endpoint：/hystrix.stream
+
+```java
+/**
+     * 获取所有用户列表
+     *
+     * @return
+     */
+    @HystrixCommand(
+            commandProperties = { // Command 配置
+                    // 设置操作时间为 100 毫秒
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "100")
+            },
+            fallbackMethod = "fallbackForGetUsers" // 设置 fallback 方法
+    )
+    @GetMapping("/user/list")
+    public Collection<User> getUsers() throws InterruptedException {
+
+        long executeTime = random.nextInt(200);
+
+        // 通过休眠来模拟执行时间
+        System.out.println("Execute Time : " + executeTime + " ms");
+
+        Thread.sleep(executeTime);
+
+        return userService.findAll();
+    }
+    /**
+     * {@link #getUsers()} 的 fallback 方法
+     *
+     * @return 空集合
+     */
+    public Collection<User> fallbackForGetUsers() {
+        return Collections.emptyList();
+    }
+```
+
+### 生产准备特性
+
+- 整合Spring Cloud
+  - 激活：@EnableHystrixDashboard
+  - 依赖：org.springframework.cloud:spring-cloud-starter-hystrix-dashboard
+  - 收集

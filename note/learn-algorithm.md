@@ -397,3 +397,31 @@ def BFS(graph, start, end):
 - walking-robot-simulation
 - jump-game
 - jump-game-II
+
+## 二分查找
+
+### 二分查找的前提
+
+1. 目标函数单调性 (单调递增或者递减)
+2. 存在上下界 (Bounded)
+3. 能够通过索引访问 (index accessible)
+
+```py
+left, right = 0, len(arr)-1
+while left <= right:
+    mid - (left+right) / 2
+    if arr[mid] == target:
+        return result
+    elif arr[mid] < target:
+        left = mid+1
+    else:
+        right = mid-1
+```
+
+### 二分查找相关
+
+- sqrtx
+- valid-perfect-square
+- search-in-rotated-sorted-array
+- search-a-2d-matrix
+- find-minimum-in-rotated-sorted-array
