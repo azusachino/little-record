@@ -2,13 +2,13 @@
 
 > HashMap的源码，实现原理，JDK8中对HashMap做了怎样的优化
 
-a
+TODO
 > HaspMap扩容是怎样扩容的，为什么都是2的N次幂的大小
 
-为了保证hash散列平稳 hash&(size-1)
+为了保证hash散列平稳 hash & (tab.length-1)
 > HashMap，HashTable，ConcurrentHashMap的区别
 
-a
+TODO
 > 极高并发下HashTable和ConcurrentHashMap哪个性能更好，为什么，如何实现的
 
 Hashtable
@@ -306,13 +306,14 @@ public class Singleton {
 
 直接重写equals方法和hashcode方法
 
-> 请结合 OO 设计理念,谈谈访问修饰符 public、private、protected、default 在应用设计中的作用
+> 请结合 OOP 设计理念,谈谈访问修饰符 public、private、protected、default 在应用设计中的作用
 
 面对对象设计理念
 
 > 浅拷贝和深拷贝的区别
 
-区别
+浅拷贝的两个对象并非独立的  
+深拷贝是一个整个独立的对象拷贝
 
 > 数组和链表数据结构描述,各自的时间复杂度
 
@@ -344,18 +345,35 @@ Exception（异常）表示程序可以处理的异常，可以捕获且可能�
 
 > 说说你对java.lang.Object中hashCode和equals方法的理解. 在什么场景下需要重新实现这两个方法
 
-
+TODO
 > 在jdk1.5中引入了泛型, 是为了解决什么问题?
+
+泛型的本质是参数化类型, 所操作的数据类型被指定为一个参数, 泛型的好处是在编译时候检查类型安全, 并且所有的强制转换都是自动和隐式的, 以提高代码的重用率
 
 > a.hashCode()有什么用? 与a.equals(b)有什么关系
 
+hashcode()方法提供了对象的HashCode值, 是native方法, 返回的默认值和System.identity Hash Code(obj)一致; 通常这个值是对象头部的一部分二进制组成的数字, 具有一定的标识对象的意义存在, 但绝不定于地址
+
+作用: 用一个数字标识对象
+
+两个对象equals相等, 则hashcode一定相等; hashcode相等的两个对象不一定equals相等
+
 > 有没有可能2个不相等的对象有相同的hashcode
+
+有可能, 也就是所谓的hash冲突
 
 > Java中的HashSet内部是如何工作的
 
-内部维护了一个HashMap, 且有一个公共value
+内部维护了一个HashMap, 且有一个公共value `private static final Object PRESENT = new Object();`
 
 > 什么是序列化, 怎么序列化, 为什么序列化, 反序列化会遇到什么问题, 如何解决
+
+implements Serializable
+
+序列化: 把对象转换为字节序列的过程称为对象的序列化  
+反序列化: 把字节序列恢复成对象的过程称为对象的反序列化
+
+目的: 把内存中的对象状态保存到一个文件中或者数据库中; 用套接字在网络上传输对象; 通过RMI传输对象的时候
 
 > java8的新特性
 
@@ -364,3 +382,7 @@ Exception（异常）表示程序可以处理的异常，可以捕获且可能�
 - `java.time`
 - HashMap引入了红黑树
 - `Optional<T>`
+
+> 注解的原理
+
+注解底层也是使用反射实现的`method.getAnnotation(xxAnonotation.class)`

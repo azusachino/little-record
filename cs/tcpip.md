@@ -48,7 +48,7 @@ TCP（Transmission Control Protocol，传输控制协议）是面向连接的协
 
 > 长连接和短连接
 
-aa
+TODO
 > 连接池适合长连接还是短连接
 
  连接池适合长连接

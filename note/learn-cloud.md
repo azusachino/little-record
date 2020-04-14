@@ -498,3 +498,143 @@ Discovery Client 实现
   - 激活：@EnableHystrixDashboard
   - 依赖：org.springframework.cloud:spring-cloud-starter-hystrix-dashboard
   - 收集
+
+## Hystrix源码解读
+
+### `@EnableCircuitBreaker`
+
+职责：激活 Circuit Breaker
+
+#### 初始化顺序
+
+- `@EnableCircuitBreaker`
+  - `EnableCircuitBreakerImportSelector`
+    - `HystrixCircuitBreakerConfiguration`
+
+### HystrixCircuitBreakerConfiguration
+
+#### 初始化组件
+
+- `HystrixCommandAspect`
+- `HystrixShutdownHook`
+- `HystrixStreamEndpoint`：Servlet
+- `HystrixMetricsPollerConfiguration`
+
+### `HystrixCommandAspect`
+
+#### 依赖组件
+
+- `MetaHolderFactory`
+- `HystrixCommandFactory`: 生成`HystrixInvokable`
+- `HystrixInvokable`
+  - `CommandCollapser`
+  - `GenericObservableCommand`
+  - `GenericCommand`
+
+### RxJava
+
+```java
+ Single.just("Hello,World") // 仅能发布单个数据
+        .subscribeOn(Schedulers.io()) // 在 I/O 线程执行
+        .subscribe(RxJavaDemo::println) // 订阅并且消费数据
+;
+```
+
+```java
+List<Integer> values = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+Observable.from(values) //发布多个数据
+        .subscribeOn(Schedulers.computation()) // 在 I/O 线程执行
+        .subscribe(RxJavaDemo::println); // 订阅并且消费数据
+
+Observable.from(values) //发布多个数据
+        .subscribeOn(Schedulers.newThread()) // 在 newThread 线程执行
+        .subscribe(value -> {
+            if (value > 2)
+                throw new IllegalStateException("数据不应许大于 2");
+            //消费数据
+            println("消费数据：" + value);
+        }, e -> {
+            // 当异常情况，中断执行
+            println("发生异常 , " + e.getMessage());
+        }, () -> {
+            // 当整体流程完成时
+            println("流程执行完成");
+        });
+```
+
+```java
+
+import java.util.concurrent.Flow;
+import java.util.concurrent.SubmissionPublisher;
+
+public class SubmissionPublisherDemo {
+
+    public static void main(String[] args) throws InterruptedException {
+
+        try (SubmissionPublisher<Integer> publisher =
+                     new SubmissionPublisher<>()) {
+
+            //Publisher(100) => A -> B -> C => Done
+            publisher.subscribe(new IntegerSubscriber("A"));
+            publisher.subscribe(new IntegerSubscriber("B"));
+            publisher.subscribe(new IntegerSubscriber("C"));
+
+            // 提交数据到各个订阅器
+            publisher.submit(100);
+        }
+        Thread.currentThread().join(1000L);
+
+    }
+
+    private static class IntegerSubscriber implements
+            Flow.Subscriber<Integer> {
+
+        private final String name;
+        private Flow.Subscription subscription;
+
+        private IntegerSubscriber(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void onSubscribe(Flow.Subscription subscription) {
+            System.out.printf(
+                    "Thread[%s] Current Subscriber[%s] " +
+                            "subscribes subscription[%s]\n",
+                    Thread.currentThread().getName(),
+                    name,
+                    subscription);
+            this.subscription = subscription;
+            subscription.request(1);
+        }
+
+        @Override
+        public void onNext(Integer item) {
+            System.out.printf(
+                    "Thread[%s] Current Subscriber[%s] " +
+                            "receives item[%d]\n",
+                    Thread.currentThread().getName(),
+                    name,
+                    item);
+            subscription.request(1);
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        @Override
+        public void onComplete() {
+            System.out.printf(
+                    "Thread[%s] Current Subscriber[%s] " +
+                            "is completed!\n",
+                    Thread.currentThread().getName(),
+                    name);
+        }
+
+    }
+
+}
+```

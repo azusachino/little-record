@@ -425,3 +425,38 @@ while left <= right:
 - search-in-rotated-sorted-array
 - search-a-2d-matrix
 - find-minimum-in-rotated-sorted-array
+
+## 动态规划
+
+1. 动态规划和递归或者分治没有根本上的区别
+2. 共性: 找到重复子问题
+3. 差异性: 最优子结构, 中途可以淘汰次优解
+
+---
+
+1. 最优子结构 dp[n] = best_of(dp[n-1], dp[n-2])
+2. 储存中间状态: dp[i]
+3. 递推公式
+
+Fib: dp[n] = dp[n-1] + dp[n-2]
+
+二维路径: dp[i,j] = dp[i+1,j] + dp[i,j+1]
+
+```py
+opt[i,j] = opt[i+1,j] + opt[i,j+1]
+if a[i,j] = '0':
+    opt[i,j] = opt[i+1,j] + opt[i,j+1]
+else:
+    opt[i,j] = 0
+```
+
+1. 打破自己的思维惯性, 形成机器思维
+2. 理解复杂逻辑的关键
+3. 职业进阶的要点要领
+
+### dp面试题
+
+1. Fibonacci
+2. count the paths
+3. unique path
+4. longest common subsequence

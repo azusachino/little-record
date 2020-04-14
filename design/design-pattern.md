@@ -1,14 +1,13 @@
 # DESIGN PATTERN
 
-## 观察者模式
+> 观察者模式
 
->
+TODO
+> 代理模式
 
-## 代理模式
+TODO
 
->
-
-## 单例模式，有五种写法
+> 单例模式，有五种写法
 
 ```java
 public class Singleton {
@@ -28,7 +27,3 @@ public class Singleton {
     }
 }
 ```
-
-## 可以考Spring中使用了哪些设计模式
-
->
