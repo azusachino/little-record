@@ -449,6 +449,10 @@ set hello redis
 - 数据副本
 - 拓展读性能
 
+1. 一个master可以有多个slave
+2. 一个slave只能有一个master
+3. 数据流向是单向的, master到slave
+
 #### 复制的配置
 
 - `slaveof` + ip port
@@ -506,3 +510,90 @@ set hello redis
   3. 复制积压缓冲区不足
 - 避免复制风暴
   - 机器宕机后, 大量全量复制
+
+## Redis Sentinel
+
+### 主从复制高可用
+
+- 手动故障转移
+- 写能力和存储能力有限
+
+### Sentinel架构
+
+#### 故障转移
+
+1. 多个sentinel发现并确定master有问题
+2. 选举出一个sentinel作为领导
+3. 选出一个slave作为master
+4. 通知其他slave成为新的master的slave
+5. 通知客户端主从变化
+6. 等到老的master复活成为新master的slave
+
+#### 安装与配置
+
+1. 配置开启主从节点
+2. 配置开启sentinel监控注解点(特殊的redis节点)
+
+```lua
+port ${port}
+dir "opt/soft/redis/data"
+logfile "${port}.log"
+sentinel monitor mymaster 127.0.0.1 7000 2
+sentinel down-after-milliseconds mymaster 30000
+sentinel parallel-syncs mymaster 1
+sentinel failover-timeout mymaster 180000
+```
+
+#### Jedis
+
+1. Sentinel地址集合
+2. masterName
+3. 不是代理模式
+
+```java
+JedisSentinelPool sentinelPool = new JedisSentinelPool(masterName, sentinelSet, poolConfig, timeout);
+try (Jedis jedis = redisSentinelPool.getResource()) {
+  // jedis command
+  do something
+} catch(Exception e) {
+  log.error(e);
+}
+```
+
+#### 三个定时任务
+
+- 每十秒每个sentinel对master和slave执行info
+  - 发现slave节点
+  - 确认主从关系
+- 每2秒每个sentinel通过master节点的channel交换信息(pub/sub)
+  - 通过_sentinel_:hello频道交互
+  - 交互对节点的“看法”和自身信息
+- 每3秒每个sentinel对其他sentine和redis节点执行ping
+
+主观下线和客观下线
+
+`sentinel monitor <masterName> <ip> <port> <quorum>`
+
+`sentinel down-after-milliseconds <masterName> <timeout>`
+
+#### 领导者选举
+
+原因: 只有一个sentinel节点完成故障转移
+
+#### 故障转移 (sentinel领导者节点完成)
+
+1. 从slave节点选出一个“合适的”节点作为新的master
+2. 对上面的slave节点执行 *slaveof no one*命令让其成为master节点
+3. 向剩余slave节点发送命令, 让它们成为新master节点的slave节点, 复制规则和parallel-syncs参数有关
+4. 更新原来master节点配置为slave, 并保持着对其“关注”, 当恢复后命令它去复制新的master节点
+
+#### 选择“合适的”slave节点
+
+1. 选择slave-priority(slave节点优先级)最高的slave节点, 如果存在则返回, 不存在则继续
+2. 选择复制偏移量最大的节点(复制的最完整(最近)), 如果存在则返回, 不存在则继续
+3. 选择runId最小的slave节点(最早启动的)
+
+#### 从节点的作用
+
+1. 副本: 高可用的基础
+2. 拓展: 读能力
