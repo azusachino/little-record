@@ -597,3 +597,71 @@ try (Jedis jedis = redisSentinelPool.getResource()) {
 
 1. 副本: 高可用的基础
 2. 拓展: 读能力
+
+## Redis Cluster 16384
+
+### 取余分区
+
+- 节点取余(哈希+取余)
+- 节点伸缩: 数据节点关系变化, 导致数据迁移
+- 迁移数量和添加节点数量有关: 建议翻倍扩容
+
+### 一致性哈希
+
+- 客户端分片: 哈希 + 顺时针(优化取余)
+- 节点伸缩: 只影响临近节点, 还是存在数据迁移
+- 翻倍伸缩: 保证最小迁移数据和负载均衡
+
+### 虚拟槽分区
+
+- 预设虚拟槽: 每个槽映射一个数据子集, 一般比节点数大
+- 良好的哈希函数: 例如RCR16
+- 服务器管理节点, 槽, 数据: Redis Cluster
+
+`cluster meet ip port`
+
+### Cluster 节点主要配置
+
+```properties
+cluster-enable yes
+cluster-node-timeout 15000
+cluster-config-file "nodes.conf"
+cluster-require-full-coverage yes
+```
+
+### Cluster 集群伸缩
+
+#### 伸缩原理
+
+- 准备新节点
+- 加入集群
+- 迁移槽和数据
+
+#### 迁移数据
+
+1. 对目标节点发送: cluster setslot {slot} importing {sourceNodeId}命令, 让目标节点准备导入槽的数据
+2. 对源节点发送: cluster setslot {slot} migrating {targetNodeId}命令, 让源节点准备迁出槽的数据
+3. 源节点循环执行 cluster getkeysinslot {slot} {count}命令, 每次获取count个属于槽的键
+4. 在源节点上执行 migrate {targetIp} {targetPort} key 0 {timeout}命令把指定key迁移
+5. 重复执行3-4直到槽下的所有键数据迁移到目标节点
+6. 向集群内所有主节点发送 cluster setslot {slot} node {targetNodeId} 命令, 通知槽分配给目标节点
+
+#### 客户端路由
+
+- moved重定向
+- ask
+- smart客户端
+
+### Cluster 故障转移
+
+#### 故障发现
+
+1. 主观下线
+2. 客观下线 -- 故障下线
+
+#### 常见运维问题
+
+1. 集群完整性
+2. 带宽消耗
+3. Pub/Sub广播
+4. 集群数据倾斜
