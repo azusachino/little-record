@@ -638,3 +638,67 @@ public class SubmissionPublisherDemo {
 
 }
 ```
+
+## Spring Cloud 服务调用
+
+### 远程过程调用(RPC)
+
+⼀个计算机通信协议。该协议允许运⾏于⼀台计算机的程序调⽤另⼀台计算机的⼦程序，⽽程序员⽆需额外地为这个交互作⽤编程。如果涉及的软件采⽤⾯向对象编程，那么远程过程调⽤亦可称作远程调⽤或远程⽅法调⽤
+
+- RMI (二进制协议)
+- WebSerices (文本协议)
+
+### 服务调用核心概念
+
+- 消息传递
+  - RPC 是⼀种请求-响应协议，⼀次RPC在客户端初始化，再由客户端将请求消息传递到远程的服务器，执⾏指定的带有参数的过程。经过远程服务器执⾏过程后，将结果作为响应内容返回到客户端。
+- 存根（Stub）
+  - 在⼀次分布式计算RPC 中，客户端和服务器转化参数的⼀段代码。 由于存根的参数转化，RPC执⾏过程如同本地执⾏函数调⽤。存根必须在客户端和服务器两端均装载，并且保持兼容
+
+### Spring Cloud Feign
+
+- `org.springframework.cloud:spring-cloud-starter-feign`
+- `@EnableFeignClients`
+- `@FeignClient`
+
+- 默认组件
+  - Decoder/Encoder : ResponseEntityDecoder / SpringEncoder
+  - Logger : Slf4jLogger
+  - Contract : SpringMvcContract
+  - Feign.Builder : HystrixFeign.Builder
+  - Client : LoadBalancerFeignClient
+
+```java
+@SpringBootApplication
+@RibbonClient("user-service-provider") // 指定目标应用名称
+@EnableCircuitBreaker // 使用服务短路
+@EnableFeignClients(clients = UserService.class) // 申明 UserService 接口作为 Feign Client 调用
+public class UserServiceClientApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(UserServiceClientApplication.class, args);
+    }
+
+    /**
+     * 将 {@link MyRule} 暴露成 {@link Bean}
+     *
+     * @return {@link MyRule}
+     */
+    @Bean
+    public IRule myRule() {
+        return new MyRule();
+    }
+
+    /**
+     * 申明 具有负载均衡能力 {@link RestTemplate}
+     *
+     * @return
+     */
+    @Bean
+    @LoadBalanced
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+}
+```

@@ -974,3 +974,60 @@ newFixedThreadPool 创建一个定长线程池，可控制线程最大并发数�
 > 假如有一个第三方接口, 有很多的线程去调用获取数据, 现在规定每秒钟最多有十个线程同时调用它, 如何做到?
 
 AOP进行拦截
+
+> spring的controller是单例还是多例, 怎么保证并发的安全?
+
+TODO
+> 用三个线程按顺序循环打印abc三个字母, 比如abcabcabc
+
+Lock加Condition
+
+> ThreadLocal用过吗, 用途是什么, 原理是什么, 用的时候需要注意什么?
+
+给每个线程都保存一份公共变量的副本, 每个Thread对象都有一个ThreadLocalMap
+
+ThreadLocal用完要remove, 否则可能会发生内存泄漏
+
+> 如果让你实现一个并发安全的链表, 你会怎么做?
+
+读无锁, 写上锁
+
+> 有哪些无锁的数据结构, 他们实现的原理是什么?
+
+TODO
+> 讲讲java同步机制的wait和notify
+
+TODO
+> CAS机制是什么, 如何解决ABA问题
+
+偏移量
+
+> 多线程如果线程挂了怎么办?
+
+> CountDownLatch和CylicBarrier的内部原理和用法, 以及相互之间的差别?(countdown(), await())
+
+> 对AQS了解多少, 讲讲加锁和解锁的流程, 独占锁和公平锁加锁有什么不同?
+
+> 使用synchronized修饰静态方法和非静态方法有什么区别?
+
+修饰静态方法锁的是Class, 非静态方法锁的是对象
+
+> 简述ConcurrentLinkedQueue和LinkedBlockingQueue的用处和不同之处
+
+> 导致线程死锁的原因? 怎么解除线程死锁?
+
+> 非常多个线程(可能是不同机器), 相互之间需要等待协调,,才能完成某种工作, 问怎么设计这种协调方案
+
+分布式锁
+> 用过读写锁吗? 原理是什么? 一般在什么场景下用
+
+读锁是shared, 写锁exclusive
+28. 开启多个线程, 如何保证顺序执行, 有哪几种实现方式, 或者如何保证多个线程都执行完成后再拿到结果
+
+1. synchronized
+2. lock
+3. 公平
+
+Future, FutureTask, CompletableFuture, countdownlatch
+
+> 延迟队列的实现方式, delayQueue和时间轮算法的异同

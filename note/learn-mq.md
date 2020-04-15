@@ -23,3 +23,24 @@
 - Broker: MQ消息服务(中转角色, 用于消息存储与生产消费转发)
 
 ## RockerMQ - 环境搭建
+
+## RockerMQ - 生产者使用
+
+1. 创建生产者对象 DefaultMQProducer
+2. 设定NamesrvAddr
+3. 启动生产者服务
+4. 创建消息并发送
+
+## RocketMQ - 消费者使用
+
+1. 创建消费者对象 DefaultMQPushConsumer
+2. 设置NamesrvAddr及其消费位置 ConsumeFromWhere
+3. 订阅主题 Subscribe
+4. 注册监听并消费 registerMessageListener
+
+## RocketMQ - 四种集群环境构建详解
+
+- 单点模式
+- 主从模式
+- 双主模式
+- 双主双从模式, 多主多从模式

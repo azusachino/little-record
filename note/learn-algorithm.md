@@ -460,3 +460,12 @@ else:
 2. count the paths
 3. unique path
 4. longest common subsequence
+5. climbing-stairs
+6. triangle
+7. maximum-subarray
+8. maximum-product-subarray
+9. coin-change
+10. house-robber
+11. house-robber-ii
+12. best-time-to-buy-and-sell-stock (series)
+13. edit-distance
