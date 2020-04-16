@@ -631,6 +631,8 @@ cluster-require-full-coverage yes
 
 ### Cluster 集群伸缩
 
+redis-trib.rb(集群伸缩 官方工具)
+
 #### 伸缩原理
 
 - 准备新节点

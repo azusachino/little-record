@@ -2,16 +2,59 @@
 
 > JVM的内存结构
 
-a
+Heap, Method Area(PermGen), ThreadStack(native method stack, program register counter, JVM stack)
+
+MethodArea: 它用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。
+
+Program Counter Register 是唯一一个在Java虚拟机规范中没有规定任何OutOfMemoryError情况的区域。
 > JVM方法栈的工作过程，方法栈和本地方法栈有什么区别
 
-a
+Java虚拟机栈（Java Virtual Machine Stacks）是线程私有的，它的生命周期与线程相同。虚拟机栈描述的是Java方法执行的内存模型：每个方法被执行的时候都会同时创建一个栈帧（Stack Frame）用于存储局部变量表、操作栈、动态链接、方法出口等信息。每一个方法被调用直至执行完成的过程，就对应着一个栈帧在虚拟机栈中从入栈到出栈的过程。
+
+局部变量表存放了编译期可知的各种基本数据类型（boolean、byte、char、short、int、float、long、double）、对象引用（reference类型，它不等同于对象本身，根据不同的虚拟机实现，它可能是一个指向对象起始地址的引用指针，也可能指向一个代表对象的句柄或者其他与此对象相关的位置）和returnAddress类型（指向了一条字节码指令的地址）。
+
+其中64位长度的long和double类型的数据会占用2个局部变量空间（Slot），其余的数据类型只占用1个。局部变量表所需的内存空间在编译期间完成分配，当进入一个方法时，这个方法需要在帧中分配多大的局部变量空间是完全确定的，在方法运行期间不会改变局部变量表的大小。
+
+在Java虚拟机规范中，对这个区域规定了两种异常状况：如果线程请求的栈深度大于虚拟机所允许的深度，将抛出StackOverflowError异常；如果虚拟机栈可以动态扩展（当前大部分的Java虚拟机都可动态扩展，只不过Java虚拟机规范中也允许固定长度的虚拟机栈），当扩展时无法申请到足够的内存时会抛出OutOfMemoryError异常。
+
+本地方法栈（Native Method Stacks）与虚拟机栈所发挥的作用是非常相似的，其区别不过是虚拟机栈为虚拟机执行Java方法（也就是字节码）服务，而本地方法栈则是为虚拟机使用到的Native方法服务。
 > JVM的栈中引用如何和堆中的对象产生关联
 
-a
+堆中存的是对象。栈中存的是基本数据类型和堆中对象的引用
 > 逃逸分析技术
 
-a
+在编程语言的编译优化原理中，分析指针动态范围的方法称之为逃逸分析。当一个对象的指针被多个方法或线程引用时，我们称这个指针发生了逃逸。
+
+```java
+class A {  
+public static B b;  
+
+public void globalVariablePointerEscape() { // 给全局变量赋值，发生逃逸  
+b = new B();  
+}  
+
+public B methodPointerEscape() { // 方法返回值，发生逃逸  
+return new B();  
+}  
+
+public void instancePassPointerEscape() {  
+methodPointerEscape().printClassName(this); // 实例引用传递，发生逃逸  
+}  
+}  
+
+class B {  
+public void printClassName(A a) {  
+System.out.println(a.class.getName());  
+}  
+}  
+```
+
+逃逸分析优化 - 栈上分配
+
+优化原理：分析找到未逃逸的变量，将变量类的实例化内存直接在栈里分配(无需进入堆)，分配完成后，继续在调用栈内执行，最后线程结束，栈空间被回收，局部变量对象也被回收。
+
+-XX:+DoEscapeAnalysis
+
 > GC的常见算法，CMS以及G1的垃圾回收过程，CMS的各个阶段哪两个是Stop the world的，CMS会不会产生碎片，G1的优势
 
 a

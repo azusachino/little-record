@@ -657,7 +657,7 @@ public class SubmissionPublisherDemo {
 
 ### Spring Cloud Feign
 
-- `org.springframework.cloud:spring-cloud-starter-feign`
+- `org.springframework.cloud:spring-cloud-starter-openfeign`
 - `@EnableFeignClients`
 - `@FeignClient`
 
@@ -702,3 +702,142 @@ public class UserServiceClientApplication {
 
 }
 ```
+
+## Spring Cloud 服务网关
+
+⽹关是程序或者系统之间的连接节点，扮演着程序或系统之间的⻔户，允许它们之间通过通讯协议
+交换信息，它们可能是同构和异构的系统。
+
+- REST API 网关
+- WebServices 网关
+
+---
+
+- 使用场景
+  - 监控（Monitoring）
+  - 测试（Testing）
+  - 动态路由（Dynamic Routing）
+  - 服务整合（Service Integration）
+  - 负荷减配（Load Shedding）
+  - 安全(Security)
+  - 静态资源处理(Static Resources handling)
+  - 活跃流量管理(Active traffic management)
+
+### 服务网关 - 核心概念
+
+- 数据来源
+  - 服务发现
+  - 服务注册
+- 通讯⽅式
+  - 协议：⼆进制、本⽂
+  - ⽅式：同步、异步
+- 服务接⼝
+  - 平台⽆关
+    - XML、JSON、HTML
+  - 平台相关
+    - IDL、RMI、Hession
+
+### Spring Cloud Zuul
+
+- 依赖
+  - `org.springframework.cloud:spring-cloud-starter-zuul`
+- 激活
+  - `@EnableZuulProxy`
+- 配置
+  - zuul.*
+- 路由设置
+  - 配置模式
+    - 服务-映射：`zuul.routes.${service-id} = ${url-pattern}`
+  - 路径模式
+    - 当前层级匹配：/*
+    - 递归层级匹配：/**
+- HTTP 客户端
+  - HttpClient（默认）
+    - 装配：`HttpClientRibbonConfiguration`
+  - OkHttp（条件）
+    - 激活配置：`ribbon.okhttp.enabled = true`
+    - 装配：`OkHttpRibbonConfiguration`
+- 端点（Endpoint）
+  - 实现：`RoutesEndpoint`
+  - 路径：/routes
+- 过滤器：ZuulFilter
+
+```java
+@EnableZuulProxy
+@EnableDiscoveryClient
+@SpringBootApplication
+public class ZuulProxyApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ZuulProxyApplication.class, args);
+    }
+
+}
+```
+
+ZuulFilter 调用链
+
+`ZuulFilter#run()` <- `ZuulFilter#runFilter()` <- `FilterProcessor#runFilters`
+
+- `FilterProcessor#preRoute()`
+- `FilterProcessor#route()`
+- `FilterProcessor#postRoute()`
+
+## Zuul 自动装配
+
+`ZuulServletFilter` 适用范围更大，可以拦截所有的`Servlet`，包括 `ZuulServlet`
+
+`ZuulServlet` 会有URL 匹配的模式，url-pattern
+
+Zuul 有两种的激活模式：
+
+#### `@EnableZuulProxy`
+
+导入`ZuulProxyMarkerConfiguration`，随后生成一个`ZuulProxyMarkerConfiguration.Marker()` Bean，这个Bean 作为`ZuulProxyAutoConfiguration` 的装配前置条件。
+
+请注意：`ZuulProxyMarkerConfiguration` 扩展了 `ZuulServerAutoConfiguration`，所以 `ZuulServlet` 和`ZuulController`会被自动装配
+
+`ZuulController` 有 `DispatcherServlet` 来在控制,它的映射地址是："/*"，
+
+`DispatcherServlet` 中注册了一个`ZuulHandlerMapping` ，它控制映射到`ZuulController`，可以参考`ZuulServerAutoConfiguration`:
+
+```java
+   @Bean
+   public ZuulController zuulController() {
+    return new ZuulController();
+   }
+
+   @Bean
+   public ZuulHandlerMapping zuulHandlerMapping(RouteLocator routes) {
+    ZuulHandlerMapping mapping = new ZuulHandlerMapping(routes, zuulController());
+    mapping.setErrorController(this.errorController);
+    return mapping;
+   }
+ ```
+
+通过源码分析，`ZuulController`  将请求委派给`ZuulServlet`，所以所有的`ZuulFilter` 实例都会被执行。
+
+> 因此，访问 <http://localhost:6060/user-service-client/user/find/all> ，实际将请求递交给 DispatcherServlet
+> 发送请求"/user-service-client/user/find/all"
+
+- `DispatcherServlet`
+  - `ZuulHandlerMapping`
+    - `ZuulController`
+      - `ZuulServlet`
+        - `RibbonRoutingFilter`
+
+#### `@EnableZuulServer`
+
+导入`ZuulServerMarkerConfiguration` ，随后生成一个 `ZuulServerMarkerConfiguration.Marker()` Bean ，主要用作引导装配`ZuulServerAutoConfiguration`
+
+`ZuulServerAutoConfiguration`与 父类 `ZuulProxyAutoConfiguration` 区别：
+
+父类`ZuulProxyAutoConfiguration` 提供了`RibbonRoutingFilter`
+
+调用层次：
+
+- `DispatcherServlet`
+  - `ZuulHandlerMapping`
+    - `ZuulController`
+      - `ZuulServlet`
+        - `ZuulFilter`
