@@ -92,3 +92,13 @@ redis最大可以达到1GB，而memcache只有1MB
 Redis Sentinel着眼于高可用，在master宕机时会自动将slave提升为master，继续提供服务。
 
 Redis Cluster着眼于扩展性，在单个redis内存不足时，使用Cluster进行分片存储。
+
+> 如何在亿级数据中找到有一定规则的key?
+
+1. keys [pattern], 当前操作会产生阻塞, 但可以同时返回所有key
+2. scan cursor [Match pattern] [Count count] [Type type]
+
+```sh
+keys a*
+scan 0 match user* count 10 type zset
+```

@@ -1,3 +1,5 @@
 # Linux basic questions
 
-> what is linux?
+> 几种常用命令
+
+grep, awk, find, sed
