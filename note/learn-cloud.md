@@ -791,7 +791,7 @@ ZuulFilter 调用链
 
 Zuul 有两种的激活模式：
 
-#### `@EnableZuulProxy`
+### `@EnableZuulProxy`
 
 导入`ZuulProxyMarkerConfiguration`，随后生成一个`ZuulProxyMarkerConfiguration.Marker()` Bean，这个Bean 作为`ZuulProxyAutoConfiguration` 的装配前置条件。
 
@@ -841,3 +841,42 @@ Zuul 有两种的激活模式：
     - `ZuulController`
       - `ZuulServlet`
         - `ZuulFilter`
+
+## Spring Cloud 消息整合
+
+### Spring Cloud Stream
+
+消息驱动的微服务应⽤
+
+- 简化编码
+- 统一抽象
+
+#### 主要概念
+
+1. 应用模型
+2. Binder抽象
+3. 持久化 发布/订阅支持
+4. 消费分组支持
+5. 分区支持
+
+#### 基本概念
+
+• Source：Stream 发送源
+  • 近义词：Producer、Publisher
+• Sink：Stream 接收器
+  • 近义词：Consumer、Subscriber
+• Processor
+
+#### 编程模型
+
+• 激活: @EnableBinding
+  • @Configuration
+  • @EnableIntegration
+• Source
+  • @Output
+  • MessageChannel
+• Sink
+  • @Input
+  • SubscribableChannel
+  • @ServiceActivator
+  • @StreamListener
