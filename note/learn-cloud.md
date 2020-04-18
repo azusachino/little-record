@@ -880,3 +880,165 @@ Zuul 有两种的激活模式：
   • SubscribableChannel
   • @ServiceActivator
   • @StreamListener
+
+## Spring Cloud JMS
+
+### ActiveMQ
+
+- 消息生产者: MessageProducer
+- 消息消费者: MessageConsumer
+- 消息连接: Connection
+- 消息会话: Session
+- 消息目的: Destination
+
+---
+
+- JmsTemplate
+- ActiveMQAutoConfiguration
+- ActiveMQProperties
+
+### ActiveMQ Stream Binder
+
+- 实现Binder SPI
+  - 实现Binder接口
+  - @Configuration标记Binder实现类
+  - 绑定实现到 META-INF/spring.binders
+
+```java
+private static void sendMessage() throws Exception {
+        // 创建 ActiveMQ 链接，设置 Broker URL
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+        // 创造 JMS 链接
+        Connection connection = connectionFactory.createConnection();
+        // 创建会话 Session
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        // 创建消息目的 - Queue 名称为 "TEST"
+        Destination destination = session.createQueue("TEST");
+        // 创建消息生产者
+        MessageProducer producer = session.createProducer(destination);
+        // 创建消息 - 文本消息
+        ActiveMQTextMessage message = new ActiveMQTextMessage();
+        message.setText("Hello,World");
+        // 发送文本消息
+        producer.send(message);
+
+        // 关闭消息生产者
+        producer.close();
+        // 关闭会话
+        session.close();
+        // 关闭连接
+        connection.close();
+    }
+```
+
+```java
+    private static void receiveMessage() throws Exception {
+
+        // 创建 ActiveMQ 链接，设置 Broker URL
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+        // 创造 JMS 链接
+        Connection connection = connectionFactory.createConnection();
+        // 启动连接
+        connection.start();
+        // 创建会话 Session
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        // 创建消息目的 - Queue 名称为 "TEST"
+        Destination destination = session.createQueue("TEST");
+        // 创建消息消费者
+        MessageConsumer messageConsumer = session.createConsumer(destination);
+        // 获取消息
+        Message message = messageConsumer.receive(100);
+
+        if (message instanceof TextMessage) {
+            TextMessage textMessage = (TextMessage) message;
+            System.out.println("消息消费内容：" + textMessage.getText());
+        }
+
+        // 关闭消息消费者
+        messageConsumer.close();
+        // 关闭会话
+        session.close();
+        // 关闭连接
+        connection.stop();
+        connection.close();
+    }
+```
+
+## Spring Cloud Event Bus
+
+- ApplicationEvent
+- ApplicationListener/@EventListener
+- ApplicationEventPublisher
+
+### Spring Cloud Stream -
+
+- activate
+  - @EnableBinding
+  - @Configuration
+  - @EnableIntegration
+- source
+  - @Output
+  - MessageChannel
+- sink
+  - @Input
+  - SubscribaleChannel
+  - @ServiceActivator
+  - @StreamListener
+
+### Spring Cloud Bus
+
+用于广播应用状态变更到分布式系统中各个关联的节点. 应用节点间不直接相互通讯, 而是通过消息总线来实现通知.
+
+- default
+  - AMQP(Rabiit MQ) `spring-cloud-starter-bus-amqp`
+  - Kafka `spring-cloud-starter-bug-kafka`
+- 总线事件端点
+  - 更新SpringEnvironment - EnvironmentBusEndpoint: /bus/env
+  - 刷新应用配置 - RefreshBusEndpoint: /bus/refresh
+- 总线事件传播
+  - 单点传播 - Endpoint: /bus/refresh?destination=${destination}:*
+  - 集群传播 - Endpoint: /bus/refresh?destination=${destination}:**
+- 总线事件跟踪 - TraceEndpoint: /trace
+- 总线内部事件
+  - EnvironmentChangeRemoteApplicationEvent
+  - RefreshRemoteApplicationEvent
+  - AckRemoteApplicationEvent
+- 自定义事件
+  - 事件扩展 - RemoteApplicationEvent
+  - 事件扫描 - @RemoteApplicationEventScan
+
+---
+
+- 自动装配 - BusAutoConfiguration
+- 本地事件/监听
+- Stream事件/监听
+- 事件匹配
+
+## Spring Cloud Sleuth
+
+- google dapper
+- spring-cloud-starter-sleuth
+- logging MDC
+
+---
+
+### Zipkin
+
+- spring-cloud-sleuth-zipkin-stream
+- spring-cloud-binder-rabbit
+- @EnableZipkinStreamServer
+- spring-cloud-sleuth
+
+## SpringCloud技术栈
+
+- preparation
+- 原生云应用
+- 分布式配置
+- 服务发现/注册
+- 负载均衡
+- 服务短路
+- 服务调用
+- 服务网关
+- 消息驱动整合
+- 消息总线
+- 分布式跟踪
