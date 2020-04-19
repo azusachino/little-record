@@ -87,6 +87,8 @@ SSL: 安全套接层(Security Sockets Layer)
 SERVER: 创建socket -> 绑定socket和端口号 -> 监听该端口号 -> 接收来自client的连接请求 -> 从socket中读取字段 -> 关闭socket
 CLIENT: 创建socket -> 连接指定计算机的端口 -> 向socket中写入信息 -> 关闭socket
 
+## Java面试题总览
+
 > http1.0和http1.1有什么区别?
 
 1. 缓存处理，在HTTP1.0中主要使用header里的If-Modified-Since,Expires来做为缓存判断的标准，HTTP1.1则引入了更多的缓存控制策略例如Entity tag，If-Unmodified-Since, If-Match, If-None-Match等更多可供选择的缓存头来控制缓存策略。

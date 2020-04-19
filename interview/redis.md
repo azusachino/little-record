@@ -156,3 +156,61 @@ Redis采用的I/O多路复用函数: epoll/kqueue/evport/select
 - integer
 - ziplist
 - object
+
+> 常见的缓存策略有哪些? 如何做到缓存与DB里的数据一致性, 你们项目中用到了什么缓存系统, 如何设计的
+
+TODO
+> 如何防止缓存击穿和雪崩
+
+TODO
+> 缓存数据过期后的更新如何设计
+
+TODO
+> redis的list结构相关的操作
+
+TODO
+> Redis的数据结构都有哪些?
+
+TODO
+> Redis的使用要注意什么, 讲讲持久化方式, 内存设置, 集群的应用和优劣势, 淘汰策略等
+
+TODO
+> Redis2和Redis3的区别, Redis3的内部通讯机制
+
+TODO
+> 当前redis有哪些玩法, 各自优缺点, 场景
+
+TODO
+> Memcache的原理, 哪些数据适合放在缓存里
+
+TODO
+> Redis和Memcache内存管理的区别
+
+TODO
+> Redis的并发竞争问题如何解决, 了解Redis事务的CAS操作吗?
+
+TODO
+> Redis的选举算法和流程是怎样的?
+
+TODO
+> Redis持久化的机制, AOF和RDB的区别
+
+TODO
+> Redis的集群是怎么同步数据的
+
+TODO
+> 知道哪些Redis的优化操作
+
+TODO
+> Redis的主从复制机制原理
+
+TODO
+> Redis的线程模型是什么
+
+TODO
+> 请思考一个方案, 设计一个可以控制缓存总体大小的自动适应的本地缓存
+
+TODO
+> 如何看待缓存的使用(本地缓存, 集中式缓存), 简述本地缓存和集中式缓存的优缺点, 本地缓存在并发使用时的注意事项
+
+TODO
