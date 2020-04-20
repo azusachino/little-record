@@ -25,6 +25,8 @@ TODO
 TODO
 > Spring如何维护它拥有的bean
 
+## Java面试题总览 - framework
+
 TODO
 > 简单讲讲tomcat结构以及其类加载流程, 线程模型等
 
@@ -181,6 +183,24 @@ TODO
 > 为什么选择netty
 
 TODO
+> 什么时TCP粘包, 拆包? 解决方案是什么?
+
+todo
+> netty的fashwheeltimer的用法, 实现原理, 是否出现过调用不够准时, 怎么解决?
+
+todo
+> netty的心跳处理在弱网下怎么办?
+
+todo
+> netty的通讯协议时什么样的?
+
+todo
+> springMVC用到的注解, 作用是什么? 原理
+
+todo
+> SpringBoot的启动机制
+
+todo
 > 提前加载一个class?
 
 ```java

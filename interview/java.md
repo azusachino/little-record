@@ -2,19 +2,47 @@
 
 > HashMap的源码，实现原理，JDK8中对HashMap做了怎样的优化
 
-TODO
+JDK8引入了红黑树
 > HaspMap扩容是怎样扩容的，为什么都是2的N次幂的大小
 
 为了保证hash散列平稳 hash & (tab.length-1)
-> HashMap，HashTable，ConcurrentHashMap的区别
-
-TODO
-> 极高并发下HashTable和ConcurrentHashMap哪个性能更好，为什么，如何实现的
+> HashMap，Hashtable，ConcurrentHashMap的区别
 
 Hashtable
+
+- 底层数组+链表实现，无论key还是value都不能为null，线程安全，实现线程安全的方式是在修改数据时锁住整个Hashtable，效率低
+- 初始size为11，扩容：newSize = oldSize*2+1
+- 计算index的方法：index = (hash & 0x7FFFFFFF) % tab.length
+
+HashMap(JDK7)
+
+- 底层数组+链表实现，可以存储null键和null值，线程不安全
+- 初始size为16，扩容：newSize = oldSize*2，size一定为2的n次幂
+- 扩容针对整个Map，每次扩容时，原来数组中的元素依次重新计算存放位置，并重新插入
+- 插入元素后才判断该不该扩容，有可能无效扩容（插入后如果扩容，如果没有再次插入，就会产生无效扩容）
+- 当Map中元素总数超过Entry数组的0.75F，触发扩容操作，为了减少链表长度，元素分配更均匀
+- 计算index方法：index = hash & (tab.length – 1)
+
+ConcurrentHashMap(JDK7)
+
+- 底层采用分段的数组+链表实现，线程安全
+- 通过把整个Map分为N个Segment，可以提供相同的线程安全，但是效率提升N倍，默认提升16倍。(读操作不加锁，由于HashEntry的value变量是 volatile的，也能保证读取到最新的值。)
+- Hashtable的synchronized是针对整张Hash表的，即每次锁住整张表让线程独占，ConcurrentHashMap允许多个修改操作并发进行，其关键在于使用了锁分离技术
+- 有些方法需要跨段，比如size()和containsValue()，它们可能需要锁定整个表而而不仅仅是某个段，这需要按顺序锁定所有段，操作完毕后，又按顺序释放所有段的锁
+- 扩容：段内扩容（段内元素超过该段对应Entry数组长度的75%触发扩容，不会对整个Map进行扩容），插入前检测需不需要扩容，有效避免无效扩容
+
+ConcurrentHashMap(JDK8)
+
+- Node数组+链表+红黑树的数据结构
+
+> 极高并发下HashTable和ConcurrentHashMap哪个性能更好，为什么，如何实现的
+
+HashTable使用一把锁处理并发问题，当有多个线程访问时，需要多个线程竞争一把锁，导致阻塞ConcurrentHashMap则使用分段，减少了锁的粒度
 > HashMap在高并发下如果没有处理线程安全会有怎样的安全隐患，具体表现是什么
 
-闭环, 数据覆盖
+多线程put时可能会导致get无限循环，具体表现为CPU使用率100%；
+
+原因：在向HashMap put元素时，会检查HashMap的容量是否足够，如果不足，则会新建一个比原来容量大两倍的Hash表，然后把数组从老的Hash表中迁移到新的Hash表中，迁移的过程就是一个rehash()的过程，多个线程同时操作就有可能会形成循环链表，所以在使用get()时，就会出现Infinite Loop的情况
 > java中四种修饰符的限制范围
 
 - private 私有
@@ -75,7 +103,7 @@ final传值
 2. @Transactional 注解属性 propagation 设置错误
 3. @Transactional 注解属性 rollbackFor 设置错误
 4. 同一个类中方法调用，导致@Transactional失效
-5. 异常被你的 catch“吃了”导致@Transactional失效
+5. 异常被 `catch` “吃了”导致@Transactional失效
 6. 数据库引擎不支持事务
 
 > java反射中，Class.forName和classloader的区别?
@@ -377,7 +405,9 @@ implements Serializable
 
 > java8的新特性
 
-- lambda
+- Objects, Collections
+- **lambda**
+- `default`
 - Stream
 - `java.time`
 - HashMap引入了红黑树
@@ -385,4 +415,4 @@ implements Serializable
 
 > 注解的原理
 
-注解底层也是使用反射实现的`method.getAnnotation(xxAnonotation.class)`
+注解底层是使用反射实现的`method.getAnnotation(xxAnonotation.class)`

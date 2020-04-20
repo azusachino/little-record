@@ -14,7 +14,7 @@
 - 1.5(2004) 泛型, 增强循环(迭代), 自动装箱与自动拆箱, 类型安全的枚举, 可变参数, 静态引入, 元数据(注解), Instrumentation
 - 1.6(2006) 支持脚本语言, JDBC 4.0 API, Java Compiler API, 可插拔注解, 支持Native PKI & Java GSS & Kerberos & LDAP, 继承Web Service
 - 1.7(2011) switch语句允许以字符串作为条件, 创建泛型对象时应用类型推断, 在一个语句块中捕捉多种异常, 支持动态语言, try-with-resource, 引入Java NIO.2, 数值类型可以用二进制字符串表示(下划线), 钻石型语法, null值自动处理
-- 1.8(2014) lambda表达式, 方法应用(FunctionInterface), 默认方法, 新工具, Stream API, DateTime API, Optional, Nashorn(JavaScript)引擎
+- 1.8(2014) lambda表达式, 方法引用(`FunctionInterface`), 默认方法(default), 新工具类(Objects,Collections), Stream API, `LocalDateTime` API, `Optional<T>`, Nashorn(JavaScript)引擎
 - 1.9(2017) 模块系统, REPL, HTTP2, 改进的JavaDoc, 多版本兼容jar包, 集合工厂方法, 私有接口方法, 进程API, 改进的StreamAPI, 改进try-with-resource, 改进的@Deprecated, 改进钻石操作符, 改进Optional类, 多分辨率图像API, 改进的CompletableFuture API, 轻量级的JSON API, 响应式流API
 - 1.10(2018) var局部变量类型推断, 统一的垃圾回收接口, G1垃圾回收器的并行完整垃圾回收
 - 1.11(2018) ...
@@ -23,7 +23,7 @@
 
 ## 双亲委派
 
-> 双亲委派：如果一个类加载器收到了加载某个类的请求,则该类加载器并不会去加载该类,而是把这个请求委派给父类加载器,每一个层次的类加载器都是如此,因此所有的类加载请求最终都会传送到顶端的启动类加载器;只有当父类加载器在其搜索范围内无法找到所需的类,并将该结果反馈给子类加载器,子类加载器会尝试去自己加载。  
+双亲委派：如果一个类加载器收到了加载某个类的请求,则该类加载器并不会去加载该类,而是把这个请求委派给父类加载器,每一个层次的类加载器都是如此,因此所有的类加载请求最终都会传送到顶端的启动类加载器;只有当父类加载器在其搜索范围内无法找到所需的类,并将该结果反馈给子类加载器,子类加载器会尝试去自己加载。  
 
 ### 加载器
 
@@ -36,7 +36,7 @@
 
 ### 原因
 
-因为在某些情况下父类加载器需要委托子类加载器去加载class文件。受到加载范围的限制，父类加载器无法加载到需要的文件，以Driver接口为例，由于Driver接口定义在jdk当中的，而其实现由各个数据库的服务商来提供，比如mysql的就写了MySQL Connector，那么问题就来了，DriverManager（也由jdk提供）要加载各个实现了Driver接口的实现类，然后进行管理，但是DriverManager由启动类加载器加载，只能记载JAVA_HOME的lib下文件，而其实现是由服务商提供的，由系统类加载器加载，这个时候就需要启动类加载器来委托子类来加载Driver实现，从而破坏了双亲委派。
+在某些情况下父类加载器需要委托子类加载器去加载class文件。受到加载范围的限制，父类加载器无法加载到需要的文件，以Driver接口为例，由于Driver接口定义在jdk当中，而其实现由各个数据库的服务商来提供，比如mysql就写了MySQL Connector，那么问题就来了，DriverManager（也由jdk提供）要加载各个实现了Driver接口的实现类，然后进行管理，但是DriverManager由启动类加载器加载，只能记载JAVA_HOME的lib下文件，而其实现是由服务商提供的，由系统类加载器加载，这个时候就需要启动类加载器来委托子类来加载Driver实现，从而破坏了双亲委派。
 
 ### 实现
 
@@ -59,7 +59,7 @@
 - @Transactional 可以作用在接口、类、类方法。
   - 作用于类：当把@Transactional 注解放在类上时，表示所有该类的public方法都配置相同的事务属性信息。
   - 作用于方法：当类配置了@Transactional，方法也配置了@Transactional，方法的事务会覆盖类的事务配置信息。
-  - 作用于接口：不推荐这种使用方法，因为一旦标注在Interface上并且配置了Spring AOP 使用CGLib动态代理，将会导致@Transactional注解失效
+  - 作用于接口：不推荐这种使用方法，因为一旦标注在接口上并且配置了Spring AOP使用CGLib动态代理，将会导致@Transactional注解失效
 
 ### 有哪些属性
 
@@ -189,7 +189,7 @@
     - 强封装的实施与精确的模块依赖声明使得大型应用和框架更好的维护
     - 安全提升
     - 增快应用模块中类型检测的速度, 提升应用性能
-    - 搜身JDK以及SE的体积, 有利于在小型计算设备使用和云端部署
+    - 瘦身JDK以及SE的体积, 有利于在小型计算设备使用和云端部署
   - 收益
     - 提升平台伸缩性
     - 提升平台完整性
@@ -201,7 +201,7 @@
   - 模块结构
     - 模块描述文件
     - 平台模块
-    - 模块 artifacts
+    - 模块artifacts
 - 基本特性
   - 并非所有的 `public` Class 都可以被运用，需要 `exports` 来配合
   - `exports` 所配置的 `package` 下必须要有 Class
@@ -304,10 +304,10 @@
 
 ### 函数式接口设计
 
-- Supplier - T get()
-- Consumer - void accept()
-- Function - R apply(T t)
-- Predicate - boolean test(T t)
+- Supplier - `T get()`
+- Consumer - `void accept()`
+- Function - `R apply(T t)`
+- Predicate - `boolean test(T t)`
 
 ### 函数式在框架中的运用
 
@@ -318,9 +318,9 @@
 
 ### Stream API 设计
 
-- 转换: Stream#map(Function)
-- 过滤: Stream#filter(Predicate)
-- 排序: Stream#sorted()/(Comparator)
+- 转换: `Stream#map(Function)`
+- 过滤: `Stream#filter(Predicate)`
+- 排序: `Stream#sorted()/(Comparator)`
 - 串行: Stream(默认类型)
 - 并行: Stream#parallel() / isParallel()
 - Collect, 分组, 聚合, flatMap, reduce
@@ -537,7 +537,7 @@ Collections, Arrays, BitSet, EnumSet
 
 - 同步: 最常见的编程手段, 指任务发起方和执行方在同一线程中完成
 - 异步: 常见的提升吞吐手段, 指任务发起方和执行方在不同线程中完成
-- 非阻塞: 一种编程模型, 由通知状态被动的回调执⾏，同步或异步执⾏均可.
+- 非阻塞: 一种编程模型, 由通知状态被动的回调执⾏，同步或异步执⾏均可
 
 #### 线程状态
 
@@ -561,7 +561,7 @@ Collections, Arrays, BitSet, EnumSet
 stop会unlock Monitor, 导致了lock块中数据不再安全
 > 如何中止一个线程
 
-- private volatile boolean stop
+- private volatile boolean stop(开关)
 - 抛出异常
 
 > 如何理解线程“中止”方法
@@ -655,7 +655,7 @@ class X {
 
 - CountDownLatch -> latch.countdown() -> latch.await()
 - CyclicBarrier -> cb.await() -> cb.reset()
-- Semaphore -> s.acquire()
+- Semaphore -> s.acquire() -> s.release()
 
 ### Java 线程池
 

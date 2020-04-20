@@ -157,6 +157,8 @@ Redis采用的I/O多路复用函数: epoll/kqueue/evport/select
 - ziplist
 - object
 
+## java面试题总览
+
 > 常见的缓存策略有哪些? 如何做到缓存与DB里的数据一致性, 你们项目中用到了什么缓存系统, 如何设计的
 
 TODO

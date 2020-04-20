@@ -229,6 +229,71 @@ ApplicationListener & ApplicationEvent
 
 ### 9.运行阶段
 
+`AbstractApplicationContext#refresh()`
+
+```java
+ @Override
+ public void refresh() throws BeansException, IllegalStateException {
+  synchronized (this.startupShutdownMonitor) {
+   // Prepare this context for refreshing.
+   prepareRefresh();
+
+   // Tell the subclass to refresh the internal bean factory.
+   ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+
+   // Prepare the bean factory for use in this context.
+   prepareBeanFactory(beanFactory);
+
+   try {
+    // Allows post-processing of the bean factory in context subclasses.
+    postProcessBeanFactory(beanFactory);
+
+    // Invoke factory processors registered as beans in the context.
+    invokeBeanFactoryPostProcessors(beanFactory);
+
+    // Register bean processors that intercept bean creation.
+    registerBeanPostProcessors(beanFactory);
+
+    // Initialize message source for this context.
+    initMessageSource();
+
+    // Initialize event multicaster for this context.
+    initApplicationEventMulticaster();
+
+    // Initialize other special beans in specific context subclasses.
+    onRefresh();
+
+    // Check for listener beans and register them.
+    registerListeners();
+
+    // Instantiate all remaining (non-lazy-init) singletons.
+    finishBeanFactoryInitialization(beanFactory);
+
+    // Last step: publish corresponding event.
+    finishRefresh();
+   } catch (BeansException ex) {
+    if (logger.isWarnEnabled()) {
+     logger.warn("Exception encountered during context initialization - " +
+       "cancelling refresh attempt: " + ex);
+    }
+
+    // Destroy already created singletons to avoid dangling resources.
+    destroyBeans();
+
+    // Reset 'active' flag.
+    cancelRefresh(ex);
+
+    // Propagate exception to caller.
+    throw ex;
+   } finally {
+    // Reset common introspection caches in Spring's core, since we
+    // might not ever need metadata for singleton beans anymore...
+    resetCommonCaches();
+   }
+  }
+ }
+```
+
 - 创建: 应用上下文, Environment
 - 失败: 故障分析报告
 - 回调: CommandLineRunner, ApplicationRunner
@@ -253,7 +318,7 @@ ApplicationListener & ApplicationEvent
 - Spring 应用正在运行
 - Spring 应用运行失败
 
-Spring Boot 事件
+Spring Boot 事件 `ApplicationListener<xxxEvent>`
 
 - ApplicationStartingEvent
 - ApplicationEnvironmentPreparedEvent
@@ -263,7 +328,8 @@ Spring Boot 事件
 - ApplicationFailedEvent
 
 ---
-拓展SpringBoot注意Ordered接口(加载顺序)
+
+拓展SpringBoot: 注意`Ordered` | `@Order`接口 (加载顺序)
 
 ## 第四章 Web MVC 核心
 
@@ -376,11 +442,11 @@ public class HelloWorldController {
 - 理解HTTP Accept 请求头 与  View Content-Type 匹配
 - 理解最佳  View  匹配规则
   - ViewResolver  优先规则
-    - 自定义  InternalResourceViewResolver
+    - 自定义 - InternalResourceViewResolver
     - ThymeleafViewResolver
-    - 默认  InternalResourceViewResolver
+    - 默认 - InternalResourceViewResolver
   - MediaType  匹配规则
-    - Accept 头策略(Accept:text/html)
+    - Accept头策略(Accept:text/html)
     - 请求参数策略(format=text/xml)
 
 ## 第六章 Web MVC REST 应用
@@ -461,11 +527,11 @@ REST = RESTful = Representational State Transfer，is one way of providing inter
 
 Servlet组件注册
 
-- Servlet
+- *Servlet
   - web.xml -> `<servlet> + <servlet-mapping>`
   - `@WebServlet`
   - `ServletContext#addServlet`
-- Filter
+- *Filter
   - web.xml -> `<filter> + <filter-mapping>`
   - `@WebFilter`
   - `ServletContext#addFilter`

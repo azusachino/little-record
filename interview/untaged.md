@@ -6,7 +6,7 @@ True (同为常量池 指针)
 > HashMap里的hashcode方法和equal方法什么时候需要重写？如果不重写会有什么后果
 
 严重的hash冲突 (key不是基础类型的时候)
-> ArrayList和LinkedList底层实现有什么差别？它们各自适用于哪些场合？对此大家也可以
+> ArrayList和LinkedList底层实现有什么差别？它们各自适用于哪些场合
 
 了解下相关底层代码。
 > volatile关键字有什么作用? (线程内存和堆内存的差)
@@ -35,16 +35,16 @@ public static List<String> findPrice4(String product){
 Heap
 > Java的静态代理和动态代理有什么差别？最好结合底层代码
 
-啊
+todo
 > JVM数据存储模型,新生代 年老代的构造
 
 eden + 2survivor
 > java GC算法, 什么时候会触发minor gc, 什么时候触发full GC
 
-啊
+todo
 > GC 可达性分析中哪些算是GC ROOT
 
-啊
+todo
 > 你熟悉的JVM调优参数,使用过哪些调优工具
 
 jmap, jstat

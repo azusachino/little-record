@@ -2,7 +2,7 @@
 
 ## 1.线程创建
 
->有哪些方法创建线程
+> 有哪些方法创建线程
 
 创建有且只有一个new Thread()
 运行线程有两种 -> Runnable.run() & Thread.start()
@@ -15,7 +15,7 @@ public static void main(String[] args) {
 
 ```
 
->如何创建进程
+> 如何创建进程
 
 ```java
 public static void main(String[] args) {
@@ -26,7 +26,7 @@ public static void main(String[] args) {
 }
 ```
 
->如何销毁一个线程
+> 如何销毁一个线程
 
 ```java
 public static void main(String[] args) {
@@ -45,7 +45,7 @@ public static void main(String[] args) {
 
 ## 2.线程执行
 
->如何通过JAVA API启动线程
+> 如何通过JAVA API启动线程
 
 ```java
 thread.start()
@@ -135,7 +135,7 @@ private static void threadStartAndWait(Thread t) {
 
 ## 3.线程中止
 
->如何停止一个线程? (没办法停止线程, 只能停止逻辑)
+> 如何停止一个线程? (没办法停止线程, 只能停止逻辑)
 
 ```java
 public static void main(String[] args) {
@@ -177,7 +177,7 @@ public static void action() {
 }
 ```
 
->为什么JAVA放弃了Thread的stop方法
+> 为什么JAVA放弃了Thread的stop方法
 
 Inherently unsafe, 为了防止死锁, 状态不一致
 Stopping a thread causes it to unlock all the monitors that it has locked.(The monitors are unlocked as the ThreadDeath exception propagates up the stack)
@@ -190,7 +190,7 @@ Stopping a thread causes it to unlock all the monitors that it has locked.(The m
 
 ## 4.线程异常
 
->当线程遇到异常时, 到底发生了什么?
+> 当线程遇到异常时, 到底发生了什么?
 
 ```java
 public static void main(String[] args){
@@ -200,13 +200,13 @@ public static void main(String[] args){
     t1.start();
     t1.join();
 
-    // java里的THread是一个包装, 由GC做垃圾回收
+    // java里的Thread是一个包装, 由GC做垃圾回收
     // JVM Thread 可能是一个OS Thread, JVM管理, 当线程执行完毕(正常或异常)
     System.out.print(t1.isAlive()); // false (t1的对象还在, 线程已经终止了)
 }
 ```
 
->当线程遇到异常时, 如何捕获?
+> 当线程遇到异常时, 如何捕获?
 
 ```java
 public static void main(String[] args){
@@ -223,7 +223,7 @@ public static void main(String[] args){
 }
 ```
 
->当线程遇到异常时, ThreadPoolExecutor如何捕获异常?
+> 当线程遇到异常时, ThreadPoolExecutor如何捕获异常?
 
 ```java
 public static void main(String[] args){
@@ -236,7 +236,7 @@ public static void main(String[] args){
         protected void afterExecute(Runnable r, Throwable t) {
             System.out.printf("Thread [%s] runs with err, %s", Thread.currentThread().getName(), t.getMessage());
         }
-    }
+    };
     service.execute(()-> {
         throw new RuntimeException("eee");
     });
@@ -250,11 +250,11 @@ public static void main(String[] args){
 
 ## 5.线程状态
 
->1.线程有哪些状态, 分别代表什么含义
+> 1.线程有哪些状态, 分别代表什么含义
 
 NEW, RUNNABLE, BLOCKED, WAITTING, TIMED_WAITING, TERMINATED;
 
->2.如何获取当前JVM所有的线程状态
+> 2.如何获取当前JVM所有的线程状态
 
 jps获取java线程id -> jstack + pid
 
@@ -268,7 +268,7 @@ public static void main(String[] args) {
 }
 ```
 
->3.如何获取线程的资源消费情况
+> 3.如何获取线程的资源消费情况
 
 ```java
 public static void main(String[] args) {
@@ -285,39 +285,49 @@ public static void main(String[] args) {
 
 ## 6.线程同步
 
->请说明synchronized关键字在修饰方法和代码块中的作用
+> 请说明synchronized关键字在修饰方法和代码块中的作用
 
 基本上没什么区别  
 看字节码(class)  
 方法 -> ACC_SYNCHRONIZED  
 代码块 -> monitorenter, monitorexit
 
->请说明synchronized关键字与ReentrantLock之间的关系
+> 请说明synchronized关键字与ReentrantLock之间的关系
 
 - 都可以重进入
+- synchronized是JVM实现
+- ReentrantLock是API实现
 
->请解释偏向锁对synchronized与ReentrantLock的价值
+> 请解释偏向锁对synchronized与ReentrantLock的价值
 
 偏向锁对ReentrantLock没有影响
 
 ## 7.线程通讯
 
->为什么wait()和notify()以及notifyAll()方法属于Object, 并解释它们的作用
+> 为什么wait()和notify()以及notifyAll()方法属于Object, 并解释它们的作用
 
-待查询
+wait()暂停的是持有锁的对象，所以想调用wait()必须为：对象.wait();
 
->为什么Object wait()和notify()以及notifyAll()方法必须在synchronized之中执行
+notify()唤醒的是等待锁的对象，调用:对象.notify();
 
-wait() 获得锁的对象, 释放锁, 当前线程又被阻塞 ->类似于 LockSupport park() (需显示唤醒)
+简单说：因为synchronized中的这把锁可以是任意对象，所以任意对象都可以调用wait()和notify()；所以wait和notify属于Object
+
+专业说：因为这些方法在操作同步线程时，都必须要标识它们操作线程的锁，只有同一个锁上的被等待线程，可以被同一个锁上的notify唤醒，不可以对不同锁中的线程进行唤醒
+
+也就是说，等待和唤醒必须是同一个锁。而锁可以是任意对象，所以可以被任意对象调用的方法是定义在object类中
+
+> 为什么Object wait()和notify()以及notifyAll()方法必须在synchronized之中执行
+
+wait() 获得锁的对象, 释放锁, 当前线程又被阻塞 -> 类似于 LockSupport park() (需显示唤醒)
 notify() 已经获得锁, 唤起一个被阻塞的线程 -> unpark()
 
->请通过Java代码模拟实现wait()和notify()以及notifyAll()的语义
+> 请通过Java代码模拟实现wait()和notify()以及notifyAll()的语义
 
-待实现
+todo
 
 ## 8.线程退出
 
->当主线程退出时, 守护子线程会执行完毕吗
+> 当主线程退出时, 守护子线程会执行完毕吗
 
 主线程退出时, 守护子线程不一定会执行 (和执行时间有关系,但非唯一评判标准)
 
@@ -331,7 +341,7 @@ public static void main(String[] args) {
 }
 ```
 
->请说明Shutdown hook线程的使用场景, 以及如何触发执行
+> 请说明Shutdown hook线程的使用场景, 以及如何触发执行
 
 ```java
 public static void main(String[] args) {
@@ -342,7 +352,7 @@ public static void main(String[] args) {
 }
 ```
 
->如何确保主线程退出前, 所有线程执行完毕
+> 如何确保主线程退出前, 所有线程执行完毕
 
 ```java
 public static void main(String[] args) {
@@ -369,13 +379,13 @@ public static void main(String[] args) {
 
 ## 9.线程安全集合
 
->请在Java集合框架以及J.U.C框架中各举出List,Set以及Map的实现
+> 请在Java集合框架以及J.U.C框架中各举出List,Set以及Map的实现
 
 - ArrayList, LinkedList,CopyOnWriteArrayList
 - HashSet, TreeSet, CopyOnWriteArraySet,ConcurrentListSet
 - HashMap, TreeMap, ConcurrentHashMap
 
->如何将普通List, Set以及Map转化为线程安全对象
+> 如何将普通List, Set以及Map转化为线程安全对象
 
 ```java
 public static void main(String[] args) {
@@ -396,7 +406,7 @@ public static void main(String[] args) {
 }
 ```
 
->如何在Java9+实现以上问题
+> 如何在Java9+实现以上问题
 
 List.of() // return immutable object
 
@@ -449,17 +459,16 @@ private static class ConcurrentHashSet<E> implements HashMap<E> {
     }
 
     //skip all override functions
-
 }
 ```
 
 > 当Set.iterator()方法返回iterator对象后, 能否在其迭代中, 给Set对象添加新的元素
 
-不一定, 看具体实现, 如果是Concurrent
+不一定, 看具体实现
 
 ## 12.线程安全MAP
 
-> 请说明Hashtable, Hash Map 以及ConcurrentHashMap的区别
+> 请说明Hashtable, HashMap 以及ConcurrentHashMap的区别
 
 - Hashtable
   - 不允许key, value为空
@@ -486,7 +495,7 @@ private static class ConcurrentHashSet<E> implements HashMap<E> {
 > 请说明BlockingQueue和Queue的区别
 
 - BlockingQueue继承了Queue
-- 存取 都有阻塞处理
+- offer, poll 都有阻塞处理
 
 > 请说明LinkedBlockingQueue与ArrayBlockingQueue的区别
 
@@ -814,7 +823,7 @@ public static void main(String[] args) {
 > 在变量原子操作时, Atomic*CAS操作比synchronized关键字, 哪个更重
 
 - 偏向锁 < CAS < 重锁(完全互斥)
-- CAS操作也是相对重的操作, 他也是实现synchronized 瘦锁(thin lock)的关键
+- CAS操作也是相对重的操作, 也是实现synchronized 瘦锁(thin lock)的关键
 - 偏向锁就是避免CAS (Compare And Set/Swap)操作
 - 当没有锁竞争时, CAS比synchronzed重
 - 当竞争多时, 看情况
@@ -822,6 +831,8 @@ public static void main(String[] args) {
 > Atomic*CAS的底层是如何实现的
 
 - compare and exchange
+
+## Java面试题总览
 
 > 多线程的几种实现方式, 什么是线程安全?
 
@@ -973,11 +984,16 @@ newFixedThreadPool 创建一个定长线程池，可控制线程最大并发数�
 
 > 假如有一个第三方接口, 有很多的线程去调用获取数据, 现在规定每秒钟最多有十个线程同时调用它, 如何做到?
 
-AOP进行拦截
+AOP进行拦截 (令牌桶, 漏桶)
 
 > spring的controller是单例还是多例, 怎么保证并发的安全?
 
-TODO
+controller默认是SINGLETOn单例模式: 不安全, 导致属性重复使用
+
+1. 不要在controller中定义成员变量
+2. 万一必须要定义一个非静态成员变量时候，则通过注解@Scope(“prototype”)，将其设置为多例模式
+3. 在Controller中使用ThreadLocal变量
+
 > 用三个线程按顺序循环打印abc三个字母, 比如abcabcabc
 
 Lock加Condition
@@ -994,19 +1010,89 @@ ThreadLocal用完要remove, 否则可能会发生内存泄漏
 
 > 有哪些无锁的数据结构, 他们实现的原理是什么?
 
-TODO
+ArrayList, LinkedList, HashSet, HashMap
 > 讲讲java同步机制的wait和notify
 
-TODO
+Obj.wait()，与Obj.notify()必须要与synchronized(Obj)一起使用，也就是wait,与notify是针对已经获取了Obj锁进行操作，从语法角度来说就是Obj.wait(),Obj.notify必须在synchronized(Obj){...}语句块内。从功能上来说wait就是说线程在获取对象锁后，主动释放对象锁，同时本线程休眠。直到有其它线程调用对象的notify()唤醒该线程，才能继续获取对象锁，并继续执行。相应的notify()就是对对象锁的唤醒操作。但有一点需要注意的是notify()调用后，并不是马上就释放对象锁的，而是在相应的synchronized(){}语句块执行结束，自动释放锁后，JVM会在wait()对象锁的线程中随机选取一线程，赋予其对象锁，唤醒线程，继续执行。这样就提供了在线程间同步、唤醒的操作。Thread.sleep()与Object.wait()二者都可以暂停当前线程，释放CPU控制权，主要的区别在于Object.wait()在释放CPU同时，释放了对象锁的控制。
 > CAS机制是什么, 如何解决ABA问题
 
-偏移量
+比较和交换（Compare And Swap）是用于实现多线程同步的原子指令。 它将内存位置的内容与给定值进行比较，只有在相同的情况下，将该内存位置的内容修改为新的给定值。 这是作为单个原子操作完成的。 原子性保证新值基于最新信息计算; 如果该值在同一时间被另一个线程更新，则写入将失败
 
-> 多线程如果线程挂了怎么办?
+用`AtomicStampedReference`/`AtomicMarkableReference`解决ABA问题
 
 > CountDownLatch和CylicBarrier的内部原理和用法, 以及相互之间的差别?(countdown(), await())
 
+CyclicBarrier可重用
 > 对AQS了解多少, 讲讲加锁和解锁的流程, 独占锁和公平锁加锁有什么不同?
+
+```java
+   public final void acquire(int arg) {
+        if (!tryAcquire(arg) &&
+            acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+            selfInterrupt();
+    }
+    public final boolean release(int arg) {
+        if (tryRelease(arg)) {
+            Node h = head;
+            if (h != null && h.waitStatus != 0)
+                unparkSuccessor(h);
+            return true;
+        }
+        return false;
+    }
+
+    private void doAcquireInterruptibly(int arg)
+        throws InterruptedException {
+        final Node node = addWaiter(Node.EXCLUSIVE);
+        try {
+            for (;;) {
+                final Node p = node.predecessor();
+                if (p == head && tryAcquire(arg)) {
+                    setHead(node);
+                    p.next = null; // help GC
+                    return;
+                }
+                if (shouldParkAfterFailedAcquire(p, node) &&
+                    parkAndCheckInterrupt())
+                    throw new InterruptedException();
+            }
+        } catch (Throwable t) {
+            cancelAcquire(node);
+            throw t;
+        }
+    }
+
+
+        /**
+     * Acquires in shared uninterruptible mode.
+     * @param arg the acquire argument
+     */
+    private void doAcquireShared(int arg) {
+        final Node node = addWaiter(Node.SHARED);
+        boolean interrupted = false;
+        try {
+            for (;;) {
+                final Node p = node.predecessor();
+                if (p == head) {
+                    int r = tryAcquireShared(arg);
+                    if (r >= 0) {
+                        setHeadAndPropagate(node, r);
+                        p.next = null; // help GC
+                        return;
+                    }
+                }
+                if (shouldParkAfterFailedAcquire(p, node))
+                    interrupted |= parkAndCheckInterrupt();
+            }
+        } catch (Throwable t) {
+            cancelAcquire(node);
+            throw t;
+        } finally {
+            if (interrupted)
+                selfInterrupt();
+        }
+    }
+```
 
 > 使用synchronized修饰静态方法和非静态方法有什么区别?
 
@@ -1014,20 +1100,54 @@ TODO
 
 > 简述ConcurrentLinkedQueue和LinkedBlockingQueue的用处和不同之处
 
+阻塞队列(Blocking)
 > 导致线程死锁的原因? 怎么解除线程死锁?
 
+两个对象都在等待对方释放锁
 > 非常多个线程(可能是不同机器), 相互之间需要等待协调,,才能完成某种工作, 问怎么设计这种协调方案
 
 分布式锁
 > 用过读写锁吗? 原理是什么? 一般在什么场景下用
 
 读锁是shared, 写锁exclusive
-28. 开启多个线程, 如何保证顺序执行, 有哪几种实现方式, 或者如何保证多个线程都执行完成后再拿到结果
+> 开启多个线程, 如何保证顺序执行, 有哪几种实现方式, 或者如何保证多个线程都执行完成后再拿到结果
 
 1. synchronized
 2. lock
 3. 公平
 
-Future, FutureTask, CompletableFuture, countdownlatch
+Future, FutureTask, CompletableFuture, CountDownLatch
 
 > 延迟队列的实现方式, delayQueue和时间轮算法的异同
+
+封装了PriorityQueue + 实现Delayed接口
+
+- 定时器轮询遍历数据库记录
+- JDK的DelayQueue
+- JDK ScheduledExecutorService
+- 时间轮（netty）
+- 利用quartz等定时任务
+- Redis的ZSet实现
+- rabbitMq实现延时队列
+
+## other questions
+
+> volatile关键字的作用, 原理
+
+保证cpu对变量的可见性
+lock-free 适合做开关, java关键字 volatile
+CAS适合做非阻塞数据交换
+LOCK是一系列的原子操作
+
+> synchronized关键字的用法, 优缺点
+
+todo
+> Lock接口有哪些实现类, 使用场景是什么
+
+ReentrantLock, ReentrantReadWriteLock
+> 可重入锁的用处及实现原理, 写时复制的过程, 读写锁, 分段锁（ConcurrentHashMap中的segment）
+
+acquire(int n)
+> 悲观锁, 乐观锁, 优缺点, CAS有什么缺陷, 该如何解决
+
+CAS ABA问题
