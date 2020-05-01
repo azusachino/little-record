@@ -522,7 +522,7 @@ set hello redis
 
 #### 故障转移
 
-1. 多个sentinel发现并确定master有问题
+1. 多个sentinel发现并确定master有问题 客观下线
 2. 选举出一个sentinel作为领导
 3. 选出一个slave作为master
 4. 通知其他slave成为新的master的slave

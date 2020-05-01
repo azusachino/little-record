@@ -219,7 +219,7 @@ Spring makes it easy to create java enterprise applications. It provides everyth
 - 易测试性
 - 更好的面向对象
 
-## Spring IoC容器钙素
+## Spring IoC容器概述
 
 ### 1.Spring IoC依赖查找
 
