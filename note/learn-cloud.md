@@ -27,12 +27,12 @@ SpringCloud为开发人员提供了快速构建分布式系统的一些通用模
 
 ### Bootstrap 上下文
 
-- Bootstrap 上下⽂文是 Spring Cloud 新引⼊入的，与传统 Spring 上下⽂文相同，系 ConfigurableApplicationContext 实例例，由 BootstrapApplicationListener 在监听 ApplicationEnvironmentPreparedEvent 时创建。
+- Bootstrap 上下文是 Spring Cloud 新引⼊的，与传统 Spring 上下⽂相同， ConfigurableApplicationContext 实例，由 BootstrapApplicationListener 在监听 ApplicationEnvironmentPreparedEvent 时创建。
   - ApplicationEvent / ApplicationListener
-- SpringApplication 是 Spring Boot 引导启动类，与 Spring 上下⽂文、事件、监听器器以及环境等组件 关系紧密，其中提供了了控制 Spring Boot 应⽤特征的⾏为方法。
+- SpringApplication 是 Spring Boot 引导启动类，与 Spring 上下⽂、事件、监听器以及环境等组件 关系紧密，其中提供了控制 Spring Boot 应⽤特征的⾏为方法。
   - SpringApplicationRunListener
 - Spring Boot context
-  - ⾮非 Web 应⽤用:AnnotationConfigApplicationContext
+  - 非 Web 应⽤用:AnnotationConfigApplicationContext
   - Web 应⽤用:AnnotationConfigEmbeddedWebApplicationContext
 - 先于ApplicationContext加载
 
