@@ -514,3 +514,29 @@ else:
   - 重叠子问题
   - 最优子结构
   - 状态转移方程
+
+## A* Search
+
+### model
+
+```py
+def a_star_search(graph, start, end):
+    pq = collections.priority_queue()
+    pq.append([start])
+    visited.add(start)
+
+    while pq:
+        node = pq.pop()
+        visited.add(node)
+
+        # main proces
+        process(node)
+
+        nodes = generate_related_nodes(node)
+        unvisited = [node for node in nodes if node not in visited]
+        pq.push(unvisited)
+```
+
+#### 启发式函数: h(n)
+
+用来评价哪些节点最有希望的是一个我们要找的结点, h(n)会返回一个肺腑实数, 也可以认为是从结点n的目标结点路径的估计成本.
