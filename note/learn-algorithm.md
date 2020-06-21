@@ -638,3 +638,7 @@ def a_star_search(graph, start, end):
   - 计数排序
   - 桶排序
   - 基数排序
+
+## 字符串算法
+
+string in python & java is immutable
