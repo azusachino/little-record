@@ -642,3 +642,16 @@ def a_star_search(graph, start, end):
 ## 字符串算法
 
 string in python & java is immutable
+
+### 字符串匹配算法
+
+1. brute force
+2. Rabin-Karp
+3. KMP算法
+
+#### Rabin-Karp
+
+1. 假设子串的长度为M(path), 目标字符串的长度位N
+2. 计算子串的hash值
+3. 计算目标字符串中每个长度为M的子串的hash值(共需计算N-M+1次)
+4. 比较hash值: 如果hash值不同, 字符串必然不匹配, 如果hash值相同, 还需要使用朴素算法再次判断
