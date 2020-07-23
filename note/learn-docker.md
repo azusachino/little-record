@@ -166,3 +166,169 @@ CMD ["mongod"]
 
 docker push azusachino/hello:latest => 推送到docker hub(需要登陆)
 
+```Dockerfile
+FROM python:2.7
+LABEL maintainer = "AzusaChino<azusachino@yahoo.com>"
+RUN pip install flask
+COPY app.py /app/
+
+WORKDIR /app
+EXPOSE 5000
+CMD ["python", "app.py"]
+```
+
+- docker exec -it 'hash' /bin/bash => 在运行的container中执行命令
+
+```Dockerfile
+FROM ubuntu
+RUN apt-get update && apt-get install -y stress
+ENTRYPOINT ["/usr/bin/stress"]
+CMD []
+```
+
+> docker run -it az/ubuntu-stress -vm 1 --verbose => 直接利用CMD执行命令
+
+---
+
+- docker run --memory = 200M 限定container的内存暂用
+- docker run --cpu-shares=10 --name=test1 xx/xx --cpu 1 => cpuShares 权重
+
+## Docker Network
+
+- 单机
+  - Bridge Network
+  - Host Network
+  - None Network
+- 联机
+  - Overlay Network
+
+### 网络基础概念
+
+- 基于数据包的通信方式
+- IP地址和路由
+- 公有IP和私有IP
+  - A类 10.0.0.0 -- 10.255.255.255 (10.0.0.0/8)
+  - B类 172.16.0.0 -- 172.31.255.255 (172.16.0.0/12)
+  - C类 192.168.0.0 -- 192.168.255.255 (192.168.0.0/16)
+- 网络地址转换NAT
+- ping 检查ip的可达性
+- telnet 验证服务的可用性
+
+---
+
+docker network ls
+
+## Docker的持久化存储和数据共享
+
+- 基于本地文件系统的Volume
+- 基于plugin的Volume (NAS, AWS)
+
+### Volume的类型
+
+- 受管理的data volume, 由docker后台自动创建
+- 绑定挂载的volume, 具体挂载位置可以由用户指定
+
+---
+
+- docker run -d --name mysql_test -e MYSQL_ALLOW_EMPTY_PASSWORD = true mysql
+- docker volume ls => 查看volume信息
+- docker volume inspect 'vol_id'
+
+```Dockerfile
+VOLUME ["/var/lib/mysql"]
+```
+
+- docker run -v mysql:/var/lib/mysql
+
+```Dockerfile
+FROM nginx:latest
+WORKDIR /usr/share/nginx/html
+COPY index.html index.html
+```
+
+- docker run -d -p 80:80 --name web az/nginx-html
+- docker run -d -p 80:80 -v $(pwd):/usr/share/nginx/html --name web az/nginx-html => 将当前目录映射到xx目录
+- docker exec -it web /bin/bash
+
+## Docker Composer => 批处理
+
+- docker compose是一个工具
+- 通过yml文件定义多容器的docker应用
+- 通过一条命令根据yml文件的定义去创建或者管理多个容器
+
+### Services
+
+- 一个service代表一个container, 可以是拉取的, 也可以是本地build的
+- service的启动类似docker run, 可以指定network和volume
+
+```yml
+services:
+  db:
+    image: postgres:9.4
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+    networks:
+    - back-tire
+```
+
+等价于 `docker run -d --network back-tier -v db-data:/var/lib/postgresql/data postgres:9.4`
+
+```yaml
+services:
+  worker:
+    build: ./worker
+    links:
+      - db
+      - redis
+    networks:
+      - back-tier
+```
+
+完整示例
+
+```yml
+version: '3'
+
+services:
+  wordpress:
+    image: wordpress
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_PASSWORD: root
+    networks:
+      - my-bridge
+
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - my-bridge
+
+volumes:
+  mysql-data:
+
+networks:
+  my-bridge:
+    driver: bridge
+
+```
+
+### 安装docker-compose
+
+`sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+
+`sudo chmod +x /usr/local/bin/docker-compose`
+
+### 相关命令
+
+- docker-compose up => create and start containers
+- docker-compose -f docker-compose.yml up
+- docker-compose stop => stop services
+- docker-compose down => stop and remove all related folders
+- docker-compose scale web=3 -d => set number of containers to run for a service
