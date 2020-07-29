@@ -332,3 +332,18 @@ networks:
 - docker-compose stop => stop services
 - docker-compose down => stop and remove all related folders
 - docker-compose scale web=3 -d => set number of containers to run for a service
+
+## Docker Swarm (容器编排)
+
+raft协议
+
+- Manager
+- Worker
+
+### Swarm相关命令
+
+```bash
+docker swarm init --advertise-addr=192.168.205.10
+
+docker node ls
+```
