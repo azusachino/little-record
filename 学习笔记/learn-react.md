@@ -6,12 +6,12 @@
 - 2013年推出
 - 函数式编程
 - 健全的文档和社区
-- React 16 (Fiber)
+- React 16 Fiber
 
 ## 脚手架
 
 - `npm install -g create-react-app`
-- `npx create-react-app my-app`
+- `npx create-react-app my-app` `--template typescript`
 
 ## 工程目录简介
 
@@ -23,7 +23,7 @@
   - scripts
   - dependencies
 - public
-  - index.html SPA的page
+  - index.html `SPA`的page
   - favicon.ico 网页图标
   - manifest.json
 - src
@@ -71,9 +71,8 @@ Class.DefaultProps = {
 
 当props和state改变时, render函数会重新执行
 
----
-state -> 当前组件的render()  
-props -> 子组件的render()
+- state -> 当前组件的render()  
+- props -> 子组件的render()
 
 ## 虚拟dom
 
