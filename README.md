@@ -1,6 +1,6 @@
 # LittleRecord
 
-记录生活，一切。
+记录学习上的所见所闻。
 
 ## learn-record
 
