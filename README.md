@@ -2,15 +2,15 @@
 
 记录生活，一切。
 
-## 学习笔记
+## learn-record
 
 - algorithm
 - java
 - boot
 - go
 
-## 快捷方式
+## shortcut-record
 
-## 经验总结
+## experience-record
 
-## 面试相关
+## intervew-record
