@@ -2,9 +2,9 @@
 
 ## 数据结构与算法总览
 
-![data-structure](../resources/algorithm/data-structure.png)
+![data-structure](../../resources/algorithm/data-structure.png)
 
-![algorithm](../resources/algorithm/algorithm.png)
+![algorithm](../../resources/algorithm/algorithm.png)
 
 ### 精通一个领域 (semantic tree)
 
@@ -123,7 +123,7 @@ O(n!): Factorial 阶乘
 
 ### 主定理
 
-![master](../resources/algorithm/master.png)
+![master](../../resources/algorithm/master.png)
 
 ## 数组, 链表, 跳表
 

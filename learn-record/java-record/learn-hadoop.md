@@ -104,7 +104,7 @@
 
 ### 技术生态体系
 
-![生态体系](../resources/hadoop/hadoop_relation.png)
+![生态体系](../../resources/hadoop/hadoop_relation.png)
 
 ## Hadoop运行环境搭建
 

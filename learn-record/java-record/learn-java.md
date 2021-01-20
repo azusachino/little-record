@@ -2,7 +2,7 @@
 
 ## java中锁的结构图
 
-> ![结构图](../resources/java/lock.png)
+> ![结构图](../../resources/java/lock.png)
 
 ## JAVA各版本特性
 
@@ -30,7 +30,7 @@
 - 启动类加载器（Bootstrap ClassLoader）：C++实现，在java里无法获取，负责加载/lib下的类。
 - 扩展类加载器（Extension ClassLoader）： Java实现，可以在java里获取，负责加载/lib/ext下的类。
 - 系统类加载器/应用程序类加载器（Application ClassLoader）：是与我们接触对多的类加载器，我们写的代码默认就是由它来加载，ClassLoader.getSystemClassLoader返回的就是它。  
-![classLoader](../resources/java/classLoader.png)
+![classLoader](../../resources/java/classLoader.png)
 
 ## 破坏双亲委派
 
@@ -40,7 +40,7 @@
 
 ### 实现
 
-![Driver实现](../resources/java/classLoader-practice.png)
+![Driver实现](../../resources/java/classLoader-practice.png)
 
 ## 讲讲HashMap
 
@@ -471,7 +471,7 @@ Collections, Arrays, BitSet, EnumSet
     - List：emptyList()
     - Set: emptySet()、emptySortedSet()、emptyNavigableSet()
     - Map：emptyMap()、emptySortedMap()、emptyNavigableMap()
-  - 转换集合接口 (Collections.* , Arrays.*)
+  - 转换集合接口 (`Collections.*` , `Arrays.*`)
     - Enumeration: `Collections.enumeration(Collection)`
     - List: `Collections.list(Enumeration<T>)`, `Arrays.asList(T…)`
     - Set: `Collections.newSetFromMap(Map<E, Boolean>)`
