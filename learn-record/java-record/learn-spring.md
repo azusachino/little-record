@@ -1,25 +1,25 @@
-# 深入学习SpringFramework
+# 深入学习 SpringFramework
 
-## Spring Framework总览
+## Spring Framework 总览
 
 ### 1.特性总览
 
-- core特性
-  - IoC容器(IoC Container)
-  - Spring事件(Events)
+- core 特性
+  - IoC 容器(IoC Container)
+  - Spring 事件(Events)
   - 资源管理(Resources)
   - 国际化(i18n)
   - 校验(validation)
   - 数据绑定(data binding)
   - 类型转换(type conversion)
-  - Spring表达式(Spring Express Language)
+  - Spring 表达式(Spring Express Language)
   - 面向切面编程(AOP)
 - 数据存储(Data Access)
   - JDBC
   - 事务抽象(Transactions)
-  - DAO支持(Dao Support)
-  - O/R映射(O/R mapping)
-  - XML编列(XML Marshalling)
+  - DAO 支持(Dao Support)
+  - O/R 映射(O/R mapping)
+  - XML 编列(XML Marshalling)
 - Web Servlet
   - Spring MVC
   - WebSocket
@@ -30,19 +30,19 @@
   - WebSocket
 - 技术整合
   - 远程调用(Remoting)
-  - Java消息服务(JMS)
-  - Java连接架构(JCA)
-  - Java管理扩展(JMX)
-  - Java邮件客户端(Email)
+  - Java 消息服务(JMS)
+  - Java 连接架构(JCA)
+  - Java 管理扩展(JMX)
+  - Java 邮件客户端(Email)
   - 本地任务(Tasks)
   - 本地调度(Scheduling)
   - 缓存抽象(Caching)
-  - Spring测试(Testing)
+  - Spring 测试(Testing)
 - 测试(testing)
   - 模拟对象(Mock Objects)
-  - TestContext框架
-  - SpringMVC测试
-  - Web测试客户端(WebTestClient)
+  - TestContext 框架
+  - SpringMVC 测试
+  - Web 测试客户端(WebTestClient)
 
 ### 2.版本特性
 
@@ -75,7 +75,7 @@
 - spring-webmvc
 - spring-websocket
 
-### 4.对Java语言特性应用
+### 4.对 Java 语言特性应用
 
 - 1.5 (枚举, 泛型, 注解, 封箱(解箱))
   - 注解 @Transactional
@@ -83,23 +83,23 @@
   - for-each AbstractApplicationContext
   - 泛型 ApplicationListener
 - 1.6 `@Override`接口
-- 1.7 Diamond语法, 多个catch, try(resource)
+- 1.7 Diamond 语法, 多个 catch, try(resource)
   - Diamond `DefaultListableBeanFactory`
   - try `ResourceBundleMessageSource`
-- 1.8 Lambda语法, 可重复注解, 类型注解
+- 1.8 Lambda 语法, 可重复注解, 类型注解
   - Lambda `PropertyEditorRegistrySupport`
 - 1.9 模块化, 接口私有方法
 - 1.10 局部变量类型推断
 
-### 5.对JDK API实践
+### 5.对 JDK API 实践
 
-- 小于Java5 API
+- 小于 Java5 API
   - 反射 MethodMatcher
   - Java Beans `CachedIntrospectionResults`
   - 动态代理(Dynamic Proxy) `JdkDynamicAopProxy`
 - Java5 API
-  - XML处理 `XmlBeanDefinitionReader`
-  - Java管理扩展 `@ManagedResource`
+  - XML 处理 `XmlBeanDefinitionReader`
+  - Java 管理扩展 `@ManagedResource`
   - Instrumentation `InstrumentationSavingAgent`
   - 并发框架 `ThreadPoolTaskScheduler`
   - 格式化 `DataFormatter`
@@ -111,17 +111,17 @@
   - 可插拔注解处理 API @Indexed
   - Java Compiler API TestCompiler
 - Java7 API
-  - Fork/Join框架 ForkJoinPoolFactoryBean
+  - Fork/Join 框架 ForkJoinPoolFactoryBean
   - NIO2 PathResource
 - Java8 API
   - Data and Time API DateTimeContext
-  - 可重复Annotations @PropertySources
+  - 可重复 Annotations @PropertySources
   - Stream API StreamConverter
   - CompletableFuture CompletableToListenableFutureAdapter
 
-### 6.对Java EE API的整合
+### 6.对 Java EE API 的整合
 
-- Java EE web技术相关
+- Java EE web 技术相关
   - Servlet+jsp DispatcherServlet
   - JSTL JstlView
   - JavaServer Faces FacesCOntextUtils
@@ -134,7 +134,7 @@
   - JTA JtaTransactionManager
   - JPA JpaTransactionManager
   - Java Caching API JCacheCache
-- Java EE Bean技术相关
+- Java EE Bean 技术相关
   - JMS JmsTemplate
   - EJB 2.0 AbstractStatefulSesionBean
   - Dependency Injection AutowiredAnnotationBeanPostProcessor
@@ -159,30 +159,31 @@
 
 ### 9.面试题
 
-> 什么是Spring Framework?
+> 什么是 Spring Framework?
 
 Spring makes it easy to create java enterprise applications. It provides everything you need to embrace the java language in an enterprise environment, with support for Groovy and Kotolin as alternative languages on the JVM, and with the flexibility to create many kinds of architectures depending on an application's needs.
-> Spring Framework有哪些核心模块?
 
-- spring-core: Spring基础API模块, 如资源管理, 范型处理
-- spring-beans: Spring Bean相关, 如依赖查找, 依赖注入
-- spring-aop: Spring AOP处理, 如动态代理, AOP字节码提升
+> Spring Framework 有哪些核心模块?
+
+- spring-core: Spring 基础 API 模块, 如资源管理, 范型处理
+- spring-beans: Spring Bean 相关, 如依赖查找, 依赖注入
+- spring-aop: Spring AOP 处理, 如动态代理, AOP 字节码提升
 - spring-context: 事件驱动, 注解驱动, 模块驱动等
-- spring-expression: Spring表达式语言模块
+- spring-expression: Spring 表达式语言模块
 
-> Spring Framework的优势和不足有哪些?
+> Spring Framework 的优势和不足有哪些?
 
 ## Spring Framework IOC
 
-### IOC主要实现策略, 和DI的关系
+### IOC 主要实现策略, 和 DI 的关系
 
 - Using a service locator pattern
-- Using dependency injection(构造器注入, Setter注入, 属性注入, 接口注入)
+- Using dependency injection(构造器注入, Setter 注入, 属性注入, 接口注入)
 - Using a contextualized lookup
 - Using template method design pattern
 - Using strategy design pattern
 
-### IOC职责
+### IOC 职责
 
 - 通用职责
   - 依赖处理
@@ -190,7 +191,7 @@ Spring makes it easy to create java enterprise applications. It provides everyth
     - 依赖注入
   - 生命周期管理
     - 容器
-    - 托管的资源(JavaBeans或其他资源)
+    - 托管的资源(JavaBeans 或其他资源)
   - 配置
     - 容器
     - 外部化配置
@@ -202,15 +203,17 @@ Spring makes it easy to create java enterprise applications. It provides everyth
 
 ### 面试题
 
-> 什么是IOC?
+> 什么是 IOC?
 
-简单地说, IoC是反转控制, 类似于好莱坞原则, 主要有依赖查找和依赖注入实现
+简单地说, IoC 是反转控制, 类似于好莱坞原则, 主要有依赖查找和依赖注入实现
+
 > 依赖查找和依赖注入的区别?
 
-依赖查找是主动或手动的依赖查找方式, 通常需要依赖容器或标准API实现; 而依赖注入则是手动绑定或自动依赖绑定的方式, 无需依赖特定的容器和API.
-> Spring作为IoC容器有什么优势?
+依赖查找是主动或手动的依赖查找方式, 通常需要依赖容器或标准 API 实现; 而依赖注入则是手动绑定或自动依赖绑定的方式, 无需依赖特定的容器和 API.
 
-- 典型的IoC管理, 依赖查找和依赖注入
+> Spring 作为 IoC 容器有什么优势?
+
+- 典型的 IoC 管理, 依赖查找和依赖注入
 - AOP 抽象
 - 事件抽象
 - 事件机制
@@ -219,22 +222,22 @@ Spring makes it easy to create java enterprise applications. It provides everyth
 - 易测试性
 - 更好的面向对象
 
-## Spring IoC容器概述
+## Spring IoC 容器概述
 
-### 1.Spring IoC依赖查找
+### 1.Spring IoC 依赖查找
 
-- 根据Bean名称查找
+- 根据 Bean 名称查找
   - 实时查找
   - 延迟查找
-- 根据Bean类型查找
-  - 单个Bean对象
-  - 集合Bean对象
-- 根据Bean名称+类型查找
-- 根据Java注解查找
-  - 单个Bean对象
-  - 集合Bean对象
+- 根据 Bean 类型查找
+  - 单个 Bean 对象
+  - 集合 Bean 对象
+- 根据 Bean 名称+类型查找
+- 根据 Java 注解查找
+  - 单个 Bean 对象
+  - 集合 Bean 对象
 
-### 2.Spring Ioc依赖注入
+### 2.Spring Ioc 依赖注入
 
 - 根据 Bean 名称注入
 - 根据 Bean 类型注入
@@ -248,8 +251,8 @@ Spring makes it easy to create java enterprise applications. It provides everyth
 
 ### 3.Spring IoC 依赖来源
 
-- 自定义Bean
-- 容器内建Bean对象
+- 自定义 Bean
+- 容器内建 Bean 对象
 - 容器内建依赖
 
 ### 4.Spring IoC 配置元信息
@@ -266,7 +269,8 @@ Spring makes it easy to create java enterprise applications. It provides everyth
 - 基于 Java 注解
 
 ---
-> BeanFactory和ApplicationContext 谁才是Spring IoC容器?
+
+> BeanFactory 和 ApplicationContext 谁才是 Spring IoC 容器?
 
 - The `BeanFactory` interface provides an advanced configuration mechanism capable of managing any any type of object.
 - `ApplicationContext` is a sub-interface of BeanFactory. It adds:
@@ -277,19 +281,19 @@ Spring makes it easy to create java enterprise applications. It provides everyth
 
 ### 5.Spring 应用上下文
 
-- ApplicationContext除了IoC角色, 还提供:
+- ApplicationContext 除了 IoC 角色, 还提供:
   - 面向切面(AOP)
   - 配置元信息(Configurable Metadata)
   - 资源管理(Resources)
   - 事件(Events)
   - 国际化(i18n)
   - 注解(Annotations)
-  - Environment抽象
+  - Environment 抽象
 
 ---
 
-- BeanFacotry是Spring IoC容器
-- ApplicationContext是具备应用特性的BeanFactory超集
+- BeanFacotry 是 Spring IoC 容器
+- ApplicationContext 是具备应用特性的 BeanFactory 超集
 
 ### 6.Spring Ioc 生命周期
 
@@ -299,51 +303,53 @@ Spring makes it easy to create java enterprise applications. It provides everyth
 
 ### 7.面试题
 
-> 什么是Spring IoC容器?
+> 什么是 Spring IoC 容器?
 
 Spring Framework implementation of the Inversion of Control (IoC) principle. IoC is also known as dependency injection (DI). It is a process whereby objects define their dependencies (that is, the other objects they work with) only through constructor arguments, arguments to a factory method, or properties that are set on the object instance after it is constructed or returned from a factory method. The container then injects those dependencies when it creates the bean.
+
 > BeanFactory 与 FactoryBean?
 
-BeanFactory是IoC底层容器  
-FactoryBean是创建Bean的一种方式, 帮助实现复杂的初始化逻辑
-> Spring IoC容器启动时做了哪些准备?
+BeanFactory 是 IoC 底层容器  
+FactoryBean 是创建 Bean 的一种方式, 帮助实现复杂的初始化逻辑
 
-IoC配置元信息读取和解析, IoC容器生命周期, Spring事件发布, 国际化等.
+> Spring IoC 容器启动时做了哪些准备?
+
+IoC 配置元信息读取和解析, IoC 容器生命周期, Spring 事件发布, 国际化等.
 
 ## Spring Bean 基础
 
 ### 1. 定义 Spring Bean
 
-> 什么是Bean Definition?
+> 什么是 Bean Definition?
 
-BeanDefinition是Spring Framework中定义Bean的配置元信息接口, 包含:
+BeanDefinition 是 Spring Framework 中定义 Bean 的配置元信息接口, 包含:
 
-- Bean的类名
-- Bean行为配置元素, 如作用域, 自动绑定的模式, 生命周期回调等
-- 其他Bean引用, 又可称为合作者或依赖
-- 配置设置, 如Bean属性
+- Bean 的类名
+- Bean 行为配置元素, 如作用域, 自动绑定的模式, 生命周期回调等
+- 其他 Bean 引用, 又可称为合作者或依赖
+- 配置设置, 如 Bean 属性
 
 ### 2. BeanDefinition 元信息
 
-- BeanDefinition元信息:
-  - Class Bean全类名, 必须是具体类(不能用抽象类或接口)
-  - Name Bean的名称或ID
-  - Scope Bean的作用域(Singleton, prototype)
-  - Constructor arguments Bean构造器参数(用于依赖注入)
-  - Properties Bean属性设置(用于依赖注入)
-  - Autowiring mode Bean自动绑定模式(如:byName)
-  - Lazy initailization mode Bean延迟初始化模式(延迟和非延迟)
-  - Initialization method Bean初始化回调方法名称
-  - Destruction method Bean销毁回调方法名称
-- BeanDefinition构建
-  - 通过BeanDefinitionBuilder
-  - 通过AbstractBeanDefinition以及派生类
+- BeanDefinition 元信息:
+  - Class Bean 全类名, 必须是具体类(不能用抽象类或接口)
+  - Name Bean 的名称或 ID
+  - Scope Bean 的作用域(Singleton, prototype)
+  - Constructor arguments Bean 构造器参数(用于依赖注入)
+  - Properties Bean 属性设置(用于依赖注入)
+  - Autowiring mode Bean 自动绑定模式(如:byName)
+  - Lazy initailization mode Bean 延迟初始化模式(延迟和非延迟)
+  - Initialization method Bean 初始化回调方法名称
+  - Destruction method Bean 销毁回调方法名称
+- BeanDefinition 构建
+  - 通过 BeanDefinitionBuilder
+  - 通过 AbstractBeanDefinition 以及派生类
 
 ### 3. 命名 Spring Bean
 
 每个 Bean 拥有一个或多个标识符(identifiers)，这些标识符在 Bean 所在的容器必须是唯一 的。通常，一个 Bean 仅有一个标识符，如果需要额外的，可考虑使用别名(Alias)来扩充  
 在基于 XML 的配置元信息中，开发人员可用 id 或者 name 属性来规定 Bean 的 标识符。通常 Bean 的 标识符由字母组成，允许出现特殊字符。如果要想引入 Bean 的别名的话，可在 name 属性使用半角逗号(“,”)或分号(“;”) 来间隔  
-Bean 的 id 或 name 属性并非必须制定，如果留空的话，容器会为 Bean 自动生成一个唯一的 名称。Bean 的命名尽管没有限制，不过官方建议采用驼峰的方式，更符合 Java 的命名约定  
+Bean 的 id 或 name 属性并非必须制定，如果留空的话，容器会为 Bean 自动生成一个唯一的 名称。Bean 的命名尽管没有限制，不过官方建议采用驼峰的方式，更符合 Java 的命名约定
 
 ### 4. Spring Bean 的别名
 
@@ -371,7 +377,7 @@ Bean 的 id 或 name 属性并非必须制定，如果留空的话，容器会�
 - 常规方式
   - 通过构造器(配置元信息:XML、Java 注解和 Java API )
   - 通过静态工厂方法(配置元信息:XML 和 Java API )
-  - 通过 Bean 工厂方法(配置元信息:XML和 Java API )
+  - 通过 Bean 工厂方法(配置元信息:XML 和 Java API )
   - 通过 FactoryBean(配置元信息:XML、Java 注解和 Java API )
 - 特殊方式
   - 通过 ServiceLoaderFactoryBean(配置元信息:XML、Java 注解和 Java API )
@@ -394,7 +400,7 @@ Bean 的 id 或 name 属性并非必须制定，如果留空的话，容器会�
 
 ### 9. 销毁 Spring Bean
 
-- @PreDestroy 标注方法s
+- @PreDestroy 标注方法 s
 - 实现 DisposableBean 接口的 destroy() 方法
 - 自定义销毁方法
   - XML 配置: `<bean destroy=”destroy” ... />`
@@ -404,20 +410,22 @@ Bean 的 id 或 name 属性并非必须制定，如果留空的话，容器会�
 ### 10. 垃圾回收 Spring Bean
 
 1. 关闭 Spring 容器(应用上下文)
-2. 执行GC
+2. 执行 GC
 3. Spring Bean 覆盖的 finalize() 方法被回调
 
 ### 11. 面试题
 
-> 如何注册一个Spring Bean?
+> 如何注册一个 Spring Bean?
 
-通过BeanDefinition和外部单体对象来注册 (`SingletonBeanRegistry`)
-> 什么是Spring BeanDefinition?
+通过 BeanDefinition 和外部单体对象来注册 (`SingletonBeanRegistry`)
+
+> 什么是 Spring BeanDefinition?
 
 参照上面的笔记
->Spring 容器是怎样管理注册Bean
 
-IoC配置元信息读取和解析, 依赖查找和注入以及Bean生命周期
+> Spring 容器是怎样管理注册 Bean
+
+IoC 配置元信息读取和解析, 依赖查找和注入以及 Bean 生命周期
 
 ## Spring IoC 依赖查找
 
@@ -490,7 +498,7 @@ IoC配置元信息读取和解析, 依赖查找和注入以及Bean生命周期
 ### 6. 安全依赖查找
 
 - 不安全: `BeanFactory.getBean(), ObjectFactory.getObject()`
-- 安全: `ObjectProvider.getIfAvailable(),ListableBeanFactory.getBeansOfType(),  ObjectProvider.stream()`
+- 安全: `ObjectProvider.getIfAvailable(),ListableBeanFactory.getBeansOfType(), ObjectProvider.stream()`
 
 层次性依赖查找的安全性取决于其扩展的单一或集合类型的 BeanFactory 接口
 
@@ -513,14 +521,16 @@ IoC配置元信息读取和解析, 依赖查找和注入以及Bean生命周期
 
 ### 9. 面试题精选
 
-> ObjectFactory与BeanFactory的区别?
+> ObjectFactory 与 BeanFactory 的区别?
 
 ObjectFactory 与 BeanFactory 均提供依赖查找的能力。  
 不过 ObjectFactory 仅关注一个或一种类型的 Bean 依赖查找，并且自身不具备依赖查找的能力，能力则由 BeanFactory 输出。  
 BeanFactory 则提供了单一类型、集合类型以及层次性等多种依赖查找方式。
-> BeanFactory.getBean操作是否线程安全?
 
-BeanFactory.getBean方法的执行是线程安全的, 操作过程中会增加互斥锁
+> BeanFactory.getBean 操作是否线程安全?
+
+BeanFactory.getBean 方法的执行是线程安全的, 操作过程中会增加互斥锁
+
 > Spring 依赖查找和注入在来源上的区别?
 
 ## Spring IoC 依赖注入
@@ -552,7 +562,7 @@ The Spring container can autowire relationships between collaborating beans. You
 
 ### 4. 自动绑定的限制和不足
 
-### 5. Setter方法依赖注入
+### 5. Setter 方法依赖注入
 
 - 手动模式
   - XML 资源配置元信息
@@ -603,7 +613,7 @@ The Spring container can autowire relationships between collaborating beans. You
 ### 10. 依赖注入类型选择
 
 - 低依赖: 构造器注入
-- 多依赖: Setter注入
+- 多依赖: Setter 注入
 - 便利性: 字段注入
 - 声明类: 方法注入
 
@@ -649,7 +659,7 @@ public AutowiredAnnotationBeanPostProcessor() {
     // JSR-330 API not available - simply skip.
     }
 }
-  ```
+```
 
 ### 18. Java 通用注解注入原理 `CommonAnnotationBeanPostProcessor`
 
@@ -673,15 +683,16 @@ public AutowiredAnnotationBeanPostProcessor() {
 > 有多少种依赖注入的方式?
 
 - 构造器注入
-- Setter注入
+- Setter 注入
 - 字段注入
 - 方法注入
 - 接口回调注入
 
-> 你偏好构造器注入还是Setter注入?
+> 你偏好构造器注入还是 Setter 注入?
 
-两种依赖注入的方式均可使用, 如果是必须依赖的话, 那么推荐使用构造器注入, Setter注入用于可选依赖
-> Spring依赖注入的来源有哪些?
+两种依赖注入的方式均可使用, 如果是必须依赖的话, 那么推荐使用构造器注入, Setter 注入用于可选依赖
+
+> Spring 依赖注入的来源有哪些?
 
 resolveDependency()
 
@@ -695,28 +706,28 @@ resolveDependency()
   - BeanDefinitionBuilder
 - Singleton
   - API
-- 非Spring容器管理对象
+- 非 Spring 容器管理对象
 
 ---
 
-- Spring内建BeanDefinition
-  - ConfigurationClassPostProcessor: 处理Spring配置类
-  - AutowiredAnnotationBeanProcessor: 处理@Autowired和@Value
-  - CommonAnnotationBeanPostProcessor: (Conditional) 处理JSR-250注解(@PostConstruct)
-  - EventListenerMethodProcessor: 处理标注@EventListener的Spring事件监听方法
-- Spring内建单例对象
-  - (environment)Environment: 外部化配置和Profiles
-  - (systemProperties)Properties: Java系统属性
+- Spring 内建 BeanDefinition
+  - ConfigurationClassPostProcessor: 处理 Spring 配置类
+  - AutowiredAnnotationBeanProcessor: 处理@Autowired 和@Value
+  - CommonAnnotationBeanPostProcessor: (Conditional) 处理 JSR-250 注解(@PostConstruct)
+  - EventListenerMethodProcessor: 处理标注@EventListener 的 Spring 事件监听方法
+- Spring 内建单例对象
+  - (environment)Environment: 外部化配置和 Profiles
+  - (systemProperties)Properties: Java 系统属性
   - (systemEnvironment)Map: 操作系统环境变量
   - (messageSource)MessageSource: 国际化文案
-  - (lifecycleProcessor)LifecycleProcessor: LifecycleBean处理器
-  - (applicationEventMulticaster)ApplicationEventMulticaster: Spring广播器
+  - (lifecycleProcessor)LifecycleProcessor: LifecycleBean 处理器
+  - (applicationEventMulticaster)ApplicationEventMulticaster: Spring 广播器
 
 ### 2. 依赖注入的来源
 
 - BeanDefinition
 - 单例对象
-- 非Spring容器管理对象作为依赖来源
+- 非 Spring 容器管理对象作为依赖来源
 
 ### 3. Spring 容器管理和游离对象
 
@@ -753,7 +764,8 @@ resolveDependency()
 > 依赖注入和依赖查找的来源是否相同?
 
 否，依赖查找的来源仅限于 Spring BeanDefinition 以及单例对 象，而依赖注入的来源还包括 Resolvable Dependency 以及 @Value 所标注的外部化配置。
-> 单例对象能在IoC容器启动后注册吗?
+
+> 单例对象能在 IoC 容器启动后注册吗?
 
 可以的，单例对象的注册与 BeanDefinition 不同，BeanDefinition 会 被 ConfigurableListableBeanFactory#freezeConfiguration() 方法影响， 从而冻结注册，单例对象则没有这个限制。
 
@@ -765,7 +777,7 @@ public void freezeConfiguration() {
 }
 ```
 
-> Spring依赖注入的来源有哪些?
+> Spring 依赖注入的来源有哪些?
 
 - Spring BeanDefinition
 - 单例对象
@@ -774,101 +786,101 @@ public void freezeConfiguration() {
 
 ## Spring Bean 作用域
 
-### 1. Spring Bean 作用域
+### 1. singleton
 
-### 2. singleton
+默认作用域, 一个 BeanFactory 有且仅有一个实例
 
-默认作用域, 一个BeanFactory有且仅有一个实例
+### 2. prototype
 
-### 3. prototype
+原型作用域, 每次依赖查找和依赖注入生成新 Bean 对象, Spring 容器没有办法管理 prototypeBean 的完整生命周期, 也没有办法记录实例的存在. 销毁回调方法不会执行, 可以利用 BeanPostProcessor 进行清扫工作.
 
-原型作用域, 每次依赖查找和依赖注入生成新Bean对象, Spring容器没有办法管理prototypeBean的完整生命周期, 也没有办法记录实例的存在. 销毁回调方法不会执行, 可以利用BeanPostProcessor进行清扫工作.
+### 3. request
 
-### 4. request
-
-将SpringBean存储在ServletRequest上下文中
+将 SpringBean 存储在 ServletRequest 上下文中
 
 - XML - `<bean class="..." scope="request" />`
 - Java - `@RequestScope` | `@Scope(WebApplicationContext.SCOPE_REQUEST)`
 
-### 5. session
+### 4. session
 
-将SpringBean存储在HttpSession中
+将 SpringBean 存储在 HttpSession 中
 
 - XML - `<bean class="..." scope="session" />`
 - Java - `@SessionScope` | `@Scope(WebApplicationContext.SCOPE_SESSION)`
 
-### 6. application
+### 5. application
 
-将SpringBean存储在ServletContext中
+将 SpringBean 存储在 ServletContext 中
 
 - XML - `<bean class="..." scope="application" />`
 - Java - `@ApplicationScope` | `@Scope(WebApplicationContext.SCOPE_APPLICATION)`
 
-### 7. 自定义Bean作用域
+### 6. 自定义 Bean 作用域
 
-- 实现Scope: `org.springframework.beans.factory.config.Scope`
-- 注册Scope
+- 实现 Scope: `org.springframework.beans.factory.config.Scope`
+- 注册 Scope
   - API: `org.springframework.beans.factory.config.ConfigurableBeanFactory#registerScope`
   - XML:
 
-  ```xml
-  <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-  <property name="scopes">
-  <map>
-  <entry key="..."> </entry>
-  </map>
-  </property>
-  </bean>
-  ```
+```xml
+<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+<property name="scopes">
+<map>
+<entry key="..."> </entry>
+</map>
+</property>
+</bean>
+```
 
-### 8.面试题
+### 7. 面试题
 
-> Spring内建Bean的作用域有几种?
+> Spring 内建 Bean 的作用域有几种?
 
 Singleton, prototype, request, session, application, websocket
-> Sinleton Bean是否在一个应用是唯一的?
 
-否, singleton bean仅在当前Spring IoC容器中是单例对象
+> Sinleton Bean 是否在一个应用是唯一的?
+
+否, singleton bean 仅在当前 Spring IoC 容器中是单例对象
+
 > 'Application' Bean 是否有其他方案替代?
 
-可以, 实际上, 'application' 和 'singleton' 的Bean没有本质区别
+可以, 实际上, 'application' 和 'singleton' 的 Bean 没有本质区别
 
 ## Spring Bean 生命周期
 
 ### 1. Spring Bean 元信息配置阶段
 
 - 面向资源
-  - XML配置
+  - XML 配置
   - Properties 资源配置
 - 面向注解
-- 面向API
+- 面向 API
 
 ### 2. Spring Bean 元信息解析阶段
 
-- 面向资源BeanDefinition解析
+- 面向资源 BeanDefinition 解析
   - BeanDefinitionReader
   - XML 解析器 - BeanDefinitionParser
-- 面向注解BeanDefinition解析
+- 面向注解 BeanDefinition 解析
   - AnnotatedBeanDefinitionReader
 
 ### 3. Spring Bean 注册阶段
 
-- BeanDefinition注册接口
+- BeanDefinition 注册接口
   - BeanDefinitionRegistry
 
 ### 4. Spring BeanDefinition 合并阶段
 
-- BeanDefinition合并
+- BeanDefinition 合并
   - 父子 BeanDefinition 合并
   - 当前 BeanFactory 查找
   - 层次性 BeanFactory 查找
 
 ### 5. Spring Bean Class 加载阶段
 
-- ClassLoader类加载
-- JavaSecurity安全控制
-- ConfigurableBeanFactory临时ClassLoader
+- ClassLoader 类加载
+- JavaSecurity 安全控制
+- ConfigurableBeanFactory 临时 ClassLoader
 
 ### 6. Spring Bean 实例化前阶段
 
@@ -886,15 +898,15 @@ Singleton, prototype, request, session, application, websocket
 
 ### 9. Spring Bean 属性赋值前阶段
 
-- Bean属性值元信息
+- Bean 属性值元信息
   - PropertyValues
-- Bean属性赋值前回调
+- Bean 属性赋值前回调
   - Spring 1.2 - 5.0:InstantiationAwareBeanPostProcessor#postProcessPropertyValues
   - Spring 5.1:InstantiationAwareBeanPostProcessor#postProcessProperties
 
-### 10. Spring Bean Aware接口回调阶段
+### 10. Spring Bean Aware 接口回调阶段
 
-- SpringAware接口 (先后次序)
+- SpringAware 接口 (先后次序)
   - BeanNameAware
   - BeanClassLoaderAware
   - BeanFactoryAware
@@ -949,18 +961,20 @@ Spring4.1+: `SmartInitializingSingleton#afterSingletonsInstantiated`
 
 ### 18. 面试题
 
-> BeanPostProcessor的使用场景有哪些?
+> BeanPostProcessor 的使用场景有哪些?
 
-BeanPostProcessor提供SpringBean初始化前后的生命周期回调, 分别对应postProcessBeforeInitialization以及postProccessorAfterInitialization方法, 允许对关心的Bean进行扩展, 甚至是替换  
-其中, ApplicationContext相关的Aware回调也是基于BeanPostProcessor实现, 即ApplicationContextAwareProcessor
-> BeanFactoryPostProcessor与BeanPostProcessor的区别
+BeanPostProcessor 提供 SpringBean 初始化前后的生命周期回调, 分别对应 postProcessBeforeInitialization 以及 postProccessorAfterInitialization 方法, 允许对关心的 Bean 进行扩展, 甚至是替换  
+其中, ApplicationContext 相关的 Aware 回调也是基于 BeanPostProcessor 实现, 即 ApplicationContextAwareProcessor
+
+> BeanFactoryPostProcessor 与 BeanPostProcessor 的区别
 
 BeanFactoryPostProcessor 是 Spring BeanFactory(实际为 ConfigurableListableBeanFactory) 的后置处理器，用于扩展 BeanFactory，或通过 BeanFactory 进行依赖查找和依赖注入。  
 加分项:BeanFactoryPostProcessor 必须有 Spring ApplicationContext 执行，BeanFactory 无法与其直接交互。  
-而 BeanPostProcessor 则直接与BeanFactory 关联，属于 N 对 1 的关系。
-> BeanFactory是怎样处理Bean的生命周期?
+而 BeanPostProcessor 则直接与 BeanFactory 关联，属于 N 对 1 的关系。
 
-BeanFactory 的默认实现为 DefaultListableBeanFactory，其中 Bean生命周期与方法映射如下:
+> BeanFactory 是怎样处理 Bean 的生命周期?
+
+BeanFactory 的默认实现为 DefaultListableBeanFactory，其中 Bean 生命周期与方法映射如下:
 
 - BeanDefinition 注册阶段 - registerBeanDefinition
 - BeanDefinition 合并阶段 - getMergedBeanDefinition
