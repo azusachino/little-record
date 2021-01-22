@@ -58,3 +58,42 @@ deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restri
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
 deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
 ```
+
+## Centos 安装Docker
+
+### 1. 删除旧版本
+
+```bash
+sudo yum remove docker \
+                docker-client \
+                docker-client-latest \
+                docker-common \
+                docker-latest \
+                docker-latest-logrotate \
+                docker-logrotate \
+                docker-engine
+```
+
+### 2. 配置repo
+
+```bash
+sudo yum install -y yum-utils
+
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+```
+
+### 3. 安装最新版docker
+
+`sudo yum install docker-ce docker-ce-cli containerd.io`
+
+## Centos安装Docker-Compose
+
+### 1. 下载
+
+`sudo curl -L "https://github.com/docker/compose/releases/download/1.28.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+
+### 2. 赋予执行权限
+
+`sudo chmod +x /usr/local/bin/docker-compose`
