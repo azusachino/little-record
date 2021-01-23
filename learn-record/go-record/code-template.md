@@ -704,3 +704,259 @@ func Map(data interface{}, fn interface{}) []interface{} {
 ### Go的类型检查
 
 #### TypeAssert
+
+```go
+// Container is a generic container, accepting anything.
+type Container []interface{}
+// Put adds an element to the container.
+func (c *Container) Put(elem interface{}) {
+    *c = append(*c, elem)
+}
+// Get gets an element from the container.
+func (c *Container) Get() interface{} {
+    elem := (*c)[0]
+    *c = (*c)[1:]
+    return elem
+}
+
+// 使用
+intContainer := &Container{}
+intContainer.Put(7)
+intContainer.Put(42)
+```
+
+#### Reflect
+
+```go
+type Container struct {
+    s reflect.Value
+}
+// 根据参数类型初始化slice
+func NewContainer(t reflect.Type, size int) *Container {
+    if size <=0  { size=64 }
+    return &Container{
+        s: reflect.MakeSlice(reflect.SliceOf(t), 0, size), 
+    }
+}
+func (c *Container) Put(val interface{})  error {
+    // 在 Put()时候，会检查 val 是否和Slice的类型一致。
+    if reflect.ValueOf(val).Type() != c.s.Type().Elem() {
+        return fmt.Errorf("Put: cannot put a %T into a slice of %s", 
+            val, c.s.Type().Elem()))
+    }
+    c.s = reflect.Append(c.s, reflect.ValueOf(val))
+    return nil
+}
+func (c *Container) Get(refval interface{}) error {
+    // 在 Get()时，我们需要用一个入参的方式，因为我们没有办法返回 reflect.Value 或是 interface{}，不然还要做Type Assert
+    if reflect.ValueOf(refval).Kind() != reflect.Ptr ||
+        reflect.ValueOf(refval).Elem().Type() != c.s.Type().Elem() {
+        return fmt.Errorf("Get: needs *%s but got %T", c.s.Type().Elem(), refval)
+    }
+    reflect.ValueOf(refval).Elem().Set( c.s.Index(0) )
+    c.s = c.s.Slice(1, c.s.Len())
+    return nil
+}
+
+// 使用样例
+f1 := 3.1415926
+f2 := 1.41421356237
+c := NewMyContainer(reflect.TypeOf(f1), 16)
+if err := c.Put(f1); err != nil {
+  panic(err)
+}
+if err := c.Put(f2); err != nil {
+  panic(err)
+}
+g := 0.0
+if err := c.Get(&g); err != nil {
+  panic(err)
+}
+fmt.Printf("%v (%T)\n", g, g) //3.1415926 (float64)
+fmt.Println(c.s.Index(0)) //1.4142135623
+```
+
+## [修饰器](https://coolshell.cn/articles/17929.html)
+
+```go
+package main
+import "fmt"
+// 高阶函数
+func decorator(f func(s string)) func(s string) {
+    return func(s string) {
+        fmt.Println("Started")
+        f(s)
+        fmt.Println("Done")
+    }
+}
+func Hello(s string) {
+    fmt.Println(s)
+}
+func main() {
+        decorator(Hello)("Hello, World!")
+}
+```
+
+### Http示例
+
+```go
+package main
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "strings"
+)
+func WithServerHeader(h http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        log.Println("--->WithServerHeader()")
+        w.Header().Set("Server", "HelloServer v0.0.1")
+        h(w, r)
+    }
+}
+func WithAuthCookie(h http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        log.Println("--->WithAuthCookie()")
+        cookie := &http.Cookie{Name: "Auth", Value: "Pass", Path: "/"}
+        http.SetCookie(w, cookie)
+        h(w, r)
+    }
+}
+func WithBasicAuth(h http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        log.Println("--->WithBasicAuth()")
+        cookie, err := r.Cookie("Auth")
+        if err != nil || cookie.Value != "Pass" {
+            w.WriteHeader(http.StatusForbidden)
+            return
+        }
+        h(w, r)
+    }
+}
+func WithDebugLog(h http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        log.Println("--->WithDebugLog")
+        r.ParseForm()
+        log.Println(r.Form)
+        log.Println("path", r.URL.Path)
+        log.Println("scheme", r.URL.Scheme)
+        log.Println(r.Form["url_long"])
+        for k, v := range r.Form {
+            log.Println("key:", k)
+            log.Println("val:", strings.Join(v, ""))
+        }
+        h(w, r)
+    }
+}
+func hello(w http.ResponseWriter, r *http.Request) {
+    log.Printf("Recieved Request %s from %s\n", r.URL.Path, r.RemoteAddr)
+    fmt.Fprintf(w, "Hello, World! "+r.URL.Path)
+}
+func main() {
+    http.HandleFunc("/v1/hello", WithServerHeader(WithAuthCookie(hello)))
+    http.HandleFunc("/v2/hello", WithServerHeader(WithBasicAuth(hello)))
+    http.HandleFunc("/v3/hello", WithServerHeader(WithBasicAuth(WithDebugLog(hello))))
+    err := http.ListenAndServe(":8080", nil)
+    if err != nil {
+        log.Fatal("ListenAndServe: ", err)
+    }
+}
+```
+
+### 封装成Pipeline
+
+```go
+type HttpHandlerDecorator func(http.HandlerFunc) http.HandlerFunc
+
+func Handler(h http.HandlerFunc, decors ...HttpHandlerDecorator) http.HandlerFunc {
+    for i := range decors {
+        d := decors[len(decors)-1-i] // iterate in reverse
+        h = d(h)
+    }
+    return h
+}
+
+http.HandleFunc("/v4/hello", Handler(hello,
+                WithServerHeader, WithBasicAuth, WithDebugLog))
+```
+
+## [Pipeline](https://coolshell.cn/articles/21228.html)
+
+```go
+// 将整型数组放到chan中
+func echo(nums []int) <-chan int {
+  out := make(chan int)
+  go func() {
+    for _, n := range nums {
+      out <- n
+    }
+    close(out)
+  }()
+  return out
+}
+
+type EchoFunc func ([]int) (<- chan int) 
+type PipeFunc func (<- chan int) (<- chan int) 
+func pipeline(nums []int, echo EchoFunc, pipeFns ... PipeFunc) <- chan int {
+  ch  := echo(nums)
+  for i := range pipeFns {
+    ch = pipeFns[i](ch)
+  }
+  return ch
+}
+
+```
+
+## [K8SVisitor](https://coolshell.cn/articles/21263.html)
+
+```go
+package main
+import (
+    "encoding/json"
+    "encoding/xml"
+    "fmt"
+)
+type Visitor func(shape Shape)
+type Shape interface {
+    accept(Visitor)
+}
+type Circle struct {
+    Radius int
+}
+func (c Circle) accept(v Visitor) {
+    v(c)
+}
+type Rectangle struct {
+    Width, Heigh int
+}
+func (r Rectangle) accept(v Visitor) {
+    v(r)
+}
+
+// JSON序列化Visitor
+func JsonVisitor(shape Shape) {
+    bytes, err := json.Marshal(shape)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(string(bytes))
+}
+// XML序列化Visitor
+func XmlVisitor(shape Shape) {
+    bytes, err := xml.Marshal(shape)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(string(bytes))
+}
+
+func main() {
+  c := Circle{10}
+  r :=  Rectangle{100, 200}
+  shapes := []Shape{c, r}
+  for _, s := range shapes {
+    s.accept(JsonVisitor)
+    s.accept(XmlVisitor)
+  }
+}
+```
