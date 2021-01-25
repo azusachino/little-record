@@ -55,7 +55,7 @@ mybatis-plus:
 
 ### 三种方案
 
-1. 独立数据库: 隔离级别最高，安全性最好，但成本较高。 
+1. 独立数据库: 隔离级别最高，安全性最好，但成本较高。
 2. 共享数据库，独立 Schema
 3. 共享数据库，共享 Schema，共享数据表
 
@@ -129,6 +129,7 @@ public class Truncate extends AbstractMethod {
         return addDeleteMappedStatement(mapperClass, method, sqlSource);
     }
 }
+
 @Component
 public class MySqlInjector extends DefaultSqlInjector {
 
