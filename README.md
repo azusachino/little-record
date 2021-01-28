@@ -1,6 +1,6 @@
 # LittleRecord
 
-记录学习上的所见所闻。
+记录学习
 
 ## learn-record
 
@@ -11,6 +11,13 @@
 
 ## shortcut-record
 
+- Git
+- IDEA
+- Linux
+- PowerShell
+
 ## experience-record
 
 ## intervew-record
+
+## language-record
