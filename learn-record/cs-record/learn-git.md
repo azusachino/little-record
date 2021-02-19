@@ -4,7 +4,7 @@
 
 ### AngularJS的提交规范
 
-![ ](https://s3.ax1x.com/2021/01/22/s5BPSO.png)
+![angular](https://s3.ax1x.com/2021/01/22/s5BPSO.png)
 
 ```properties
 <type>[optional scope]: <description>

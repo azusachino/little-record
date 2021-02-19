@@ -1,13 +1,16 @@
 # DESIGN PATTERN
 
-> 观察者模式
+## 观察者模式
 
-TODO
-> 代理模式
+Observer
 
-TODO
+## 代理模式
 
-> 单例模式，有五种写法
+Proxy
+
+## 单例模式 - 有五种写法
+
+### 双检查锁版本
 
 ```java
 public class Singleton {
