@@ -1,21 +1,25 @@
-# MainIdea
+# 标题
 
-## Title
-
-TODO
-
-## Key Point
+## 作文题目
 
 TODO
 
-## Attention
+## 写作大纲
 
 TODO
 
-## Sample
+## 写作要点
 
 TODO
 
-## Practice
+## 注意
+
+TODO
+
+## 例子
+
+TODO
+
+## 练习
 
 TODO
