@@ -11,3 +11,7 @@
 ### 要点
 
 GOPATH和go.mod是两种不同的构建go项目的方式
+
+## Context
+
+Context provides a means of transmitting deadlines, caller cancellations, and other request-scoped values across API boundaries and between processes.
