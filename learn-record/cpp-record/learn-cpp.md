@@ -129,7 +129,7 @@ int j = ci; // 可行，ci的值被拷贝给了j
 
 #### 默认情况下，const对象仅在文件内有效
 
-编译器将在编译过程种把用到该变量的地方都替换成对应的值。  
+编译器将在编译过程种把用到该变量的地方都替换成对应的值。（默认情况下，const对象被设定为仅在文件内有效）
 如果程序包含多个文件，则每个用了const对象的文件都必须得能访问到它的初始值才行。  
 如果想在多文件中使用同一个常量，不管是声明还是定义都添加extern关键字。
 
@@ -147,4 +147,183 @@ const int &r1 = i; // 允许将const int&绑定到一个普通int对象上
 const int &r2 = 42; // 正确
 const int &r2 = r1 * 2; // 正确
 int &r4 = r1 * 2; // 错误，r4是一个普通的非常量引用
+```
+
+#### 指针和const
+
+指向常量的指针不能用于改变其所指对象的值。
+
+```c++
+const double pi = 3.14;
+double *ptr = &pi;
+const double *cptr = &pi;
+*cptr = 42; // 错误，不能给*cptr赋值
+```
+
+指针本身是一个常量并不意味着不能通过指针修改其所指对象的值，能否这样做全依赖于所指对象的类型。
+
+```c++
+int errNum = 0;
+int *const curErr = &errNum; // curErr将一直指向errNum
+const double pi = 3.1415;
+const double *const pip = &pi; // pip是一个指向常量对象的常量指针
+```
+
+#### 顶层const
+
+名词顶层const（top-level const）表示指针本身是个常量，而用名词底层const（low-level const）表示指针所指的对象是一个常量。
+
+```c++
+int i = 0;
+int *const p1 = &i; // 顶层const
+const int ci = 42; // 顶层const
+const int *p2 = &ci; // 底层const，可以改变p2的值
+
+const int *const p3 = p2; // 靠右的const是顶层const，靠左的是底层const
+const int &r = ci; // 用于申明引用的const都是底层const
+i = ci; // 正确：拷贝ci的值，ci是一个顶层const
+p2 = p3; // 正确：p2和p3指向的对象类型相同，p3的顶层const部分不影响
+
+int *p = p3; // 错误：o3包含底层const的定义，而p没有
+p2 = &i; // 正确：int*能转换成const int*
+int &r = ci; // 错误：普通的int&不能绑定到int常量上
+const int &r2 = i; // 正确：const int&可以绑定到一个普通的int上
+```
+
+#### constexpr和常量表达式
+
+常量表达式（const expression）是指值不会改变并且在编译过程就能得到计算结果的表达式。
+
+```c++
+// 一个对象（表达式）是不是常量表达式由它的数据类型和初始类型共同决定
+const int max_files = 20; // true
+const int limit = max_files + 1; // true
+int staff_size = 27; // false
+const int sz = get_size(); // false
+```
+
+C++11新标准规定，允许将变量声明为constexpr类型以便由编译器来验证变量的值是否是一个常量表达式。声明为constexpr的变量一定是一个常量，而且必须用常量表达式初始化：
+
+```c++
+constexpr int mf = 20; // true
+constexpr int limit = mf + 1; // true
+constexpr int sz = size(); // 只有当size是一个constexpr函数是才是一条正确的声明语句
+```
+
+算术类型、引用和指针都属于字面值类型。一个constexpr指针的初始值必须是nullptr或者0，或者是存储与某个固定地址的对象。
+
+```c++
+const int *p = nullptr; // p是一个指向整型常量的指针
+constexpr int *q = nullptr; // q是一个指向整型的常量指针
+
+constexpr int *np = nullptr; // np是一个指向整型的常量指针，其值为空
+int j = 0; 
+constexpr int i = 45; // i的类型是整型常量
+constexpr const int *p = &i; // p是常量指针，指向整型常量i
+constexpr int *pi = &j; // pi是常量指针，指向整数j
+```
+
+### 处理类型
+
+#### 类型别名
+
+类型别名（type alias）是一个名字，它是某种类型的同义词。使用类型别名有很多好处，它让复杂的类型名字变得简单明了、易于理解和使用，还有助于程序员清楚地知道使用该类型的真实目的。
+
+```c++
+typedef double wages; // wages是double的别名
+typedef wages base, *p; // base是double的同义词，p是double*的同义词
+
+using SI = Sales_item; // SI是Sales_item的别名
+
+typedef char *pstring;
+const pstring cstr = 0; // cstr是指向char的常量指针
+const pstring *ps; // ps是一个指针，他的对象是指向char的常量指针
+```
+
+#### auto类型说明符
+
+C++11新标准引入了auto类型说明符，用它就能让编译器替我们去分析表达式所属的类型。
+
+```c++
+auto item = val1+val2;// item初始化为val1和val2相加的结果
+
+auto i = 0, *p = &i; // 正确：i是整数，p是整型指针
+auto sz = 0, pi = 3.14; // 错误：sz和pi的类型不一样
+
+// 使用引用其实是使用引用的对象，特别是当引用被用作初始值时，真正参与初始化的其实是引用对象的值。
+int j = 0, &r = j;
+auto a = r; // a是一个整数
+
+// auto一般会忽略掉顶层const，保留底层const
+const int ci = j, &cr = ci;
+auto b = ci; // 整数
+auto c = cr; // 整数
+auto d = &j; // 整数指针
+auto e = &ci; // 指向整数常量的指针
+
+// 如果希望推断出的auto类型是一个顶层const
+const auto f = ci;
+
+// 将引用的类型设为auto
+auto &g = ci; // g是一个整型常量引用，绑定到ci
+auto &h = 42; // 错误：不能为非常量引用绑定字面值
+const auto &j = 32; // 正确：可以为常量引用绑定字面量
+
+// 如果在一条语句中定义多个变量，&和*只从属于某个声明符，而非基本数据类型的一部分，初始值必须是同一种类型
+auto k = ci, &l = i; // k是整数，i是整数引用
+auto &m = ci, *p = &ci; // m是对整型常量的引用，p是指向整型常量的指针
+auto &n = i, *p2 = &ci; // 错误：i的类型是int而&ci的类型是const int
+```
+
+#### decltype类型指示符
+
+C++11新标准引入了第二种类型说明符decltype，它的作用是选择并返回操作数的数据类型。
+
+```c++
+// 编译器并不实际调用函数f，而是使用当调用发生时f的返回值类型作为sum的类型。
+decltype(f()) sum = x; // sum的类型就是函数f的返回类型
+
+// 如果decltype使用的表达式十一i个变量，则decltype返回该变量的类型
+const int ci = 0, &cj = ci;
+decltype(ci) x = 0; // x的类型是const int
+decltype(cj) y = x; // y的类型是const int&, y绑定到变量x
+decltype(cj) z; // 错误：z是一个引用，必须初始化
+
+// decltype的结果可以是引用类型
+int i = 42, *p = &i, &r = i;
+decltype(r+0) b; // 正确：加法的结果是int，b是一个（未初始化）int
+decltype(*p) c; // 错误：c是int&，必须初始化
+```
+
+### 自定义数据结构
+
+以关键字struct开始，紧跟着类名和类体（其中类体部分可以为空）。类体由花括号包围形成了一个新的作用域。类内部定义的名字必须唯一，但是可以与类外部定义的名字重复。
+
+```c++
+
+struct Sales_item {
+    std::string bookNo;
+    unsigned units_sold = 0;
+    double revenue = 0.0D;
+};
+// 类体右侧的表示结束的花括号后必须写一个分号，这是因为类体后面可以紧跟变量名以示对该类型对象的定义，所以分号必不可少
+struct Other_item {} accum, trans, *otherPtr;
+```
+
+#### 预处理器概述
+
+- `#include`指令把一个名字设定为预处理变量
+- `#ifdef`当前仅当变量已定义时为真
+- `#ifndef`当且仅当变量未定义时为真
+
+一旦检查结果为真，则执行后续操作知道遇到`#endif`指令为止。
+
+```c++
+#ifndef SALES_DATA_H
+#define SALES_DATA_H
+#include <string>
+struct Sales_data {
+    std:string bookNo;
+}
+#endif
 ```
