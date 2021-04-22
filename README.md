@@ -1,25 +1,27 @@
 # LittleRecord
 
-记录学习
+Recorder
 
-## learn-record
+## [Collection](collection/README.md)
 
-- algorithm
-- java
-- boot
-- go
+用来收集很多很多内容，Full of possibility
 
-## shortcut-record
+## [Experience](experience/README.md)
 
-- Git
-- IDEA
-- Linux
-- PowerShell
+经验值UP
 
-## experience-record
+## [interview](interview/README.md)
 
-## intervew-record
+面试相关的内容
 
-## language-record
+## [language](language/README.md)
 
-## error-record
+外语学习
+
+## [learning](learning/README.md)
+
+CS学习
+
+## [literary](literary/README.md)
+
+记录
