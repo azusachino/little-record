@@ -649,7 +649,7 @@ class X {
 - CyclicBarrier -> cb.await() -> cb.reset()
 - Semaphore -> s.acquire() -> s.release()
 
-### Java 线程池
+### Java-线程池
 
 - ThreadPoolExecutor
 - ScheduledThreadPoolExecutor
