@@ -2,6 +2,10 @@
 
 Service Mesh 是一种控制处理服务间通信的基础设施层，可以在云原生场景下帮助应用程序在复杂的服务拓扑间可靠的传递请求。
 
+![Service Mesh](https://img.luozhiyun.com/20201025200941.png)
+
+Istio 就是一个 Service Mesh 实现的形态，用于服务治理的开放平台，并且 Istio 是与 K8s 紧密结合的适用于云原生场景的平台。
+
 ## `Istio` Architecture
 
 ![https://img.luozhiyun.com/20201025200944.svg](https://img.luozhiyun.com/20201025200944.svg)

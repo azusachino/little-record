@@ -1,6 +1,6 @@
 # Kubernetes
 
-## TODO
+## PlaceHolder
 
 [Hello Minikube](https://kubernetes.io/docs/tutorials/hello-minikube/)
 
@@ -140,3 +140,147 @@ To update the image of the application to version 2, use the `set image` comma
 The command notified the Deployment to use a different image for your app and initiated a rolling update. Check the status of the new Pods, and view the old one terminating with the `get pods` command:
 
 `kubectl get pods`
+
+## Configuration
+
+1.define a configmap, then `kubectl apply -f redis-configmap.yml`
+
+```yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-redis-config
+data:
+  redis-config: |
+    maxmemory 2mb
+    maxmemory-policy allkeys-lru
+```
+
+- A volume named config is created by spec.volumes[1]
+- The key and path under spec.volumes[1].items[0] exposes the redis-config key from the example-redis-config ConfigMap as a file named redis.conf on the config volume.
+- The config volume is then mounted at /redis-master by spec.containers[0].volumeMounts[1].
+
+  2.define pod
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+spec:
+  containers:
+    - name: redis
+      image: redis:5.0.4
+      command:
+        - redis-server
+        - "/redis-master/redis.conf"
+      env:
+        - name: MASTER
+          value: "true"
+      ports:
+        - containerPort: 6379
+      resources:
+        limits:
+          cpu: "0.1"
+      volumeMounts:
+        - mountPath: /redis-master-data
+          name: data
+        - mountPath: /redis-master
+          name: config
+  volumes:
+    - name: data
+      emptyDir: {}
+    - name: config # connect with volumeMounts, use configmap as redis.conf
+      configMap:
+        name: example-redis-config
+        items:
+          - key: redis-config
+            path: redis.conf
+```
+
+## Stateless Application
+
+1.Run a HelloWorld
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+labels:
+  app.kubernetes.io/name: load-balancer-example
+name: hello-world
+spec:
+replicas: 5
+selector:
+  matchLabels:
+    app.kubernetes.io/name: load-balancer-example
+template:
+  metadata:
+    labels:
+      app.kubernetes.io/name: load-balancer-example
+  spec:
+    containers:
+      - image: gcr.io/google-samples/node-hello:1.0
+        name: hello-world
+        ports:
+          - containerPort: 8080
+```
+
+`kubectl apply -f load-balancer-example.yml`
+
+2.Create Service exposes the deployment
+
+`kubectl expose deployment hello-world --type=LoadBalancer --name=my-service`
+
+## StatefulSet
+
+1.Create a StatefulSet
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  serviceName: "nginx"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: k8s.gcr.io/nginx-slim:0.8
+        ports:
+        - containerPort: 80
+          name: web
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+```
