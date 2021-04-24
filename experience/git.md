@@ -33,3 +33,30 @@ git windows 安装之后，可以配置下面两个参数：
 autocrlf = false ---> true
 safecrlf = true
 ```
+
+## 一台主机配置多个 git 账户
+
+1.通过命令生成两份密钥
+
+`ssh-keygen -t rsa -C your@email.com`
+
+2.将生成的 ssh 信息配置到账户信息中
+
+3.在 `.ssh` 文件夹中新建 `config` 文件
+
+```plain
+Host   域名地址
+    HostName  域名地址
+    IdentityFile C:\Users\yourname\.ssh\id_rsa
+    PreferredAuthentications publickey
+    User name1
+
+# 配置github
+Host github.com
+    HostName github.com
+    IdentityFile C:\Users\yourname\.ssh\id_rsa_new
+    PreferredAuthentications publickey
+    User name2
+```
+
+4.通过 ssh -T git@github.com 检测是否匹配成功
