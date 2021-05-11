@@ -44,3 +44,7 @@
         restHighLevelClient.close();
     }
 ```
+
+## 文件夹分组
+
+`chown -R 1000:1000 folder`
