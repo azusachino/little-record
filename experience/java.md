@@ -19,12 +19,11 @@ public void registerAlias(String alias, Class<?> value) {
     }
 ```
 
+## Spring 事务
 
-## Spring事务
+@Transactional(timeout=30) //默认是 30 秒
 
-@Transactional(timeout=30) //默认是30秒
-
-``` java
+```java
 1、@Transactional 只能被应用到public方法上, 对于其它非public的方法,如果标记了@Transactional也不会报错,但方法没有事务功能.
 
 2、用 spring 事务管理器,由spring来负责数据库的打开,提交,回滚.默认遇到运行期例外(throw new RuntimeException("注释");)会回滚，即遇到不受检查（unchecked）的例外时回滚；而遇到需要捕获的例外(throw new Exception("注释");)不会回滚,即遇到受检查的例外（就是非运行时抛出的异常，编译器会检查到的异常叫受检查例外或说受检查异常）时，需我们指定方式来让事务回滚要想所有异常都回滚,要加上 @Transactional( rollbackFor={Exception.class,其它异常}) .如果让unchecked例外不回滚： @Transactional(notRollbackFor=RunTimeException.class)
@@ -38,7 +37,7 @@ public void registerAlias(String alias, Class<?> value) {
 
 ### 事务传播级别
 
-``` java
+```java
 @Transactional(propagation=Propagation.REQUIRED) ：如果有事务, 那么加入事务, 没有的话新建一个(默认情况下)
 @Transactional(propagation=Propagation.NOT_SUPPORTED) ：容器不为这个方法开启事务
 @Transactional(propagation=Propagation.REQUIRES_NEW) ：不管是否存在事务,都创建一个新的事务,原来的挂起,新的执行完毕,继续执行老的事务
@@ -49,7 +48,7 @@ public void registerAlias(String alias, Class<?> value) {
 
 ### 事务隔离级别
 
-``` java
+```java
 @Transactional(isolation = Isolation.READ_UNCOMMITTED)：读取未提交数据(会出现脏读, 不可重复读) 基本不使用
 @Transactional(isolation = Isolation.READ_COMMITTED)：读取已提交数据(会出现不可重复读和幻读)
 @Transactional(isolation = Isolation.REPEATABLE_READ)：可重复读(会出现幻读)
@@ -58,4 +57,42 @@ public void registerAlias(String alias, Class<?> value) {
 
 ## Feign
 
-通过FeignClient调用接口时, GET接口需要给入参标注@SpringQueryMap
+通过 FeignClient 调用接口时, GET 接口需要给入参标注@SpringQueryMap
+
+## maven 源码
+
+`mvn dependency:sources`
+
+## web flux cors
+
+```java
+@Configuration
+public class WebFluxConfig extends WebFluxConfigurationSupport {
+
+    private static final String ALLOWED_HEADERS = "Origin, X-Requested-With, Content-Type, Accept";
+    private static final String ALLOWED_METHODS = "POST, GET, PATCH, DELETE, PUT";
+    private static final String ALLOWED_ORIGIN = "*";
+    private static final String MAX_AGE = "3600L";
+
+    @Bean
+    public WebFilter corsFilter() {
+        return (ServerWebExchange ctx, WebFilterChain chain) -> {
+            ServerHttpRequest request = ctx.getRequest();
+            if (CorsUtils.isCorsRequest(request)) {
+                ServerHttpResponse response = ctx.getResponse();
+                HttpHeaders headers = response.getHeaders();
+                headers.add("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+                headers.add("Access-Control-Allow-Methods", ALLOWED_METHODS);
+                headers.add("Access-Control-Max-Age", MAX_AGE);
+                headers.add("Access-Control-Allow-Headers", ALLOWED_HEADERS);
+                headers.add("Access-Control-Allow-Credentials", "true");
+                if (request.getMethod() == HttpMethod.OPTIONS) {
+                    response.setStatusCode(HttpStatus.OK);
+                    return Mono.empty();
+                }
+            }
+            return chain.filter(ctx);
+        };
+    }
+}
+```
