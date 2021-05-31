@@ -32,3 +32,16 @@ client.test("Request executed successfully", function() {
     });
  %}
 ```
+
+### upload file
+
+```http
+POST http://172.31.103.161:29530/api/v1/logging/collect/file
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="log5.txt"
+
+< C:\Users\ycpang\Desktop\log5.txt
+--WebAppBoundary--
+```
