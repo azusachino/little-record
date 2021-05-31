@@ -1,6 +1,6 @@
-# Linux相关经验
+# Linux 相关经验
 
-## Ubuntu更新APT源
+## Ubuntu 更新 APT 源
 
 ```sh
 cd /etc/apt/
@@ -59,7 +59,7 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted
 deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
 ```
 
-## Centos 安装Docker
+## Centos 安装 Docker
 
 ### 1. 删除旧版本
 
@@ -74,7 +74,7 @@ sudo yum remove docker \
                 docker-engine
 ```
 
-### 2. 配置repo
+### 2. 配置 repo
 
 ```bash
 sudo yum install -y yum-utils
@@ -84,11 +84,11 @@ sudo yum-config-manager \
     https://download.docker.com/linux/centos/docker-ce.repo
 ```
 
-### 3. 安装最新版docker
+### 3. 安装最新版 docker
 
 `sudo yum install docker-ce docker-ce-cli containerd.io`
 
-## Centos安装Docker-Compose
+## Centos 安装 Docker-Compose
 
 ### 1. 下载
 
@@ -98,14 +98,92 @@ sudo yum-config-manager \
 
 `sudo chmod +x /usr/local/bin/docker-compose`
 
-## sh文件无法执行
+## sh 文件无法执行
 
 /bin/bash^M: bad interpreter: 没有那个文件或目录  
-问题在于，文件可能在windows环境下编辑过，产生了不兼容问题，解决方案：
+问题在于，文件可能在 windows 环境下编辑过，产生了不兼容问题，解决方案：
 
 ```sh
 vim demo.sh
 :set ff # 查看是否dos，如果是dos执行后续操作
 :set fileformat=unix
 wq
+```
+
+## Shell 变量 字符串截取
+
+```shell
+val='Hello/World/Shell/Script'
+
+# #号截取，删除左边字符，保留右边字符。(仅匹配一次)
+echo ${val#*/} # => World/Shell/Script
+# */匹配 任意字符 + /
+
+# ##号截取，删除左边字符，保留右边字符。(匹配所有)
+echo ${val##*/} # => Script
+
+# %号截取，删除右边字符，保留左边字符。(仅匹配一次)
+echo ${val%/*} # => Hello/World/Shell
+
+# %%截取，删除右边字符，保留左边字符。(匹配所有)
+echo ${val%%/*} # => Hello
+
+# 从左边第几个字符开始，以及字符的个数
+echo ${val:0:5} # => Hello
+
+# 从左边的第几字符开始，一直到结束
+echo ${val:6} # => World/Shell/Script
+
+# 从右边第几个字符开始，以及字符的个数
+echo ${val:0-8:4} # => l/Sc
+
+# 从右边的第几个字符开始，一直到结束
+echo ${val:0-6} # => Script
+```
+
+## 内存占用较高
+
+### 查看内存情况
+
+```sh
+# 按MB查看
+free -m
+```
+
+- total:总计物理内存的大小。
+- used:已使用多大。
+- free:可用有多少。
+- Shared:多个进程共享的内存总额。
+- Buffers/cached:磁盘缓存的大小。
+
+```sh
+# 内存使用情况
+cat /proc/meminfo
+pidstat -r -p 12345 1 5
+ps aux | head -1; ps aux | grep -v PID | sort -rn -k +4 | head -20
+slatop
+```
+
+### Cached 占用过高
+
+buffer,cached 的作用：
+
+- cached 主要负责缓存文件使用, 日志文件过大造成 cached 区内存增大把内存占用完
+- Free 中的 buffer 和 cache：（它们都是占用内存）：
+- buffer : 作为 buffer cache 的内存，是块设备(磁盘)的缓冲区，包括读、写磁盘
+- cache: 作为 page cache 的内存, 文件系统的 cache，包括读、写文件，如果 cache 的值很大，说明 cache 住的文件数很多。
+
+```sh
+#常用方法是
+
+sync
+
+echo 1 > /proc/sys/vm/drop_caches
+
+#清除后要还原系统默认配置：
+echo 0 > /proc/sys/vm/drop_caches
+
+#查看设置
+ sysctl -a | grep drop_caches
+补充： echo 字符串 > 文件  就是把字符串内容从定向到文件中
 ```
