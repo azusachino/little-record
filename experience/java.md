@@ -165,11 +165,217 @@ private static ByteBuffer reAllocate(ByteBuffer stringBuffer) {
 // 利用Java8的Stream
 Stream<String> stream = Files.lines(Paths.get(fileName));
 
-// BufferedReader 
+// BufferedReader
 BufferedReader br = Files.newBufferedReader(Paths.get(fileName));
 List<String> list = br.lines().collect(Collectors.toList());
 
 // BufferedReader + Scanner
 BufferedReader br = new BufferedReader(new FileReader(fileName));
 Scanner scanner = new Scanner(new File(fileName));
+```
+
+## Spring Webflux 获取 Request
+
+### SpringMVC 场景下
+
+直接调用 RequestContextHolder.getRequestAttributes().getRequest()，即可获得当前请求的 req。（采用了 ThreadLocal）
+
+```java
+ServletRequestAttributes requestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+// get the request
+HttpServletRequest request = requestAttributes.getRequest();
+```
+
+### SpringWebFlux 场景下
+
+为了能够方便获得 Request 对象，我们就需要在开始的时候把它存在一个可以使用、并且是相同 scope 的容器里。
+
+1. `WebFilter`
+2. `reactor.util.context.Context`
+
+```java
+@Configuration
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+public class ReactiveRequestContextFilter implements WebFilter {
+  @Override
+  public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    ServerHttpRequest request = exchange.getRequest();
+    return chain.filter(exchange)
+        .subscriberContext(ctx -> ctx.put(ReactiveRequestContextHolder.CONTEXT_KEY, request));
+  }
+}
+
+public class ReactiveRequestContextHolder {
+  public static final Class<ServerHttpRequest> CONTEXT_KEY = ServerHttpRequest.class;
+
+  public static Mono<ServerHttpRequest> getRequest() {
+    return Mono.subscriberContext()
+        .map(ctx -> ctx.get(CONTEXT_KEY));
+  }
+}
+
+@RestController
+public class GetRequestController {
+
+  @RequestMapping("/request")
+  public Mono<String> getRequest() {
+    return ReactiveRequestContextHolder.getRequest()
+        .map(request -> request.getHeaders().getFirst("user"));
+  }
+}
+```
+
+## Spring Webflux static file
+
+```java
+final AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(targetPath, StandardOpenOption.WRITE);
+
+AtomicLong fileSize = new AtomicLong(targetPath.toFile().length());
+
+Flux<DataBuffer> fileDataStream = webClient
+                .get()
+                .uri(remoteXFerServiceTargetHost)
+                .accept(MediaType.APPLICATION_OCTET_STREAM)
+                .header("Range", String.format("bytes=%d-", fileSize.get()))
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new CustomException("4xx error")))
+                .onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(new CustomException("5xx error")))
+                .bodyToFlux(DataBuffer.class);
+
+DataBufferUtils
+        .write(fileData , fileChannel)
+        .map(DataBufferUtils::release)
+        .doOnError(throwable -> {
+            try {
+                fileChannel.force(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        })
+        .retryWhen(Retry.any().fixedBackoff(Duration.ofSeconds(5)).retryMax(5))
+        .doOnComplete(() -> {
+            try {
+                fileChannel.force(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        })
+        .doOnError(e -> !(e instanceof ChannelException), e -> {
+            try {
+                Files.deleteIfExists(targetPath);
+            } catch (IOException exc) {
+                exc.printStackTrace();
+            }
+        })
+        .doOnError(ChannelException.class, e -> {
+            try {
+                Files.deleteIfExists(targetPath);
+            } catch (IOException exc) {
+                exc.printStackTrace();
+            }
+        })
+        .doOnTerminate(() -> {
+            try {
+                fileChannel.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        })
+    .blockLast();
+```
+
+## Spring WebFlux 文件相关开发
+
+### Endpoint
+
+```java
+// 不同于SpringMVC，采用FilePart
+@PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public Mono<FileInfo> uploadFile(@RequestPart("file") FilePart filePart) {
+    log.info("upload file:{}", filePart.filename());
+    return fileService.uploadFile(filePart);
+}
+
+@GetMapping("download/{fileId}")
+public Mono<Void> downloadFile(@PathVariable String fileId, ServerHttpResponse response) {
+    Mono<FileInfo> fileInfoMono = fileService.getFileById(fileId);
+    Mono<FileInfo> fallback = Mono.error(new FileNotFoundException("No file was found with fileId: " + fileId));
+    return fileInfoMono
+        .switchIfEmpty(fallback)
+        .flatMap(fileInfo -> {
+            var fileName = new String(fileInfo.getDfsFileName().getBytes(Charset.defaultCharset()), StandardCharsets.ISO_8859_1);
+
+            ZeroCopyHttpOutputMessage zeroCopyResponse = (ZeroCopyHttpOutputMessage) response;
+            response.getHeaders().set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+            response.getHeaders().setContentType(MediaType.IMAGE_PNG);
+
+            var file = new File(fileInfo.getDfsBucket());
+            return zeroCopyResponse.writeWith(file, 0, file.length());
+        });
+}
+
+@DeleteMapping("{fileId}")
+public Mono<Void> deleteFile(@PathVariable String fileId, ServerHttpResponse response) {
+    return fileService.deleteById(fileId);
+}
+```
+
+### Service
+
+```java
+@Override
+public Mono<FileInfo> uploadFile(FilePart filePart) {
+    return DataBufferUtils.join(filePart.content())
+        .map(dataBuffer -> {
+            ObjectWriteResponse writeResponse = dfsRepository.uploadObject(filePart.filename(), dataBuffer.asInputStream());
+            FileInfo fileInfo = new FileInfo();
+            fileInfo.setOriginFileName(filePart.filename());
+            fileInfo.setDfsFileName(writeResponse.object());
+            fileInfo.setDfsBucket(writeResponse.bucket());
+            fileInfo.setCreatedAt(new Date());
+            return fileInfo;
+        })
+        .flatMap(fileInfo -> fileInfoRepository.insert(fileInfo))
+        .onErrorStop();
+}
+
+@Override
+public Mono<FileInfo> getFileById(String fileId) {
+    return fileInfoRepository.findById(fileId);
+}
+
+@Override
+public Mono<Void> deleteById(String fileId) {
+    Mono<FileInfo> fileInfoMono = this.getFileById(fileId);
+    Mono<FileInfo> fallback = Mono.error(new FileNotFoundException("No file was found with fileId: " + fileId));
+    return fileInfoMono
+        .switchIfEmpty(fallback)
+        .flatMap(fileInfo -> {
+            dfsRepository.deleteObject(fileInfo.getDfsFileName());
+            return fileInfoRepository.deleteById(fileId);
+        }).then();
+}
+```
+
+### Exception Handler
+
+```java
+@Slf4j
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(FileNotFoundException.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public ErrorInfo handleFileNotFoundException(FileNotFoundException e) {
+        log.error("FileNotFoundException occurred", e);
+        return new ErrorInfo("not_found", e.getMessage());
+    }
+
+    @ExceptionHandler(DfsServerException.class)
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorInfo handleDfsServerException(DfsServerException e) {
+        log.error("DfsServerException occurred", e);
+        return new ErrorInfo("server_error", e.getMessage());
+    }
+}
 ```
