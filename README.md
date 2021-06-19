@@ -1,6 +1,11 @@
 # LittleRecord
 
-Recorder
+一切都是为了更好的自己。
+
+## [系统架构设计师学习](examination/system-arch-design/README.md)
+
+1. CS 整体能力
+2. 提高工资水平
 
 ## [Collection](collection/README.md)
 
@@ -8,7 +13,7 @@ Recorder
 
 ## [Experience](experience/README.md)
 
-经验值UP
+经验值 UP
 
 ## [interview](interview/README.md)
 
@@ -20,7 +25,7 @@ Recorder
 
 ## [learning](learning/README.md)
 
-CS学习
+CS 学习
 
 ## [literary](literary/README.md)
 
