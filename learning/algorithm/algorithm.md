@@ -21,18 +21,18 @@
   - 基础: Tree, Graph
   - 高级: binary search tree(red-black, AVL), heap, disjoint set, Trie 字典树
 - 特殊数据结构
-  - 位运算Bitwise, 步隆过滤器(Bloom Filter)
+  - 位运算 Bitwise, 步隆过滤器(Bloom Filter)
   - LRU Cache
 
 ### 2.算法
 
 - if-else, switch -- branch
 - for,while loop -- iteration
-- 递归Recursion(Divide & Conquer, Backtrace)
+- 递归 Recursion(Divide & Conquer, Backtrace)
 
 ---
 
-- Search: 深度优先搜索 Depth First Search, 广度优先搜索 Breadth First Search, A*, etc
+- Search: 深度优先搜索 Depth First Search, 广度优先搜索 Breadth First Search, A\*, etc
 - 动态规划 Dynamic Programming
 - 二分查找 Binary Search
 - 贪心 Greedy
@@ -49,10 +49,10 @@
 
 ### 其他建议
 
-- 善用Google
+- 善用 Google
 - Iterm2 & zsh
 - Vscode + leetcode plugin
-- IDE的快捷方式 熟练
+- IDE 的快捷方式 熟练
 - 自顶向下的编程方式
 
 ## 复杂度分析
@@ -144,18 +144,18 @@ O(n!): Factorial 阶乘
 - 跳表 (skip list)
   - lookup O(logn)
   - insert O(logn)
-  
+
 ### 1.实战解析: 移动零
 
-1. 5-10分钟: 读题和思考
+1. 5-10 分钟: 读题和思考
 2. 有思路: 自己开始做和写代码; 不然, 马上看题解
 3. 默写背诵, 熟练
 
 ## 栈和队列
 
-- Stack (FILO); 添加, 删除皆为 O(1), 查询O(n)
-- Queue (FIFO); 添加, 删除皆为 O(1), 查询O(n)
-- Deque 添加, 删除皆为 O(1), 查询O(n)
+- Stack (FILO); 添加, 删除皆为 O(1), 查询 O(n)
+- Queue (FIFO); 添加, 删除皆为 O(1), 查询 O(n)
+- Deque 添加, 删除皆为 O(1), 查询 O(n)
 
 ### Stack
 
@@ -212,8 +212,8 @@ Deque<Integer> deque = new LinkedList<>();
 
 ### Binary Tree
 
-LinkedList是特殊化的Tree  
-Tree是特殊化的Graph
+LinkedList 是特殊化的 Tree  
+Tree 是特殊化的 Graph
 
 ### 二叉树遍历
 
@@ -245,7 +245,7 @@ Tree是特殊化的Graph
 - n-ary-tree-preorder-traversal
 - n-ary-tree-level-order-traversal
 
-### python代码模板
+### python 代码模板
 
 ```python
 def recursion(level, param1, param2,...):
@@ -362,7 +362,7 @@ def BFS(graph, start, end):
     # other processes
 ```
 
-### dfs/bfs题目
+### dfs/bfs 题目
 
 - binary-tree-level-order-traversal
 - minimun-genetic-mutation
@@ -376,7 +376,7 @@ def BFS(graph, start, end):
 - number-of-islands
 - minesweeper
 
-## 贪心Greedy
+## 贪心 Greedy
 
 贪心算法是一种在每一步选择中都采取在当前状态下最好或最优的选择, 从而希望结果是全局最好或最优的算法
 
@@ -454,7 +454,7 @@ else:
 2. 理解复杂逻辑的关键
 3. 职业进阶的要点要领
 
-### dp面试题
+### dp 面试题
 
 1. Fibonacci
 2. count the paths
@@ -474,13 +474,13 @@ else:
 
 ### 字典树的数据结构
 
-字典树, Trie数, 又称单词查找树或键树, 是一种树形结构. 典型应用是用于统计和排序大量的字符串, 所以经常被搜索引擎系统用于文本词频统计
+字典树, Trie 数, 又称单词查找树或键树, 是一种树形结构. 典型应用是用于统计和排序大量的字符串, 所以经常被搜索引擎系统用于文本词频统计
 
 优点: 最大限度地减少无谓的字符串比较, 查询效率比哈希表高.
 
 ### 字典树的核心思想
 
-- Trie树的核心思想是空间换时间
+- Trie 树的核心思想是空间换时间
 - 利用字符串的公共前缀来降低查询时间的开销以达到提高效率的目的
 
 ### 字典树的基本性质
@@ -501,9 +501,9 @@ else:
 
 #### 基本操作
 
-1. makeSet(s): 建立一个新的并查集, 其中包含s个单元素集合
-2. unionSet(x,y): 把元素x和元素y所在的集合合并, 要求x和y所在的集合不相交, 如果相交则不合并
-3. find(x): 找到元素x所在的集合的代表, 该操作也可以用于判断两个元素是否位于同一个集合, 比较它们各自的代表
+1. makeSet(s): 建立一个新的并查集, 其中包含 s 个单元素集合
+2. unionSet(x,y): 把元素 x 和元素 y 所在的集合合并, 要求 x 和 y 所在的集合不相交, 如果相交则不合并
+3. find(x): 找到元素 x 所在的集合的代表, 该操作也可以用于判断两个元素是否位于同一个集合, 比较它们各自的代表
 
 ## Learn from Labuladong
 
@@ -515,7 +515,7 @@ else:
   - 最优子结构
   - 状态转移方程
 
-## A* Search
+## A\* Search
 
 ### model
 
@@ -539,9 +539,9 @@ def a_star_search(graph, start, end):
 
 #### 启发式函数: h(n)
 
-用来评价哪些节点最有希望的是一个我们要找的结点, h(n)会返回一个肺腑实数, 也可以认为是从结点n的目标结点路径的估计成本.
+用来评价哪些节点最有希望的是一个我们要找的结点, h(n)会返回一个肺腑实数, 也可以认为是从结点 n 的目标结点路径的估计成本.
 
-## 红黑树&AVL树
+## 红黑树&AVL 树
 
 ### 保证性能的关键
 
@@ -562,15 +562,15 @@ def a_star_search(graph, start, end):
 
 - 每个结点要么是红色, 要么是黑色
 - 根节点是黑色
-- 每个叶节点(NIL节点, 空节点)是黑色的
+- 每个叶节点(NIL 节点, 空节点)是黑色的
 - 不能有相邻接的两个红色节点
 - 从任一节点到其每个叶子的所有路径都包含相同数目的黑色节点
 
 ## 位运算
 
-### 6种位运算
+### 6 种位运算
 
-- >>
+- > >
 - <<
 - &
 - |
@@ -588,13 +588,13 @@ def a_star_search(graph, start, end):
 
 ### 指定位置的位运算
 
-1. 将x最右边的n位清零: `x & (~0<<n)`
-2. 获取x的第n位值: (x>>n)&1
-3. 获取x的第n位的幂值: x & (1 << (n-1))
-4. 仅将第n位置设为1: x | (1 << n)
-5. 仅将第n位置设为0: x & (~(1 << n))
-6. 将x最高位至第n位(含)清零: x & ((1 << n)-1)
-7. 将第n位至第0位(含)清零: x & (~(1 << (n+1))-1)
+1. 将 x 最右边的 n 位清零: `x & (~0<<n)`
+2. 获取 x 的第 n 位值: (x>>n)&1
+3. 获取 x 的第 n 位的幂值: x & (1 << (n-1))
+4. 仅将第 n 位置设为 1: x | (1 << n)
+5. 仅将第 n 位置设为 0: x & (~(1 << n))
+6. 将 x 最高位至第 n 位(含)清零: x & ((1 << n)-1)
+7. 将第 n 位至第 0 位(含)清零: x & (~(1 << (n+1))-1)
 
 ### 实战要点
 
@@ -602,8 +602,8 @@ def a_star_search(graph, start, end):
   - x % 2 == 1 -> (x&1)==1
   - x % 2 == 0 -> (x&1)==0
 - x >> 1 => x / 2
-- x & (x-1) 清零最低位的1
-- x&-x得到最低位的1
+- x & (x-1) 清零最低位的 1
+- x&-x 得到最低位的 1
 - x&~x => 0
 
 ## BF & LRU
@@ -614,7 +614,7 @@ def a_star_search(graph, start, end):
 
 - 比特币网络
 - 分布式系统(map-reduce)
-- Redis缓存
+- Redis 缓存
 - 垃圾邮件, 评论的过滤
 
 ### Least Recent Used
@@ -647,11 +647,11 @@ string in python & java is immutable
 
 1. brute force
 2. Rabin-Karp
-3. KMP算法
+3. KMP 算法
 
 #### Rabin-Karp
 
-1. 假设子串的长度为M(path), 目标字符串的长度位N
-2. 计算子串的hash值
-3. 计算目标字符串中每个长度为M的子串的hash值(共需计算N-M+1次)
-4. 比较hash值: 如果hash值不同, 字符串必然不匹配, 如果hash值相同, 还需要使用朴素算法再次判断
+1. 假设子串的长度为 M(path), 目标字符串的长度位 N
+2. 计算子串的 hash 值
+3. 计算目标字符串中每个长度为 M 的子串的 hash 值(共需计算 N-M+1 次)
+4. 比较 hash 值: 如果 hash 值不同, 字符串必然不匹配, 如果 hash 值相同, 还需要使用朴素算法再次判断
