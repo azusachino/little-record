@@ -14,3 +14,4 @@ Collect Sentences from Language Learning Websites.
 - [APR](2021/04.md)
 - [MAY](2021/05.md)
 - [JUNE](2021/06.md)
+- [JULY](2021/07.md)
