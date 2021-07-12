@@ -2,7 +2,7 @@
 
 ## Pod 中的重要概念
 
-### Pod 的声明周期
+### Pod 的生命周期
 
 1. Pending。这个状态意味着，Pod 的 YAML 文件已经提交给了 Kubernetes，API 对象已经被创建并保存在 Etcd 当中。但是，这个 Pod 里有些容器因为某种原因而不能被顺利创建。比如，调度不成功。
 2. Running。这个状态下，Pod 已经调度成功，跟一个具体的节点绑定。它包含的容器都已经创建成功，并且至少有一个正在运行中。
@@ -10,7 +10,9 @@
 4. Failed。这个状态下，Pod 里至少有一个容器以不正常的状态（非 0 的返回码）退出。这个状态的出现，意味着你得想办法 Debug 这个容器的应用，比如查看 Pod 的 Events 和日志。
 5. Unknown。这是一个异常状态，意味着 Pod 的状态不能持续地被 kubelet 汇报给 kube-apiserver，这很有可能是主从节点（Master 和 Kubelet）间的通信出现了问题。
 
-### Pod 的资源限制
+还包括一组 Conditions：PodScheduled, Ready, Initialized, Unschedulable.
+
+### Pod 中的资源限制
 
 Kubernetes 通过 cgroups 限制容器的 CPU 和内存等计算资源，包括 requests 和 limits。
 
@@ -23,13 +25,15 @@ spec.containers[].resources.requests.memory
 spec.containers[].resources.requests.hugepages-<size>
 ```
 
+内存的约束和请求以字节为单位：E, P, T, G, M, K.
+
 ### Pod 中的网络资源
 
 Pod 是一个逻辑概念，是一组共享了某些资源的容器。Pod 里的所有容器，共享的是同一个 Network Namespace，并且可以声明共享同一个 Volume。
 
 在 Kubernetes 项目里有一个中间容器，这个容器叫作 Infra 容器。Infra 容器永远都是第一个被创建的容器，而其他用户定义的容器，则通过 Join Network Namespace 的方式，与 Infra 容器关联在一起。
 
-Volume
+在 Kubernetes 项目里，Infra 容器一定要占用极少的资源，所以它使用的是一个非常特殊的镜像，叫作：k8s.gcr.io/pause。这个镜像是一个用汇编语言编写的、永远处于“暂停”状态的容器，解压后的大小也只有 100~200 KB 左右。
 
 ```yml
 apiVersion: v1
@@ -57,6 +61,8 @@ spec:
       args:
         ["-c", "echo Hello from the debian container > /pod-data/index.html"]
 ```
+
+`kubectl exec -it two-containers --container debian-container -- /bin/bash`
 
 ### Pod 中的重要字段
 
@@ -117,7 +123,9 @@ spec:
 
 整个 Pod 里的每个容器的进程，对于所有容器来说都是可见的。
 
-#### imagePullPolicy：定义了拉取镜像的策略
+#### ImagePullPolicy：定义了拉取镜像的策略
+
+default: IfNotPresent, 当容器的镜像是类似于 nginx 或者 nginx:latest 这样的名字时，ImagePullPolicy 会被认为 Always ，即总是会去拉取最新的镜像。
 
 #### LifeCycle：可以在容器状态发生变化时触发一系列生命周期钩子
 
@@ -169,9 +177,12 @@ c1oudc0w!
 
 $ kubectl create secret generic user --from-file=./username.txt
 $ kubectl create secret generic pass --from-file=./password.txt
+
+kubectl get secrets
 ```
 
 ```yml
+# create secrets with yml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -273,11 +284,34 @@ spec:
                     fieldPath: metadata.labels
 ```
 
+Downward API 支持的字段
+
+```plain
+1. 使用fieldRef可以声明使用:
+spec.nodeName - 宿主机名字
+status.hostIP - 宿主机IP
+metadata.name - Pod的名字
+metadata.namespace - Pod的Namespace
+status.podIP - Pod的IP
+spec.serviceAccountName - Pod的Service Account的名字
+metadata.uid - Pod的UID
+metadata.labels['<KEY>'] - 指定<KEY>的Label值
+metadata.annotations['<KEY>'] - 指定<KEY>的Annotation值
+metadata.labels - Pod的所有Label
+metadata.annotations - Pod的所有Annotation
+
+2. 使用resourceFieldRef可以声明使用:
+容器的CPU limit
+容器的CPU request
+容器的memory limit
+容器的memory request
+```
+
 #### Service Account：K8S 系统内置的一种“服务账户”，可以进行权限分配
 
 Service Account 的授权信息和文件保存在它所绑定的一个特殊的 Secret 对象 ServiceAccountToken 中。
 
-如果你查看一下任意一个运行在 Kubernetes 集群里的 Pod，就会发现，每一个 Pod，都已经自动声明一个类型是 Secret、名为 default-token-xxxx 的 Volume，然后 自动挂载在每个容器的一个固定目录上。
+任意一个运行在 Kubernetes 集群里的每一个 Pod，都已经自动声明一个类型是 Secret：名为 default-token-xxxx 的 Volume，然后自动挂载在每个容器的一个固定目录上。
 
 ```bash
 $ kubectl describe pod nginx-deployment-5c678cfb6d-lg9lw
@@ -324,7 +358,17 @@ spec:
         periodSeconds: 5 # 执行周期
 ```
 
-### Pod预设置：PodPreset
+Pod 的恢复机制：
+
+- Always：在任何情况下，只要容器不在运行状态，就自动重启容器；
+- OnFailure: 只在容器 异常时才自动重启容器；
+- Never: 从来不重启容器
+
+只要 Pod 的 restartPolicy 指定的策略允许重启异常的容器（比如：Always），那么这个 Pod 就会保持 Running 状态，并进行容器重启。
+
+对于包含多个容器的 Pod，只有它里面所有的容器都进入异常状态后，Pod 才会进入 Failed 状态。
+
+### Pod 预设置：PodPreset
 
 ```yml
 apiVersion: settings.k8s.io/v1alpha1
@@ -355,7 +399,7 @@ metadata:
   name: website
   labels:
     app: website
-    role: frontend
+    role: frontend # 根据role: frontend匹配PodPreset
 spec:
   containers:
     - name: website
@@ -363,3 +407,5 @@ spec:
       ports:
         - containerPort: 80
 ```
+
+PodPreset 里定义的内容，只会在 Pod API 对象被创建之前追加在这个对象本身上，而不会影响任何 Pod 的控制器的定义。
