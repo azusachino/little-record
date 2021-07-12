@@ -1,5 +1,7 @@
 # 持久卷 PV、PVC
 
+Kubernetes 引入了一组叫作 Persistent Volume Claim（PVC）和 Persistent Volume（PV）的 API 对象用于管理存储卷。
+
 ## Sample
 
 PVC:
@@ -69,9 +71,17 @@ spec:
         claimName: mongodb-pvc # 指定PVC名称
 ```
 
+在 Pod 中只需要声明 PVC 的名字，等 Pod 创建后 kubelet 就会把这个 PVC 所对应的 PV，也就是一个 GCE 类型的 Volume，挂载在这个 Pod 容器内的目录上。
+
+PVC 和 PV 是为了区分团队协作中管理员和研发人员的职责：研发人员定义 PVC，PV 交给管理员实现。
+
+PersistentVolumeController 会不断地查看当前每一个 PVC，是不是已经处于 Bound（已绑定）状态。如果不是，那它就会遍历所有的、可用的 PV，并尝试将其与这个“单身”的 PVC 进行绑定。
+
 ### StorageClass 的 Dynamic Provisioning
 
-StorageClass 提供了 Dynamic Provisioning 机制，可以根据模板创建 PV。
+如果找不到可用的 PV，StorageClass 提供了 Dynamic Provisioning 机制，可以根据模板自动创建 PV。
+
+k8s 能够根据用户提交的 PVC，找到一个对应的 StorageClass ，然后调用该 StorageClass 声明的存储插件，创建出需要的 PV。
 
 1. PV 的属性。比如，存储类型、Volume 的大小等等。
 2. 创建这种 PV 需要用到的存储插件。比如，Ceph 等等。
@@ -90,7 +100,7 @@ provisioner 字段的值是：kubernetes.io/gce-pd，这是 k8s 内置的存储�
 
 ### PV 和 PVC 的生命周期
 
-Provisioning —>Binding —>Using —>Reclaiming
+Provisioning —> Binding —> Using —> Reclaiming
 
 #### **Provisioning**
 
@@ -119,6 +129,6 @@ Pods 声明并使用 PVC 作为 volume 后，集群会找到该 PVC，如果该 
 一般的情况下，我们遵循这个删除流程：
 
 1. 删除使用这个 PV 的 Pod；
-2. 从宿主机移除本地磁盘（比如，umount 它）；
+2. 从宿主机移除本地磁盘；
 3. 删除 PVC；
 4. 删除 PV。

@@ -1,5 +1,7 @@
 # Depolyment
 
+Deployment 可以做到很便捷的管理 Pod，只需要在 Deployment 中描述一下希望的 Pod 状态是什么，包括定义 Pod 副本数、滚动升级和回滚应用、扩容和缩容、暂停和继续 Deployment 等，然后 Deployment Controller 就可以帮我们实现我们想要达到的状态。
+
 ## Sample
 
 ```yml
@@ -19,7 +21,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx:1.7.9
+          image: nginx:1.20.0
           ports:
             - containerPort: 80
 ```
@@ -36,27 +38,29 @@ template 字段定义了这个 Deployment 管理的 Pod 应该是怎样的，具
 
 ## ReplicaSet
 
-ReplicaSet 是一个副本控制器，可以用 select 来控制 Pod 的数量。Departments 是一个更高层次的概念，它管理 ReplicaSets，并提供对 Pod 的声明性更新以及许多其他的功能。
+ReplicaSet 是一个副本控制器，可以用 selector 来控制 Pod 的数量。Deployments 是一个更高层次的概念，它管理 ReplicaSets，并提供对 Pod 的声明性更新以及许多其他的功能。
+
+Deployment 通过控制 ReplicaSet 的个数来和属性，进而实现“水平扩展 / 收缩”和“滚动更新”这两个编排动作。
 
 ### 水平扩展与滚动更新
 
 `kubectl create -f nginx-deployment.yml --record`, `--record`参数作用是记录下每次操作所执行的命令。
 
 通过 kubectl scale 进行水平拓展，`kubectl scale deployment nginx-deployment --replicas=4`  
-通过`kubectl rollout status`查看滚动更新的状态，`kubectl rollout status deployment/nginx-deployment`
-
-在运行了一个 Deployment 修改后，Deployment Controller 会创建一个副本为 ReplicaSet，并会生成一串随机字符，ReplicaSet 会把这个随机字符串加在它所控制的所有 Pod 的标签里，从而保证这些 Pod 不会与集群里的其他 Pod 混淆。通过`kubectl get pods -show-labels`进行查看。
-
+通过`kubectl rollout status`查看滚动更新的状态，`kubectl rollout status deployment/nginx-deployment`  
+通过`kubectl get rs`查看 ReplicaSet 状态  
+在运行了一个 Deployment 修改后，Deployment Controller 会创建一个副本为 ReplicaSet，并会生成一串随机字符，ReplicaSet 会把这个随机字符串加在它所控制的所有 Pod 的标签里，从而保证这些 Pod 不会与集群里的其他 Pod 混淆。通过`kubectl get pods --show-labels`进行查看。  
 通过`set image`修改 deployment 中的镜像，`kubectl set image deployment/nginx-deployment nginx=nginx:1.16.1 --record`；然后通过`kubectl describe`查看滚动更新的过程，`kubectl describe deployment nginx-deployment`
 
 ### 版本控制和回滚
 
-通过`rollout undo`进行版本回滚，`kubectl rollout undo deployment/nginx-deployment`
-通过 kubectl rollout history 来看到相应版本的具体信息，`kubectl rollout history deployment/nginx-deployment --revision=2`
+通过`rollout undo`进行版本回滚，`kubectl rollout undo deployment/nginx-deployment`  
+通过`kubectl rollout history`来看到相应版本的具体信息，`kubectl rollout history deployment/nginx-deployment --revision=2`  
+通过`kubectl rollout undo`命令来回滚到相应的版本：`kubectl rollout undo deployment/nginx-deployment --to-revision=2`
 
 ### Pausing & Resuming
 
-一次性执行多条命令然后再一次性滚动更新，那么可以先 pause Deployment 然后操作完之后再 resume 它。
+可以一次性执行多条命令，然后再一次性滚动更新 => 先 pause Deployment 然后操作完之后再 resume 它。
 
 ```bash
 kubectl rollout pause deployment/nginx-deployment
@@ -64,13 +68,3 @@ kubectl rollout pause deployment/nginx-deployment
 kubectl rollout resume deployment/nginx-deployment
 # 在 kubectl rollout pause 指令之后的这段时间里，我们对 Deployment 进行的所有修改，最后只会触发一次“滚动更新”。
 ```
-
-## 总结
-
-1. 与 k8s 进行交互尽量选择 yaml 文件交互；
-2. 可以使用 kubectl create 命令创建一个 pod；
-3. 想要获取目前 pod 的状态可以使用 kubectl get pods 命令；
-4. 使用 kubectl describe pod 可以查看某个 pod 的详细信息；
-5. 如果想要对 pod 更新最好使用 kubectl apply -f ，这样可以做到更加无感的创建 pod 或更新；
-6. 可以使用 Volumes 来挂载卷；
-7. 使用 kubectl delete -f 可以删除一个 pod；

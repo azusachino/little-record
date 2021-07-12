@@ -409,3 +409,13 @@ spec:
 ```
 
 PodPreset 里定义的内容，只会在 Pod API 对象被创建之前追加在这个对象本身上，而不会影响任何 Pod 的控制器的定义。
+
+## 总结
+
+1. 与 k8s 进行交互尽量选择 yaml 文件交互；
+2. 可以使用 kubectl create 命令创建一个 pod；
+3. 想要获取目前 pod 的状态可以使用 kubectl get pods 命令；
+4. 使用 kubectl describe pod 可以查看某个 pod 的详细信息；
+5. 如果想要对 pod 更新最好使用 kubectl apply -f ，这样可以做到更加无感的创建 pod 或更新；
+6. 可以使用 Volumes 来挂载卷；
+7. 使用 kubectl delete -f 可以删除一个 pod；
