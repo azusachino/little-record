@@ -132,3 +132,8 @@ Pods 声明并使用 PVC 作为 volume 后，集群会找到该 PVC，如果该 
 2. 从宿主机移除本地磁盘；
 3. 删除 PVC；
 4. 删除 PV。
+
+## 源码分析
+
+- pv_controller_base.go
+- pv_controller.go

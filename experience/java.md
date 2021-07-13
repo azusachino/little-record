@@ -379,3 +379,64 @@ public class GlobalExceptionHandler {
     }
 }
 ```
+
+## AWS SDK chunkUpload
+
+```java
+        // 初始化一个分片上传，获取分块上传ID，桶名 + 对像名 + 分块上传ID 唯一确定一个分块上传
+        InitiateMultipartUploadRequest initRequest = new InitiateMultipartUploadRequest(bucket, fileName);
+        InitiateMultipartUploadResult initResult = this.amazonS3.initiateMultipartUpload(initRequest);
+        String uploadId = initResult.getUploadId();
+
+        List<PartETag> eTags = new ArrayList<>();
+
+        // 分片上传
+        try (FileInputStream is = new FileInputStream(file)) {
+
+            long contentLength = FileUtil.size(file);
+            long filePosition = 0, partSize = BUFFER_SIZE;
+            for (int i = 0; filePosition < contentLength; i++) {
+                // Last part can be less than 5 MB. Adjust part size.
+                partSize = Math.min(partSize, (contentLength - filePosition));
+                // Create request to upload a part.
+                UploadPartRequest uploadRequest = new UploadPartRequest()
+                        .withBucketName(bucket)
+                        .withKey(fileName)
+                        .withUploadId(uploadId)
+                        .withPartNumber(i)
+                        .withFileOffset(filePosition)
+                        .withPartSize(partSize)
+                        .withInputStream(is);
+                //如果是加密的，需要加入这步
+                if (filePosition + partSize == contentLength) {
+                    uploadRequest.setLastPart(true);
+                }
+                // Upload part and add response to our list.
+                eTags.add(this.amazonS3.uploadPart(uploadRequest).getPartETag());
+
+                filePosition += partSize;
+            }
+        } catch (Exception ignored) {
+
+        }
+        // 校验上传结果
+        int nextMarker = 0;
+        while (true) {
+            ListPartsRequest listPartsRequest = new ListPartsRequest(bucket, fileName, uploadId);
+            listPartsRequest.setPartNumberMarker(nextMarker);
+
+            PartListing partList = this.amazonS3.listParts(listPartsRequest);
+
+            for (PartSummary ps : partList.getParts()) {
+                nextMarker++;
+                eTags.add(new PartETag(ps.getPartNumber(), ps.getETag()));
+            }
+
+            if (!partList.isTruncated()) {
+                break;
+            }
+        }
+        // 完成分片上传
+        CompleteMultipartUploadRequest completeRequest = new CompleteMultipartUploadRequest(bucket, fileName, uploadId, eTags);
+        this.amazonS3.completeMultipartUpload(completeRequest);
+```

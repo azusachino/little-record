@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-volume-pv-0
+  labels:
+    key: local-volume-az-0
+spec:
+  capacity:
+    storage: 0.5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-volume
+  local:
+    path: /mnt/c/Users/ycpang/Desktop
+    # 经过试验，C:/Users/az/, C:\Users\az, C:\\Users\\az都不行
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/arch
+              operator: In
+              values:
+                - amd64
