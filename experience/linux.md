@@ -187,3 +187,22 @@ echo 0 > /proc/sys/vm/drop_caches
  sysctl -a | grep drop_caches
 补充： echo 字符串 > 文件  就是把字符串内容从定向到文件中
 ```
+
+## 配置 SSH 链接(centos)
+
+1. 在当前机器生成 ssh key
+2. 将公钥拷贝到目标机器的`~/.ssh/authorized_keys`中
+3. 修改`/etc/ssh/sshd_config`后保存
+4. 重启 sshd 服务`systemctl restart sshd.service`
+
+```sh
+# 主要为了保证下面两行启用
+RSAAuthentication yes
+PubkeyAuthentication yes
+```
+
+## 在shell脚本中读取.env
+
+```sh
+eval "$(echo $(cat .env))"
+```
