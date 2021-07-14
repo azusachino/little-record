@@ -27,6 +27,6 @@
 
 CS 学习
 
-## [literary](literary/README.md)
+## [reading](reading/README.md)
 
-记录
+读书学习

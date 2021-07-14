@@ -28,7 +28,7 @@ spec:
         name: fluentd-elasticsearch
     spec:
       tolerations:
-        # 在默认情况下，Kubernetes 集群不允许用户在 Master 节点部署 Pod。因为，Master 节点默认携带了一个叫作node-role.kubernetes.io/master的“污点”。所以，为了能在 Master 节点上部署 DaemonSet 的 Pod，我就必须让这个 Pod“容忍”这个“污点”。
+        # 在默认情况下，Kubernetes 集群不允许用户在 Master 节点部署 Pod。因为，Master 节点默认携带了一个叫作node-role.kubernetes.io/master的“污点”taint。所以，为了能在 Master 节点上部署 DaemonSet 的 Pod，我就必须让这个 Pod“容忍”这个“污点”。
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
       containers:
@@ -56,11 +56,19 @@ spec:
             path: /var/lib/docker/containers
 ```
 
-通过`kubectl get ds -n kube-system fluentd-elasticsearch`查看 DaemonSet 对象信息
+```sh
+# 查看Pod运行情况
+kubectl get pod -n kube-system -l name=fluentd-elasticsearch
+# 查看DaemonSet对象信息
+kubectl get ds -n kube-system fluentd-elasticsearch
+```
 
 ## 仅在某些节点上运行 Pod
 
-通过使用 nodeAffinity(亲和性)
+- nodeAffinity(亲和性)
+- nodeTaint(污点)
+
+### affinity
 
 ```yml
 apiVersion: v1
@@ -76,16 +84,23 @@ spec:
               - key: metadata.name
                 operator: In
                 values:
-                  - node1
+                  - node
 ```
 
-上面的这个 pod，我们指定了 nodeAffinity，matchExpressions 的含义是这个 pod 只能运行在 metadata.name 是 node1 的节点上，operator=In 表示部分匹配的意思，除此之外 operator 还可以指定：In，NotIn，Exists，DoesNotExist，Gt，Lt 等。
+上面的这个 pod，我们指定了 nodeAffinity，matchExpressions 的含义是这个 pod 只能运行在 metadata.name 是 node 的节点上，operator=In 表示部分匹配的意思，除此之外 operator 还可以指定：In，NotIn，Exists，DoesNotExist，Gt，Lt 等。
 
 requiredDuringSchedulingIgnoredDuringExecution 表明将 pod 调度到一个节点必须要满足的规则。除了这个规则还有 preferredDuringSchedulingIgnoredDuringExecution 将 pod 调度到一个节点可能不会满足规则
 
-## Taints & Tolerations
+### Taints & Tolerations
 
 在 k8s 集群中，我们可以给 Node 打上污点，这样可以让 pod 避开那些不合适的 node。在 node 上设置一个或多个 Taint 后，除非 pod 明确声明能够容忍这些污点，否则无法在这些 node 上运行。
+
+```sh
+# 给node增加污点
+kubectl taint nodes node key=value:NoSchedule
+# 移除污点
+kubectl taint nodes node key:NoSchedule-
+```
 
 通过`kubectl taint nodes node1 key=value:NoSchedule`给 node1 打上了污点，将阻止 pod 调度到 node1 上；通过`kubectl taint nodes node1 key:NoSchedule-`移出污点。
 
