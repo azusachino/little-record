@@ -284,3 +284,68 @@ spec:
 - If the named node does not exist, the pod will not be run, and in some cases may be automatically deleted.
 - If the named node does not have the resources to accommodate the pod, the pod will fail and its reason will indicate why, for example OutOfmemory or OutOfcpu.
 - Node names in cloud environments are not always predictable or stable.
+
+## [Pod Overhead](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/)
+
+Pod Overhead is a feature for accounting for the resources consumed by the Pod infrastructure on top of the container requests & limits.
+
+```yml
+---
+kind: RuntimeClass
+apiVersion: node.k8s.io/v1
+metadata:
+  name: kata-fc
+handler: kata-fc
+overhead:
+  podFixed:
+    memory: "120Mi"
+    cpu: "250m"
+```
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  runtimeClassName: kata-fc
+  containers:
+    - name: busybox-ctr
+      image: busybox
+      stdin: true
+      tty: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 100Mi
+    - name: nginx-ctr
+      image: nginx
+      resources:
+        limits:
+          cpu: 1500m
+          memory: 100Mi
+```
+
+At admission time the RuntimeClass admission controller updates the workload's PodSpec to include the overhead as described in the RuntimeClass. If the PodSpec already has this field defined, the Pod will be rejected. In the given example, since only the RuntimeClass name is specified, the admission controller mutates the Pod to include an overhead.
+
+```sh
+kubectl get pod test-pod -o jsonpath='{.spec.overhead}'
+# output
+map[cpu:250m memory:120Mi]
+```
+
+When the kube-scheduler is deciding which node should run a new Pod, the scheduler considers that Pod's overhead as well as the sum of container requests for that Pod. For this example, the scheduler adds the requests and the overhead, then looks for a node that has 2.25 CPU and 320 MiB of memory available.
+
+```sh
+kubectl get pod test-pod -o jsonpath='{.spec.containers[*].resources.limits}'
+# output
+map[cpu: 500m memory:100Mi] map[cpu:1500m memory:100Mi]
+# check what is observed by the node
+kubectl describe node | grep test-pod -B2
+# output
+Namespace                   Name                CPU Requests  CPU Limits   Memory Requests  Memory Limits  AGE
+---------                   ----                ------------  ----------   ---------------  -------------  ---
+default                     test-pod            2250m (56%)   2250m (56%)  320Mi (1%)       320Mi (1%)     36m
+```
+
+## [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
