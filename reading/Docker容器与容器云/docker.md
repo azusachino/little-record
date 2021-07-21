@@ -279,3 +279,243 @@ memory 子系统，会在描述内存状态的“mm_struct”结构体中记录�
 - cgroup 与任务之间的关联关系
 
 cgroup 与任务之间是多对多的关系，所以它们并不直接关联，而是通过一个中间结构把双向的关联信息记录起来。每个任务结构体 task_struct 中都包含了一个指针，可以查询到对应 cgroup 的情况，同时也可以查询到各个子系统的状态，这些子系统状态中也包含了找到任务的指针，不同类型的子系统按需定义本身的控制信息结构体，最终在自定义的结构体中把子系统状态指针包含进去，然后内核通过 container_of（这个宏可以通过一个结构体的成员找到结构体自身）等宏定义来获取对应的结构体，关联到任务，以此达到资源限制的目的。
+
+## Docker 的架构
+
+Docker 使用了传统的 cs 架构模式，用户通过 docker client 与 docker daemon 建立通信，并将请求发送给 daemon。Docker 的后端是松耦合结构，不同模块各司其职，有机组合，完成用户的请求。
+
+![.](https://res.weread.qq.com/wrepub/epub_26211797_36)
+
+Docker 通过 driver 模块来实现对 Docker 容器执行环境的创建和管理。当需要创建 Docker 容器时，可通过镜像管理（image management）部分的 distribution 和 registry 模块从 Docker registry 中下载镜像，并通过镜像管理的 image、reference 和 layer 存储镜像的元数据，通过镜像存储驱动 graphdriver 将镜像文件存储于具体的文件系统中；当需要为 Docker 容器创建网络环境时，通过网络管理模块 network 调用 libnetwork 创建并配置 Docker 容器的网络环境；当需要为容器创建数据卷 volume 时，则通过 volume 模块调用某个具体的 volumedriver，来创建一个数据卷并负责后续的挂载操作；当需要限制 Docker 容器运行资源或执行用户指令等操作时，则通过 execdriver 来完成。libcontainer 是对 cgroups 和 namespace 的二次封装，execdriver 是通过 libcontainer 来实现对容器的具体管理，包括利用 UTS、IPC、PID、Network、Mount、User 等 namespace 实现容器之间的资源隔离和利用 cgroups 实现对容器的资源限制。
+
+**Docker Daemon**:
+
+Docker daemon 是 Docker 最核心的后台进程，它负责响应来自 Docker client 的请求，然后将这些请求翻译成系统调用完成容器管理操作。该进程会在后台启动一个 API Server，负责接收由 Docker client 发送的请求；接收到的请求将通过 Docker daemon 分发调度，再由具体的函数来执行请求。
+
+**Docker Client**:
+
+用来向 Docker daemon 发起请求，执行相应的容器管理操作。它既可以是命令行工具 docker，也可以是任何遵循了 Docker API 的客户端。
+
+**镜像管理**:
+
+Docker 通过 distribution、registry、layer、image、reference 等模块实现了 Docker 镜像的管理，我们将这些模块统称为镜像管理（image management）。
+
+- distribution 负责与 Docker registry 交互，上传下载镜像以及存储与 v2registry 有关的元数据。
+- registry 模块负责与 Docker registry 有关的身份验证、镜像查找、镜像验证以及管理 registry mirror 等交互操作。
+- image 模块负责与镜像元数据有关的存储、查找，镜像层的索引、查找以及镜像 tar 包有关的导入、导出等操作。
+- reference 负责存储本地所有镜像的 repository 和 tag 名，并维护与镜像 ID 之间的映射关系。
+- layer 模块负责与镜像层和容器层元数据有关的增删查改，并负责将镜像层的增删查改操作映射到实际存储镜像层文件系统的 graphdriver 模块。
+
+**execdriver, volumedriver, graphdriver**:
+
+- execdriver 是对 Linux 操作系统的 namespaces、cgroups、apparmor、SELinux 等容器运行所需的系统操作进行的一层二次封装，其本质作用类似于 LXC，但是功能要更全面。
+- volumedriver 是 volume 数据卷存储操作的最终执行者，负责 volume 的增删改查，屏蔽不同驱动实现的区别，为上层调用者提供一个统一的接口。Docker 中作为默认实现的 volumedriver 是 local，默认将文件存储于 Docker 根目录下的 volume 文件夹里。其他的 volumedriver 均是通过外部插件实现的。
+- graphdriver 是所有与容器镜像相关操作的最终执行者。graphdriver 会在 Docker 工作目录下维护一组与镜像层对应的目录，并记下镜像层之间的关系以及与具体的 graphdriver 实现相关的元数据。用户对镜像的操作最终会被映射成对这些目录文件以及元数据的增删改查，从而屏蔽掉不同文件存储实现对于上层调用者的影响。在 Linux 环境下，目前 Docker 已经支持的 graphdriver 包括 aufs、btrfs、zfs、devicemapper、overlay 和 vfs。
+
+**network**:
+
+网络是通过 networkdriver 模块以及 libcontainer 库完成的，现在这部分功能已经分离成一个 libnetwork 库独立维护。libnetwork 抽象出了一个容器网络模型（Container Network Model, CNM），并给调用者提供了一个统一抽象接口，其目标并不仅限于 Docker 容器。CNM 模型对真实的容器网络抽象出了沙盒（sandbox）、端点（endpoint）、网络（network）这 3 种对象，由具体网络驱动（包括内置的 Bridge、Host、None 和 overlay 驱动以及通过插件配置的外部驱动）操作对象，并通过网络控制器提供一个统一接口供调用者管理网络。网络驱动负责实现具体的操作，包括创建容器通信所需的网络，容器的 network namespace，这个网络所需的虚拟网卡，分配通信所需的 IP，服务访问的端口和容器与宿主机之间的端口映射，设置 hosts、resolv.conf、iptables 等。
+
+### Client & Daemon
+
+docker 命令的工作流程
+
+**1. 解析 flag 信息**:
+
+- Debug，对应-D 和——debug 参数，它将向系统中添加 DEBUG 环境变量且赋值为 1，并把日志显示等级调为 DEBUG 级，这个 flag 用于启动调试模式。
+- LogLevel，对应-l 和——log-level 参数，默认等级为 info，即只输出普通的操作信息。用户可以指定的日志等级现在有 panic、fatal、error、warn、info、debug 这几种。
+- Hosts，对应-H 和——host=[]参数，对于 client 模式，就是指本次操作需要连接的 Docker daemon 位置，而对于 daemon 模式，则提供所要监听的地址。若 Hosts 变量或者系统环境变量 DOCKER_HOST 不为空，说明用户指定了 host 对象；否则使用默认设定，默认情况下 Linux 系统设置为 unix:///var/run/docker.sock。
+- protoAddrParts，这个信息来自于-H 参数中：//前后的两部分的组合，即与 Docker daemon 建立通信的协议方式与 socket 地址。
+
+**2. 创建 client 实例**: `api/client/cli.go#NewDockerCli`
+
+**3. 执行具体命令**: `cli/cli.go`
+
+- 从命令映射到对应的方法
+- 执行对应的方法，发起请求
+  - 解析传入的参数，并针对参数进行配置处理。
+  - 获取与 Docker daemon 通信所需要的认证配置信息。
+  - 根据命令业务类型，给 Docker daemon 发送 POST、GET 等请求。
+  - 读取来自 Docker daemon 的返回结果。
+
+Daemon 模式
+
+**1. API Server 的配置和初始化**:
+
+1. 整理解析用户指定的各项参数
+2. 创建 PID 文件
+3. 加载所需的 server 辅助配置，包括日志、是否允许远程访问、版本以及 TLS 认证信息等
+4. 通过 Goroutine 方式启动 API Server
+5. 创建一个负责处理业务的 daemon 对象作为负责处理用户请求的逻辑实体
+6. 对 APIServer 中的路由表进行初始化
+7. 设置一个 channel，保证上述 goroutine 只有在 server 出错的情况下才会退出
+8. 设置信号捕获，当 daemon 进程收到 INT、TERM、QUIT 信号时，关闭 APIServer，调用 shutdownDaemon
+9. 如果上述操作 ok，APIServer 会与上述 daemon 绑定，允许接收来自 client 的链接
+10. daemon 进程向宿主机的 init 守护进程发送"READY=1"信号，表示 Docker Daemon 正常启动
+
+shutdownDaemon:
+
+- 创建并设置一个 channel，使用 select 监听数据。在正确完成关闭 daemon 工作后将该 channel 关闭；否则在超时 15s 后报错
+- daemon/daemon.go#Shutdown
+  - 遍历所有运行中的容器，先使用 SIGTERM 软杀死容器进程，如果 10 秒内不能完成，则使用 SIGKILL 强制杀死。
+  - 如果 netController 被初始化过，调用#libnetwork/controller.go#GC 方法进行垃圾回收。
+  - 结束运行中的镜像存储驱动进程。
+
+**2. daemon 对象的创建和初始化**:
+
+- Docker 容器的配置信息
+  - 设置默认的网络最大传输单元 `-mtu, default 1500`
+  - 检测网桥配置信息
+- 检测系统支持和用户权限
+  - 操作系统的支持
+  - 用户级别(root)
+  - 内核版本与处理器的支持
+- 配置 daemon 工作路径 `/var/lib/docker (0700)`
+- 配置 Docker 容器所需的文件环境
+  - 创建容器配置文件目录 `/var/lib/docker/containers`
+  - 配置 graphdriver 目录 - 优先级 `aufs, btrfs, zfs, devicemapper, overlay, vfs`: 尝试加载内核 aufs 模块来确定 Docker 主机支持 aufs；发起 statfs 系统调用获取当前 Docker 主目录（/var/lib/docker/）的文件系统信息，确定 aufs 是否支持该文件系统；创建 aufs 驱动根目录（默认：/var/lib/docker/aufs）并将该目录配置为私有挂载；在根目录下创建 mnt、diff 和 layers 目录作为 aufs 驱动的工作环境。
+  - 配置镜像目录 `/var/lib/docker/image`
+  - 调用`volume/local/local.go#New`创建 volume 驱动目录`/var/lib/docker/volumes`，Docker 中 volume 是宿主机上挂载到 Docker 容器内部的特定目录
+  - 准备"可信"镜像所需的工作目录
+  - 创建 distributionMetadataStore 和 referenceStore。distributionMetadataStore 存储与第二版镜像仓库 registry 有关的元数据，主要用于做镜像层的 diff_id 与 registry 中镜像层元数据之间的映射。referenceStore 用于存储镜像的仓库列表。
+  - 将持久化在 Docker 根目录中的镜像、镜像层以及镜像仓库等的元数据内容恢复到 daemon 的 imageStore、layerStore 和 referenceStore 中。
+  - 执行镜像迁移
+- 创建 Docker daemon 网络
+- 初始化 execdriver，Docker 会调用 execdrivers 中的 NewDriver()函数来创建新的 execdriver。
+- daemon 对象诞生
+  - ID：根据传入的证书生成的容器 ID，若没有传入则自动使用 ECDSA 加密算法生成。
+  - repository：部署所有 Docker 容器的路径。
+  - containers：用于存储具体 Docker 容器信息的对象。
+  - execCommands:Docker 容器所执行的命令。
+  - referenceStore：存储 Docker 镜像仓库名和镜像 ID 的映射。
+  - distributionMetadataStore:v2 版 registry 相关的元数据存储。
+  - trustKey：可信任证书。
+  - idIndex：用于通过简短有效的字符串前缀定位唯一的镜像。
+  - sysInfo:Docker 所在宿主机的系统信息。
+  - configStore:Docker 所需要的配置信息。
+  - execDriver:Docker 容器执行驱动，默认为 native 类型。
+  - statsCollector：收集容器网络及 cgroup 状态信息。
+  - defaultLogConfig：提供日志的默认配置信息。
+  - registryService：镜像存储服务相关信息。
+  - EventsService：事件服务相关信息。
+  - volumes:volume 所使用的驱动，默认为 local 类型。
+  - root:Docker 运行的工作根目录。
+  - uidMaps:uid 的对应图。
+  - gidMaps:gid 的对应图。
+  - seccompEnabled：是否使用 seccompute。
+  - nameIndex：记录键和其名字的对应关系。
+  - linkIndex：容器的 link 目录，记录容器的 link 关系。
+- 恢复已有的 Docker 容器 `/var/lib/docker/containers` 若有已经存在的 Docker 容器，则将相应信息收集并进行维护，同时重启 restart policy 为 always 的容器。
+
+```s
+/var/lib/docker/
+├—— aufs                                       # aufs驱动工作的目录
+|   ├—— diff                                  # aufs文件系统的所有层的存储目录（新下载的镜像内容就逐层保存在这里）
+|   ├—— layers                                # 存储上述所有aufs层之间的关系等元数据
+|   └—— mnt                                   # aufs文件系统的挂载点，如果容器中写了一个新文件，会出现在这里
+├—— containers                                 # 容器的配置文件目录
+|
+├—— image/aufs                                 # 存储镜像和镜像层信息，注意这里只是元数据，真正的镜像层内容保存在aufs/diff下
+|   ├—— imagedb                               # 存储所有镜像的元数据
+|   ├—— layerdb                               # 存储所有镜像层和容器层的元数据
+|   ├—— repositories.json                     # 记录镜像仓库中所有镜像的repository和tag名
+|   └—— distribution
+|
+└—— volumes                                    # volumes的工作目录，存放所有volume数据和元数据
+```
+
+client to daemon:
+
+**1. 发起请求**:
+
+1. docker run 命令开始运行，用户端的 Docker 进入 client 模式，开始了 client 工作过程；
+2. 经过初始化，新建出了一个 client；
+3. 上述 client 通过反射机制找到了 CmdRun 方法。
+
+CmdRun 在解析过用户提供的容器参数等一系列操作后，最终发出了这样两个请求：
+
+```http
+POST /containers/create?${containerValues} // create container
+POSt /containers/${createResponse.ID}/start // start container
+```
+
+**2. 创建容器**:
+
+Docker daemon 并不需要真正创建一个 Linux 容器，它只需要解析用户通过 client 提交的 POST 表单，然后使用这些参数在 daemon 中新建一个 container 对象出来即可。
+
+```go
+type Container struct {
+ StreamConfig *stream.Config
+ // embed for Container to support states directly.
+ *State          `json:"State"`          // Needed for Engine API version <= 1.11
+ Root            string                  `json:"-"` // Path to the "home" of the container, including metadata.
+ BaseFS          containerfs.ContainerFS `json:"-"` // interface containing graphdriver mount
+ RWLayer         layer.RWLayer           `json:"-"`
+ ID              string
+ Created         time.Time
+ Managed         bool
+ Path            string
+ Args            []string
+ Config          *containertypes.Config
+ ImageID         image.ID `json:"Image"`
+ NetworkSettings *network.Settings
+ LogPath         string
+ Name            string
+ Driver          string
+ OS              string
+ // MountLabel contains the options for the 'mount' command
+ MountLabel             string
+ ProcessLabel           string
+ RestartCount           int
+ HasBeenStartedBefore   bool
+ HasBeenManuallyStopped bool // used for unless-stopped restart policy
+ MountPoints            map[string]*volumemounts.MountPoint
+ HostConfig             *containertypes.HostConfig `json:"-"` // do not serialize the host config in the json, otherwise we'll make the container unportable
+ ExecCommands           *exec.Store                `json:"-"`
+ DependencyStore        agentexec.DependencyGetter `json:"-"`
+ SecretReferences       []*swarmtypes.SecretReference
+ ConfigReferences       []*swarmtypes.ConfigReference
+ // logDriver for closing
+ LogDriver      logger.Logger  `json:"-"`
+ LogCopier      *logger.Copier `json:"-"`
+ restartManager restartmanager.RestartManager
+ attachContext  *attachContext
+
+ // Fields here are specific to Unix platforms
+ AppArmorProfile string
+ HostnamePath    string
+ HostsPath       string
+ ShmPath         string
+ ResolvConfPath  string
+ SeccompProfile  string
+ NoNewPrivileges bool
+
+ // Fields here are specific to Windows
+ NetworkSharedContainerID string            `json:"-"`
+ SharedEndpointList       []string          `json:"-"`
+ LocalLogCacheMeta        localLogCacheMeta `json:",omitempty"`
+}
+```
+
+**3. 启动容器**:
+
+`daemon/start.go#ContainerStart`
+
+**4. 最后一步**:
+
+所有需要跟操作系统打交道的任务都交给`ExecDriver.Run()`
+
+- commandv: 该容器所需的所有配置信息集合
+- pipes: 用于将容器 stdin, stdout, stderr 重定向到 daemon
+- startCallback()
+
+总结：
+
+- docker/docker.go 是所有命令的起始。它创建出来的 client（DockerCli）对应 api/client/cli.go。
+- api 目录下是所有与“client 如何发送请求”“server 如何响应请求”相关的文件。
+- api/client/xxx.go 中定义 Cmdxxx 函数，其中调用的 cli.client.xxx 函数指明了该命令发起何种 HTTP 请求。
+- api/server/router 中则按照不同的请求类型定义了所有响应具体请求的方法。
+- 每个请求的处理函数都会对应一个 daemon/xxx.go 文件，daemon 会使用其中相应的函数来对请求进行处理。
+- 处理过程中负责执行具体动作的 daemon 对象是 daemon/daemon.go#NewDaemon 创建出来的。
+- daemon 所使用到的 Container 对象即 container/container.go。
+- 一般 daemon 对象的具体动作再执行下去就是去调用 execdriver 了。比如启动容器调用的就是 daemon/execdriver/native/driver.go#Run（三大参数），然后交由底层模块处理。
