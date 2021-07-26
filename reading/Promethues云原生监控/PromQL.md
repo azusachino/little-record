@@ -121,3 +121,9 @@ rate(node_cpu[2m])
 - 一对一
 - 一对多
 - 多对多
+
+## 内置函数
+
+![.](https://res.weread.qq.com/wrepub/epub_34630839_103)
+
+![.](https://res.weread.qq.com/wrepub/epub_34630839_104)

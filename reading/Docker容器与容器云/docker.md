@@ -519,3 +519,5 @@ type Container struct {
 - 处理过程中负责执行具体动作的 daemon 对象是 daemon/daemon.go#NewDaemon 创建出来的。
 - daemon 所使用到的 Container 对象即 container/container.go。
 - 一般 daemon 对象的具体动作再执行下去就是去调用 execdriver 了。比如启动容器调用的就是 daemon/execdriver/native/driver.go#Run（三大参数），然后交由底层模块处理。
+
+## Docker 镜像管理
