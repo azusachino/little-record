@@ -521,3 +521,88 @@ type Container struct {
 - 一般 daemon 对象的具体动作再执行下去就是去调用 execdriver 了。比如启动容器调用的就是 daemon/execdriver/native/driver.go#Run（三大参数），然后交由底层模块处理。
 
 ## Docker 镜像管理
+
+Docker 镜像是一个只读的 Docker 容器模板，含有启动 Docker 容器所需的文件系统结构及其内容，因此是启动一个 Docker 容器的基础。Docker 镜像的文件内容以及一些运行 Docker 容器的配置文件组成了 Docker 容器的静态文件系统运行环境——rootfs。
+
+### rootfs
+
+rootfs 是 Docker 容器在启动时内部进程可见的文件系统，即 Docker 容器的根目录。rootfs 通常包含一个操作系统运行所需的文件系统，例如可能包含典型的类 Unix 操作系统中的目录系统，如/dev、/proc、/bin、/etc、/lib、/usr、/tmp 及运行 Docker 容器所需的配置文件、工具等。
+
+### Docker 镜像的主要特点
+
+- 分层
+- 写时复制
+- 内容寻址(content-addressable storage)
+- 联合挂载
+
+## Docker 存储管理
+
+- repository metadata: `/var/lib/docker/image/[graph_driver]/repositories.json`
+- image metadata: `/var/lib/docker/image/[graph_driver]/imagedb/content/sha256/[image]`
+- roLayer metadata: `/var/lib/docker/image/[graph_driver]/layerdb/sha256/[chainID]`
+- mountedLayer metadata: `/var/lib/docker/image/[graph_driver]/layerdb/mounts/[container_id]`
+
+Docker 中管理文件系统的驱动为 graphdriver。
+
+## Docker 数据卷
+
+volumedriver
+
+- volume 在容器创建时就会初始化，在容器运行时就可以使用其中的文件。
+- volume 能在不同的容器之间共享和重用。
+- 对 volume 中数据的操作会马上生效。
+- 对 volume 中数据的操作不会影响到镜像本身。
+- volume 的生存周期独立于容器的生存周期，即使删除容器，volume 仍然会存在，没有任何容器使用的 volume 也不会被 Docker 删除。
+
+## Docker 网络管理
+
+![.](https://res.weread.qq.com/wrepub/epub_26211797_61)
+
+- Sandbox: Container network stack
+- Endpoint: An endpoint can join a sandbox and a network
+- Network: A group of inter-connect endpoints.
+
+**libnetwork's driver**:
+
+- bridge
+- host
+- overlay
+- remote
+- null: got network namespace, but no config
+
+docker0 network bridge
+
+```sh
+ifconfig | grep docker0
+# output
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500 inet 172.17.0.1
+
+route -n
+# output
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         10.206.0.1      0.0.0.0         UG    100    0        0 eth0
+10.206.0.0      0.0.0.0         255.255.240.0   U     100    0        0 eth0
+172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0
+172.18.0.0      0.0.0.0         255.255.0.0     U     0      0        0 br-68e4c93dd5e6
+172.19.0.0      0.0.0.0         255.255.0.0     U     0      0        0 br-d4904e95b4fe
+```
+
+![.](https://res.weread.qq.com/wrepub/epub_26211797_64)
+
+```sh
+iptables-save
+
+mount
+```
+
+## Docker 容器安全
+
+Docker daemon 在以 TCP 形式提供服务的同时使用传输层安全协议；在构建和使用镜像时会验证镜像的签名证书；通过 cgroups 及 namespaces 来对容器进行资源限制和隔离；提供自定义容器能力（capability）的接口；通过定义 seccomp profile 限制容器内进程系统调用的范围等。
+
+- disk resource limit
+- container escape
+- container dos attack and network resource limit
+- privileged problem
+
+使用 SELinux 限制进程访问的资源；使用 quota 等技术限制容器磁盘使用量；使用 traffic controller 技术对容器的流量进行控制。
