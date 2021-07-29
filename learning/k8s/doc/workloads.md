@@ -148,4 +148,134 @@ When a force deletion is performed, the API server does not wait for confirmatio
 
 ### Init Containers
 
+A Pod can have multiple containers running apps within it, but it can also have one or more init containers, which are run before the app containers are started.
+
+1. Init containers always run to completion.
+2. Each init container must complete successfully before the next one starts.
+
+If a Pod's init container fails, the kubelet repeatedly restarts that init container until it succeeds. However, if the Pod has a `restartPolicy` of Never, and an init container fails during startup of that Pod, Kubernetes treats the overall Pod as failed.
+
+**Differences from regular containers**:
+
+Init containers support all the fields and features of app containers, including resource limits, volumes, and security settings. However, the resource requests and limits for an init container are handled differently, as documented in Resources.
+
+Also, init containers do not support lifecycle, livenessProbe, readinessProbe, or startupProbe because they must run to completion before the Pod can be ready.
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+spec:
+  containers:
+    - name: myapp-container
+      image: busybox:1.28
+      command: ["sh", "-c", "echo The app is running! && sleep 3600"]
+  initContainers:
+    - name: init-myservice
+      image: busybox:1.28
+      command:
+        [
+          "sh",
+          "-c",
+          "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done",
+        ]
+    - name: init-mydb
+      image: busybox:1.28
+      command:
+        [
+          "sh",
+          "-c",
+          "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done",
+        ]
+```
+
+```sh
+kubectl apply -f myapp.yaml
+# output
+pod/myapp-pod created
+
+kubectl get -f myapp.yaml
+# output
+NAME        READY     STATUS     RESTARTS   AGE
+myapp-pod   0/1       Init:0/2   0          6m
+# At this point, those init containers will be waiting to discover Services named mydb and myservice.
+```
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mydb
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9377
+```
+
+```sh
+kubectl apply -f services.yaml
+# output
+service/myservice created
+service/mydb created
+
+kubectl get -f myapp.yaml
+# output
+NAME        READY     STATUS    RESTARTS   AGE
+myapp-pod   1/1       Running   0          9m
+```
+
+**Detailed behaviors**:
+
+During Pod startup, the kubelet delays running init containers until the networking and storage are ready. Then the kubelet runs the Pod's init containers in the order they appear in the Pod's spec.
+
+Each init container must exit successfully before the next container starts. If a container fails to start due to the runtime or exits with failure, it is retried according to the Pod `restartPolicy`. However, if the Pod `restartPolicy` is set to Always, the init containers use `restartPolicy` _OnFailure_.
+
+A Pod cannot be `Ready` until all init containers have succeeded. The ports on an init container are not aggregated under a Service. A Pod that is initializing is in the `Pending` state but should have a condition `Initialized` set to false.
+
+If the Pod restarts, or is restarted, all init containers must execute again.
+
+Changes to the init container spec are limited to the container image field. Altering an init container image field is equivalent to restarting the Pod.
+
+Because init containers can be restarted, retried, or re-executed, init container code should be idempotent. In particular, code that writes to files on `EmptyDirs` should be prepared for the possibility that an output file already exists.
+
+Init containers have all of the fields of an app container. However, Kubernetes prohibits readinessProbe from being used because init containers cannot define readiness distinct from completion. This is enforced during validation.
+
+Use activeDeadlineSeconds on the Pod and livenessProbe on the container to prevent init containers from failing forever. The active deadline includes init containers.
+
+The name of each app and init container in a Pod must be unique; a validation error is thrown for any container sharing a name with another.
+
+**Resources**:
+
+Given the ordering and execution for init containers, the following rules for resource usage apply:
+
+- The highest of any particular resource request or limit defined on all init containers is the effective init request/limit. If any resource has no resource limit specified this is considered as the highest limit.
+- The Pod's effective request/limit for a resource is the higher of:
+  - the sum of all app containers request/limit for a resource
+  - the effective init request/limit for a resource
+- Scheduling is done based on effective requests/limits, which means init containers can reserve resources for initialization that are not used during the life of the Pod.
+- The QoS (quality of service) tier of the Pod's effective QoS tier is the QoS tier for init containers and app containers alike.
+
+**Pod restart reasons**:
+
+A Pod can restart, causing re-execution of init containers, for the following reasons:
+
+- The Pod infrastructure container is restarted. This is uncommon and would have to be done by someone with root access to nodes.
+- All containers in a Pod are terminated while restartPolicy is set to Always, forcing a restart, and the init container completion record has been lost due to garbage collection.
+
+The Pod will not be restarted when the init container image is changed, or the init container completion record has been lost due to garbage collection.
+
 ## Workload Resources

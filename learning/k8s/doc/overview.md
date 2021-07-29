@@ -33,7 +33,7 @@ Kubernetes is a portable, extensible, open-source platform for managing containe
 - Does not provide application-level services, such as middleware (for example, message buses), data-processing frameworks (for example, Spark), databases (for example, MySQL), caches, nor cluster storage systems (for example, Ceph) as built-in services. Such components can run on Kubernetes, and/or can be accessed by applications running on Kubernetes through portable mechanisms, such as the Open Service Broker.
 - Does not dictate logging, monitoring, or alerting solutions. It provides some integrations as proof of concept, and mechanisms to collect and export metrics.
 - Does not provide nor mandate a configuration language/system (for example, Jsonnet). It provides a declarative API that may be targeted by arbitrary forms of declarative specifications.
-  Does not provide nor adopt any comprehensive machine configuration, maintenance, management, or self-healing systems.
+- Does not provide nor adopt any comprehensive machine configuration, maintenance, management, or self-healing systems.
 - Additionally, Kubernetes is not a mere orchestration system. In fact, it eliminates the need for orchestration. The technical definition of orchestration is execution of a defined workflow: first do A, then B, then C. In contrast, Kubernetes comprises a set of independent, composable control processes that continuously drive the current state towards the provided desired state. It shouldn't matter how you get from A to C. Centralized control is also not required. This results in a system that is easier to use and more powerful, robust, resilient, and extensible.
 
 ## K8S Components
@@ -60,7 +60,9 @@ Factors taken into account for scheduling decisions include: individual and coll
 
 **kube-controller-manager**:
 
-A control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state.
+Control plane component that runs controller processes.
+
+Some types of these controllers are:
 
 - Node controller: Responsible for noticing and responding when nodes go down.
 - Job controller: Watches for Job objects that represent one-off tasks, then creates Pods to run those tasks to completion.
