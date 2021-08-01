@@ -2,8 +2,6 @@
 
 建立时间复杂度、空间复杂度意识，写出高质量的代码，能够设计基础架构，提升编程技能，训练逻辑思维，积攒人生经验，以此获得工作回报，实现你的价值，完善你的人生。
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/aa81002a-8e4f-48f8-91b9-2e77dab03a40/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/aa81002a-8e4f-48f8-91b9-2e77dab03a40/Untitled.png)
-
 1. 边学边练，适度刷题
 2. 多问、多思考、多互动
 3. 打怪升级学习法
@@ -14,8 +12,6 @@
 1. 只关注循环执行次数最多的一段代码
 2. 加法法则：总复杂度等于量级最大的那段代码的复杂度
 3. 乘法法则：嵌套代码的复杂度等于嵌套内外代码复杂度的乘积
-
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/16ee7adc-cc19-498b-9f89-e4bcb4a7b431/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/16ee7adc-cc19-498b-9f89-e4bcb4a7b431/Untitled.png)
 
 - 最好情况时间复杂度就是，在最理想的情况下，执行这段代码的时间复杂度
 - 最坏情况时间复杂度就是，在最糟糕的情况下，执行这段代码的时间复杂度

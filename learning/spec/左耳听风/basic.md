@@ -111,18 +111,18 @@ void bad()
 // 首先，先声明一个 RAII 类，注意其中的构造函数和析构函数
 class LockGuard {
 public:
-	LockGuard(std::mutex &m):_m(m) { m.lock(); }
-	~LockGuard() { m. unlock(); }
+ LockGuard(std::mutex &m):_m(m) { m.lock(); }
+ ~LockGuard() { m. unlock(); }
 private:
-	std::mutex& _m;
+ std::mutex& _m;
 }
 
-// 然后，我们来看一下，怎样使用的
+
 void good()
 {
-	LockGuard lg(m);   // RAII 类：构造时，互斥量请求加锁
-	f();                             // 若 f() 抛异常，则释放互斥
-	if(!everything_ok()) return;     // 提早返回，LockGuard 析构时，互斥量被释放
+ LockGuard lg(m);   // RAII 类：构造时，互斥量请求加锁
+ f();                             // 若 f() 抛异常，则释放互斥
+ if(!everything_ok()) return;     // 提早返回，LockGuard 析构时，互斥量被释放
 }
 ```
 
@@ -173,19 +173,19 @@ CompletableFuture.supplyAysnc(this::findReceiver)
                  .thenApply(this::sendMsg)
                  .thenAccept(this::notify);
 CompletableFuture.supplyAsync(Integer::parseInt) // 输入: "ILLEGAL"
-			     .thenApply(r -> r * 2 * Math.PI)
-			     .thenApply(s -> "apply>> " + s)
-			     .exceptionally(ex -> "Error: " + ex.getMessage());
+        .thenApply(r -> r * 2 * Math.PI)
+        .thenApply(s -> "apply>> " + s)
+        .exceptionally(ex -> "Error: " + ex.getMessage());
 CompletableFuture.supplyAsync(Integer::parseInt) // 输入: "ILLEGAL"
-				 .thenApply(r -> r * 2 * Math.PI)
-				 .thenApply(s -> "apply>> " + s)
-				 .handle((result, ex) -> {
-				 	if (result != null) {
-				 		return result;
-				 	} else {
-				 		return "Error handling: " + ex.getMessage();
-				 	}
-				 });
+     .thenApply(r -> r * 2 * Math.PI)
+     .thenApply(s -> "apply>> " + s)
+     .handle((result, ex) -> {
+      if (result != null) {
+       return result;
+      } else {
+       return "Error handling: " + ex.getMessage();
+      }
+     });
 ```
 
 ### 错误处理的最佳实践
@@ -269,7 +269,7 @@ float Q_rsqrt( float number )
 3. 降级操作
 4. 紧急更新
 
-**故障前的准备工作**
+**故障前的准备工作**：
 
 - 以用户功能为索引的服务和资源的全视图
 - 为地图中的各个服务指定关键指标，以及一套运维流程和工具，包括应急方案
@@ -277,14 +277,14 @@ float Q_rsqrt( float number )
 - 故障演练
 - 灰度发布系统
 
-**故障复盘过程**
+**故障复盘过程**:
 
 - **故障处理的整个过程**。就像一个 log 一样，需要详细地记录几点几分干了什么事，把故障从发生到解决的所有细节过程都记录下来。
 - **故障原因分析**。需要说明故障的原因和分析报告。
 - **Ask 5 Whys**。需要反思并反问至少 5 个为什么，并为这些“为什么”找到答案。
 - **故障后续整改计划**。需要针对上述的“Ask 5 Whys”说明后续如何举一反三地从根本上解决所有的问题。
 
-**故障整改方法**
+**故障整改方法**:
 
 第一，优化故障获知和故障定位的时间。
 
@@ -318,7 +318,7 @@ float Q_rsqrt( float number )
 1. 提高整体架构的吞吐量，服务更多的并发和流量
 2. 提高系统的稳定性，让系统的可用性更高
 
-**分布式带来的问题**
+**分布式带来的问题**:
 
 - 架构设计变得复杂（尤其是其中的分布式事务）。
 - 部署单个服务会比较快，但是如果一次部署需要多个服务，流程会变得复杂。
@@ -329,32 +329,28 @@ float Q_rsqrt( float number )
 - 技术多元化，这会带来维护和运维的复杂度。
 - 管理分布式系统中的服务和调度变得困难和复杂。
 
-**分布式系统中需要注意的问题**
+**分布式系统中需要注意的问题**:
 
 1. 异构系统的不标准问题
 2. 系统架构中的服务依赖性问题
 3. 故障发生的概率更大
 4. 多层架构的运维复杂度更大
 
-**四层系统**
+**四层系统**:
 
 - 基础层就是我们的机器、网络和存储设备等。
 - 平台层就是我们的中间件层，Tomcat、MySQL、Redis、Kafka 之类的软件。
 - 应用层就是我们的业务软件，比如，各种功能的服务。
 - 接入层就是接入用户请求的网关、负载均衡或是 CDN、DNS 这样的东西。
 
-**提升架构的性能**
-
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b79f9686-c83d-4cc3-90d1-ad7d1f90ef34/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b79f9686-c83d-4cc3-90d1-ad7d1f90ef34/Untitled.png)
+**提升架构的性能**:
 
 - **缓存系统**。加入缓存系统，可以有效地提高系统的访问能力。从前端的浏览器，到网络，再到后端的服务，底层的数据库、文件系统、硬盘和 CPU，全都有缓存，这是提高快速访问能力最有效的手段。对于分布式系统下的缓存系统，需要的是一个缓存集群。这其中需要一个 Proxy 来做缓存的分片和路由。
 - **负载均衡系统**。负载均衡系统是水平扩展的关键技术，它可以使用多台机器来共同分担一部分流量请求。
 - **异步调用**。异步系统主要通过消息队列来对请求做排队处理，这样可以把前端的请求的峰值给“削平”了，而后端通过自己能够处理的速度来处理请求。这样可以增加系统的吞吐量，但是实时性就差很多了。同时，还会引入消息丢失的问题，所以要对消息做持久化，这会造成“有状态”的结点，从而增加了服务调度的难度。
 - **数据分区和数据镜像**。**数据分区**是把数据按一定的方式分成多个区（比如通过地理位置），不同的数据区来分担不同区的流量。这需要一个数据路由的中间件，会导致跨库的 Join 和跨库的事务非常复杂。而**数据镜像**是把一个数据库镜像成多份一样的数据，这样就不需要数据路由的中间件了。你可以在任意结点上进行读写，内部会自行同步数据。然而，数据镜像中最大的问题就是数据的一致性问题。
 
-**提高架构的稳定性**
-
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b388b13d-f301-4d72-91fe-6732e164b9e0/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b388b13d-f301-4d72-91fe-6732e164b9e0/Untitled.png)
+**提高架构的稳定性**:
 
 - **服务拆分**。服务拆分主要有两个目的：一是为了隔离故障，二是为了重用服务模块。但服务拆分完之后，会引入服务调用间的依赖问题。
 - **服务冗余**。服务冗余是为了去除单点故障，并可以支持服务的弹性伸缩，以及故障迁移。然而，对于一些有状态的服务来说，冗余这些有状态的服务带来了更高的复杂性。其中一个是弹性伸缩时，需要考虑数据的复制或是重新分片，迁移的时候还要迁移数据到其它机器上。
@@ -362,7 +358,7 @@ float Q_rsqrt( float number )
 - **高可用架构**。通常来说高可用架构是从冗余架构的角度来保障可用性。比如，多租户隔离，灾备多活，或是数据可以在其中复制保持一致性的集群。总之，就是为了不出单点故障。
 - **高可用运维**。高可用运维指的是 DevOps 中的 CI/CD（持续集成 / 持续部署）。一个良好的运维应该是一条很流畅的软件发布管线，其中做了足够的自动化测试，还可以做相应的灰度发布，以及对线上系统的自动化控制。这样，可以做到“计划内”或是“非计划内”的宕机事件的时长最短。
 
-**分布式系统的关键技术**
+**分布式系统的关键技术**:
 
 - **服务治理**。服务拆分、服务调用、服务发现、服务依赖、服务的关键度定义……服务治理的最大意义是需要把服务间的依赖关系、服务调用链，以及关键的服务给梳理出来，并对这些服务进行性能和可用性方面的管理。
 - **架构软件管理**。服务之间有依赖，而且有兼容性问题，所以，整体服务所形成的架构需要有架构版本管理、整体架构的生命周期管理，以及对服务的编排、聚合、事务处理等服务调度功能。
@@ -372,24 +368,20 @@ float Q_rsqrt( float number )
 - **整体架构监控**。如果没有一个好的监控系统，那么自动化运维和资源调度管理只可能成为一个泡影，因为监控系统是你的眼睛。没有眼睛，没有数据，就无法进行高效的运维。所以说，监控是非常重要的部分。这里的监控需要对三层系统（应用层、中间件层、基础层）进行监控。
 - **流量控制**。最后是我们的流量控制，负载均衡、服务路由、熔断、降级、限流等和流量相关的调度都会在这里，包括灰度发布之类的功能也在这里。
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7a9cdc03-4c09-4acf-8322-274743b1111f/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7a9cdc03-4c09-4acf-8322-274743b1111f/Untitled.png)
-
 ### 全栈监控
 
 - **基础层**：监控主机和底层资源。比如：CPU、内存、网络吞吐、硬盘 I/O、硬盘使用等。
 - **中间层**：就是中间件层的监控。比如：Nginx、Redis、ActiveMQ、Kafka、MySQL、Tomcat 等。
 - **应用层**：监控应用层的使用。比如：HTTP 访问的吞吐量、响应时间、返回码，调用链路分析，性能瓶颈，还包括用户端的监控。
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6e907980-8583-4f8e-9a81-003e0c46011d/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6e907980-8583-4f8e-9a81-003e0c46011d/Untitled.png)
-
-**标准化的监控**
+**标准化的监控**:
 
 - 日志数据结构化；
 - 监控数据格式标准化；
 - 统一的监控平台；
 - 统一的日志分析。
 
-**监控系统功能**
+**监控系统功能**:
 
 - 服务调用链路跟踪
 - 服务调用时长分布
@@ -404,8 +396,6 @@ float Q_rsqrt( float number )
 3. **业务逻辑**。API Gateway 需要有简单的业务逻辑，所以，最好是像 AWS 的 Lambda 服务一样，可以让人注入不同语言的简单业务逻辑。
 4. **服务化**。一个好的 API Gateway 需要能够通过 Admin API 来不停机地管理配置变更，而不是通过一个.conf 文件来人肉地修改配置。
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/35d39f83-0f84-4613-8968-315419c0916f/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/35d39f83-0f84-4613-8968-315419c0916f/Untitled.png)
-
 - 提高服务的 SLA
 - 能力和资源重用或复用
 - 过程的自动化
@@ -416,15 +406,11 @@ float Q_rsqrt( float number )
 - **分布式是 PaaS 的根本特性**。多租户隔离、高可用、服务编排是 PaaS 的基本特性。
 - **自动化是 PaaS 的灵魂**。自动化部署安装运维，自动化伸缩调度是 PaaS 的关键。
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4dbe20da-c067-4807-9bf8-dad371b3a4aa/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4dbe20da-c067-4807-9bf8-dad371b3a4aa/Untitled.png)
-
 - PaaS 调度层 – 主要是 PaaS 的自动化和分布式对于高可用高性能的管理。
 - PaaS 能力服务层 – 主要是 PaaS 真正提供给用户的服务和能力。
 - PaaS 的流量调度 – 主要是与流量调度相关的东西，包括对高并发的管理。
 - PaaS 的运营管理 – 软件资源库、软件接入、认证和开放平台门户。
 - PaaS 的运维管理 – 主要是 DevOps 相关的东西。
-
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/194c047a-a313-4246-bd5a-d1c4128a8454/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/194c047a-a313-4246-bd5a-d1c4128a8454/Untitled.png)
 
 传统的单体架构系统容量显然是有上限的。同时，为了应对有计划和无计划的下线时间，系统的可用性也是有其极限的。分布式系统为以上两个问题提供了解决方案，并且还附带有其他优势。但是，要同时解决这两个问题决非易事。为了构建分布式系统，我们面临的主要问题如下。
 

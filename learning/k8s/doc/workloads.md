@@ -278,4 +278,90 @@ A Pod can restart, causing re-execution of init containers, for the following re
 
 The Pod will not be restarted when the init container image is changed, or the init container completion record has been lost due to garbage collection.
 
+### Pod Topology Spread Constraints
+
+Use topology spread constraints to control how Pods are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains.
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  topologySpreadConstraints:
+    - maxSkew: <integer>
+      topologyKey: <string>
+      whenUnsatisfiable: <string>
+      labelSelector: <object>
+```
+
+- `maxSkew` describes the degree to which Pods may be unevenly distributed. It must be greater than zero. Its semantics differs according to the value of whenUnsatisfiable:
+  - when whenUnsatisfiable equals to "DoNotSchedule", maxSkew is the maximum permitted difference between the number of matching pods in the target topology and the global minimum (the minimum number of pods that match the label selector in a topology domain. For example, if you have 3 zones with 0, 2 and 3 matching pods respectively, The global minimum is 0).
+  - when whenUnsatisfiable equals to "ScheduleAnyway", scheduler gives higher precedence to topologies that would help reduce the skew.
+- `topologyKey` is the key of node labels. If two Nodes are labelled with this key and have identical values for that label, the scheduler treats both Nodes as being in the same topology. The scheduler tries to place a balanced number of Pods into each topology domain.
+- `whenUnsatisfiable` indicates how to deal with a Pod if it doesn't satisfy the spread constraint:
+  - `DoNotSchedule` (default) tells the scheduler not to schedule it.
+  - `ScheduleAnyway` tells the scheduler to still schedule it while prioritizing nodes that minimize the skew.
+- labelSelector is used to find matching Pods. Pods that match this label selector are counted to determine the number of Pods in their corresponding topology domain.
+
+### Disruptions
+
+Pods do not disappear until someone (a person or a controller) destroys them, or there is an unavoidable hardware or system software error.
+
+### Ephemeral Containers
+
+a special type of container that runs temporarily in an existing Pod to accomplish user-initiated actions such as troubleshooting.
+
 ## Workload Resources
+
+### Deployments
+
+A Deployment provides declarative updates for Pods and ReplicaSets.
+
+**typical use cases**:
+
+- Create a Deployment to rollout a ReplicaSet
+- Declare the new state of the Pods
+- Rollback to an earlier Deployment revision
+- Scale up the Deployment to facilitate more load
+- Puase the deployment
+- Use the status of Deployment
+- Clean up older ReplicaSets
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.14.2
+          ports:
+            - containerPort: 80
+```
+
+### ReplicaSet
+
+### StatefulSets
+
+### DaemonSet
+
+### Jobs
+
+### TTL Controller for Finished Resources
+
+### CronJob
+
+### ReplicationController
