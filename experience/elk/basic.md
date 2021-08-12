@@ -105,7 +105,7 @@ es 内部的文件夹需要特殊权限，或者以`user: root`模式启动
 
 然后是具体的模板配置，介绍几个重要的知识点：
 
-注意：**ES版本不同，配置文件也有相应的变化**
+注意：**ES 版本不同，配置文件也有相应的变化**
 
 - 通过配置`dynamic_templates`，可以动态匹配 mappings.properties 之外的属性；否则出现多余字段
 - `analyzer`和`search_analyzer`使用不同的分词器达到更高的效率
@@ -120,6 +120,10 @@ es 内部的文件夹需要特殊权限，或者以`user: root`模式启动
       "number_of_shards": "1",
       "number_of_replicas": "0",
       "refresh_interval": "60s",
+      "lifecycle": {
+        "name": "spring-policy",
+        "rollover_alias": "spring"
+      },
       "translog": {
         "durability": "async",
         "sync_interval": "60s"
@@ -303,5 +307,5 @@ es 内部的文件夹需要特殊权限，或者以`user: root`模式启动
 
 注意：**插件版本必须与 ES 版本一致**，例如[elasticsearch-analysis-ik](https://github.com/medcl/elasticsearch-analysis-ik)。
 
-1. 通过执行`bin/elasticsearch-plugin install [plugin_name]`，安装完成后需要重启ES (在线安装)
+1. 通过执行`bin/elasticsearch-plugin install [plugin_name]`，安装完成后需要重启 ES (在线安装)
 2. 下载完成之后，解压到`${ES_FOLDER}/plugins`即可 (离线安装)
