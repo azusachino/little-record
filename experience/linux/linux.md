@@ -201,8 +201,38 @@ RSAAuthentication yes
 PubkeyAuthentication yes
 ```
 
-## 在shell脚本中读取.env
+## 在 shell 脚本中读取.env
 
 ```sh
 eval "$(echo $(cat .env))"
+```
+
+## 服务器被暴力访问
+
+```sh
+# 查看密码登录失败的ip
+grep "Failed password for invalid user" /var/log/secure | awk '{print $13}' | sort | uniq -c | sort -nr
+
+# 设置禁止访问
+cat /var/log/secure |  grep "Failed password for invalid user" | awk '{print $13}' | sort | uniq -c | sort -n | tail -10 |awk '{print "sshd:"$2":deny"}' >> /etc/hosts.allow
+```
+
+### 修改 sshd_config，禁止密码访问
+
+```sh
+vim /etc/ssh/sshd_config
+# ==> PasswordAuthentication no
+systemctl restart sshd.service
+```
+
+## 查看登录 session
+
+```sh
+# 查看当前session
+who am i
+# 查看全部session
+w
+
+# 清退某个session
+pkill -kill -t pts/0
 ```
