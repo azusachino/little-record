@@ -236,3 +236,16 @@ w
 # 清退某个session
 pkill -kill -t pts/0
 ```
+
+## 卸载程序
+
+```sh
+# 查看所有已安装程序
+rpm -qa
+
+# 卸载程序
+rpm -e xxx.xxx
+
+# 解决相互依赖问题
+rpm -e xxx.xxx --nodeps
+```

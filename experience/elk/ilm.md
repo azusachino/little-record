@@ -79,3 +79,14 @@ output {
   }
 }
 ```
+
+## force rollover
+
+When updated mapping, and we need apply with the new mapping, we can force rollover.  
+In case of search mechanism don't take effect with new format of data.
+
+Creates a new index for a data stream or index alias.
+
+```sh
+POST <index> | <alias>/_rollover
+```
