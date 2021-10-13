@@ -2,9 +2,19 @@
 
 在 Linux 的世界里，文件系统挂载点、主机名、POSIX 进程间通信消息队列、进程 PID 数字空间、IP 地址、user ID 数字空间等全局系统资源被 namespace 分割，装到一个个抽象的独立空间里。
 
+- Mount namespace
+- UTS namespace
+- IPC namespace
+- PID namespace
+- network namespace
+- user namespace
+
+无法跨 namespace 访问资源，同时 namespace 让其内部进程以为它是系统里唯一的进程，它独享系统的所有资源。  
+默认情况下，Linux 进程处在和宿主机相同的 namespace，即初始的跟 namespace 中，默认享有全局系统资源
+
 ## Network Namespace
 
-隔离 Linux 系统的设备，以及 IP 地址、端口、路由表、防火墙规则等网络资源。
+隔离 Linux 系统的设备，以及 IP 地址、端口、路由表、防火墙规则等网络资源。因此，每个 network namespace 中都有自己的网络设备(IP 地址、路由表、端口范围、/proc/net 目录等)
 
 ```sh
 # create network namespace
