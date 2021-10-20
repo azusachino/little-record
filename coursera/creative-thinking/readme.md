@@ -10,6 +10,30 @@ Creativity is the ability to imagine or invent something new of value.
 
 ## Creative Tools
 
+- Analogy
+- Boundary shifting
+- Brainstorming
+- Checklists
+
+### Brainstorming Techniques
+
+- Flipchart
+- Post-its
+- Brainwriting
+- Alphabet
+- Grid
+- Circle brainstorming
+
+### Brainstroming Principles
+
+- brainstorming should be a group activity undertaken by an interdisciplinary team;
+- there should be no more than ten people present;
+- no criticism or mockery of any idea, statement or individual is allowed;
+- flip charts, post-its, cards, marker pens, pencils and paper should be provided;
+- the design brief should be clearly stated;
+- a set period of time should be allocated;
+- an individual should be identified to introduce the brief.
+
 ## Thinking Styles
 
 ## Morphological Analysis

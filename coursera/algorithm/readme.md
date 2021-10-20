@@ -137,6 +137,18 @@ private int root(int i) {
 }
 ```
 
+### Analysis of Algorithms
+
+- Predict performance
+- Compare algorithms
+- Provide guarantees
+- Understand theoretical basis
+- Primary practical reason: avoid performance bugs
+
+### Queue & Stack
+
+Using Linkedlist or Array
+
 ## Sorting
 
 ## Searching
