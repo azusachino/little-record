@@ -151,6 +151,12 @@ Using Linkedlist or Array
 
 ## Sorting
 
+- Insertion Sort
+- Selection Sort
+- Shell Sort
+- Merge Sort
+- Quick Sort
+
 ## Searching
 
 ## Graphs

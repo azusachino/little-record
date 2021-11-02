@@ -36,6 +36,13 @@ Creativity is the ability to imagine or invent something new of value.
 
 ## Thinking Styles
 
+### Design Thinking
+
+- Exploration
+- Experimentation
+- Human centred design
+- Exploitation
+
 ## Morphological Analysis
 
 ## TRIZ - the theory of Inventive Problem Solving

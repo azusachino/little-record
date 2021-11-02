@@ -49,4 +49,34 @@
 
 Compaction, Transfer, Creativity, the Law of Serendipity
 
----
+## Procrastination
+
+### Keys
+
+1. Cue
+2. Routine
+3. Reward
+4. Belief
+
+### Tools
+
+1. Keep a planner journal
+2. Commit yourself to certain routines and tasks each day
+3. Delay rewards until you finish the task
+4. Watch for procrastination cues
+5. Gain trust in your new system
+6. Have backup plans for when you still procrastinate
+7. Eat your frogs first
+
+## Memory
+
+## How to learn better
+
+- Physical Exercise
+- Take care of those Critical Periods of brain development
+
+## Renaissance Learning
+
+- Learning using metaphor and analogy
+- Work profitably with teammates
+- Perform well on tests
