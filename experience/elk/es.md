@@ -62,7 +62,7 @@ bootstrap.system_call_filter        系统调用过滤器，建议禁用该项�
 
 ## 部署 ES
 
-1. 内核参数优化
+1.内核参数优化
 
 ```sh
 vim /etc/sysctl.conf
@@ -71,7 +71,7 @@ vm.max_map_count = 655300
 vm.swappiness = 1
 ```
 
-2. 执行 docker
+2.执行 docker
 
 ```sh
 #!/bin/bash
@@ -108,4 +108,69 @@ docker run --name es_master \
         -e bootstrap.memory_lock=true \
         -e bootstrap.system_call_filter=false \
         -e indices.fielddata.cache.size="25%" \
+```
+
+## es sort
+
+with special field name for `_score` to sort by score, and `_doc` to sort by index order.
+
+## ik
+
+基于 ik 分词器，增加 filter
+
+```json
+{
+  "settings": {
+    "index.number_of_shards": 3,
+    "index.max_result_window": 20000000,
+    "number_of_replicas": 1,
+    "index.refresh_interval": "60s",
+    "index.highlight.max_analyzed_offset": "10000",
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {
+          "tokenizer": "ik_max_word",
+          "char_filter": ["camel_case_filter", "special_character_filter"]
+        }
+      },
+      "char_filter": {
+        "camel_case_filter": {
+          "type": "pattern_replace",
+          "pattern": "(?<=\\p{Lower})(?=\\p{Upper})",
+          "replacement": " "
+        },
+        "special_character_filter": {
+          "type": "pattern_replace",
+          "pattern": "(?:\\p{Punct})",
+          "replacement": " "
+        }
+      }
+    }
+  },
+  "mappings": {
+    "record": {
+      "_all": { "enabled": false },
+      "dynamic": true,
+      "date_detection": true,
+      "properties": {
+        "id": {
+          "type": "keyword",
+          "index": true
+        },
+        "record": {
+          "type": "text",
+          "index": "true",
+          "analyzer": "my_analyzer",
+          "search_analyzer": "ik_smart",
+          "fields": {
+            "exact": {
+              "type": "keyword"
+            }
+          },
+          "fielddata": true
+        }
+      }
+    }
+  }
+}
 ```
