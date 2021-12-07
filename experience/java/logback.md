@@ -159,3 +159,107 @@ Logger logger = LoggerFactory.getLogger("TEST_LOGGER");
     </logger>
 </configuration>
 ```
+
+## 配置多环境 logback
+
+```properties
+# along with profile
+logging.config=classpath:logback-${spring.profiles.active}.xml
+
+# define Property in profile config
+LOG_HOME = /usr/local/app/logs
+FILE_SUFFIX = %d{yyyyMMdd}
+APP_NAME = test-logback
+```
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+    <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+    <property name="appName" value="wumanshu"/>
+    <property name="LOG_HOME" value="/home/wumanshu"/>
+    <Property name="cdr-directory-send" value="/home/wumanshu/REPORT/send"/>
+    <Property name="file-suffix" value="%d{yyyyMMdd}"/>
+    <Property name="pv-type" value="5L"/>
+    <!-- 配置本机的IP地址，去掉.，每段不足三位的，前端补零 -->
+    <Property name="ipStr" value="192168007921"/>
+    <!-- 应用端口号，不足五位的前端补零凑够五位 -->
+    <Property name="portStr" value="08181"/>
+
+    <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+    <property name="LOG_PATTERN" value="%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n"/>
+
+    <!--控制台日志， 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+    </appender>
+
+    <!--文件日志， 按照每天生成日志文件 -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <FileNamePattern>${LOG_HOME}/logs/error-${file-suffix}.log</FileNamePattern>
+            <!--日志文件保留天数-->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <!--日志文件最大的大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!--话单 当文件大小达到10M时，新建文件输出话单 -->
+    <appender name="CDR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <FileNamePattern>${cdr-directory-send}/${appName}${ipStr}${portStr}${pv-type}%d{yyyyMMddHHmm}.txt
+            </FileNamePattern>
+            <!--日志文件保留天数-->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%m%n</pattern>
+        </encoder>
+        <!--日志文件最大的大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!--error日志-->
+    <logger name="com.wlf.translateprovider" level="INFO" additivity="false">
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!--话单-->
+    <logger name="com.wlf.translateprovider.cdr" level="ERROR"
+            additivity="false">
+        <appender-ref ref="CDR"/>
+    </logger>
+</configuration>
+```
