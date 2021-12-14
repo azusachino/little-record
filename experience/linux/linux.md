@@ -4,10 +4,10 @@
 
 ```sh
 cd /etc/apt/
-cp sources.list  sources.list.bak
+cp sources.list sources.list.bak
 true > sources.list
-vi  /etc/apt/sources.list    # 将上面的源复制到文件中, 保存退出
-apt update    # 更新本地 apt 源
+vi /etc/apt/sources.list # 将上面的源复制到文件中, 保存退出
+apt update # 更新本地 apt 源
 ```
 
 国内的源地址
@@ -184,8 +184,8 @@ echo 1 > /proc/sys/vm/drop_caches
 echo 0 > /proc/sys/vm/drop_caches
 
 #查看设置
- sysctl -a | grep drop_caches
-补充： echo 字符串 > 文件  就是把字符串内容从定向到文件中
+sysctl -a | grep drop_caches
+补充： echo 字符串 > 文件 就是把字符串内容从定向到文件中
 ```
 
 ## 配置 SSH 链接(centos)

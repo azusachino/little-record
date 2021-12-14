@@ -96,7 +96,7 @@ func main() {
 - Goroutine 内的业务逻辑进入死循环，资源一直无法释放。
 - Goroutine 内的业务逻辑进入长时间等待，有不断新增的 Goroutine 进入等待。
 
-**channel 使用不当**
+**channel 使用不当**:
 
 发送不接收
 
@@ -195,7 +195,7 @@ func main() {
 // ...
 ```
 
-第三方接口，有时候会很慢，久久不返回响应结果。恰好，Go 语言中默认的  `http.Client`  是没有设置超时时间的。
+第三方接口，有时候会很慢，久久不返回响应结果。恰好，Go 语言中默认的 `http.Client` 是没有设置超时时间的。
 
 因此就会导致一直阻塞，一直阻塞就一直爽，Goroutine 自然也就持续暴涨，不断泄露，最终占满资源，导致事故。
 
@@ -229,9 +229,9 @@ func main() {
 // goroutines:  10
 ```
 
-第一个互斥锁  `sync.Mutex`  加锁了，但是他可能在处理业务逻辑，又或是忘记  `Unlock`  了。
+第一个互斥锁 `sync.Mutex` 加锁了，但是他可能在处理业务逻辑，又或是忘记 `Unlock` 了。
 
-因此导致后面的所有  `sync.Mutex`  想加锁，却因未释放又都阻塞住了。
+因此导致后面的所有 `sync.Mutex` 想加锁，却因未释放又都阻塞住了。
 
 ```go
 var mutex sync.Mutex
@@ -287,13 +287,13 @@ func main() {
 
 Go scheduler 的主要功能是针对在处理器上运行的 OS 线程分发可运行的 Goroutine，而我们一提到调度器，就离不开三个经常被提到的缩写，分别是：
 
-- G：Goroutine，实际上我们每次调用  `go func`  就是生成了一个 G。
-- P：Processor，处理器，一般 P 的数量就是处理器的核数，可以通过  `GOMAXPROCS`  进行修改。
+- G：Goroutine，实际上我们每次调用 `go func` 就是生成了一个 G。
+- P：Processor，处理器，一般 P 的数量就是处理器的核数，可以通过 `GOMAXPROCS` 进行修改。
 - M：Machine，系统线程。
 
 ![https://cdn.jsdelivr.net/gh/timqi/Blog@gh-pages/i/2020-05-15-1.jpeg](https://cdn.jsdelivr.net/gh/timqi/Blog@gh-pages/i/2020-05-15-1.jpeg)
 
-1. 当我们执行  `go func()`  时，实际上就是创建一个全新的 Goroutine，我们称它为 G。
+1. 当我们执行 `go func()` 时，实际上就是创建一个全新的 Goroutine，我们称它为 G。
 2. 新创建的 G 会被放入 P 的本地队列（Local Queue）或全局队列（Global Queue）中，准备下一步的动作。需要注意的一点，这里的 P 指的是创建 G 的 P。
 3. 唤醒或创建 M 以便执行 G。
 4. 不断地进行事件循环
@@ -324,7 +324,7 @@ Goroutine 创建所需申请的 2-4k 是需要连续的内存块。
 
 第三，那 P 呢，P 的数量是否有限制，受什么影响？
 
-答案是：有限制。**P 的数量受环境变量  `GOMAXPROCS`  的直接影响**。
+答案是：有限制。**P 的数量受环境变量 `GOMAXPROCS` 的直接影响**。
 
 ## Go 的逃逸分析
 
@@ -353,29 +353,29 @@ main 调用 `GetUserInfo` 后返回的 `&User{...}`。这个变量是分配到�
 
 ## **怎么确定是否逃逸**
 
-第一，通过编译器命令，就可以看到详细的逃逸分析过程。而指令集  `-gcflags`  用于将标识参数传递给 Go 编译器，涉及如下：
+第一，通过编译器命令，就可以看到详细的逃逸分析过程。而指令集 `-gcflags` 用于将标识参数传递给 Go 编译器，涉及如下：
 
-- `m`  会打印出逃逸分析的优化策略，实际上最多总共可以用 4 个  `m`，但是信息量较大，一般用 1 个就可以了。
-- `l`  会禁用函数内联，在这里禁用掉 inline 能更好的观察逃逸情况，减少干扰。
+- `m` 会打印出逃逸分析的优化策略，实际上最多总共可以用 4 个 `m`，但是信息量较大，一般用 1 个就可以了。
+- `l` 会禁用函数内联，在这里禁用掉 inline 能更好的观察逃逸情况，减少干扰。
 
 ```bash
-$ go build -gcflags '-m -l' main.go
+go build -gcflags '-m -l' main.go
 ```
 
 第二，通过反编译命令查看
 
 ```bash
-$ go tool compile -S main.go
+go tool compile -S main.go
 ```
 
-注：可以通过  `go tool compile -help`  查看所有允许传递给编译器的标识参数。
+注：可以通过 `go tool compile -help` 查看所有允许传递给编译器的标识参数。
 
 ---
 
 - 静态分配到栈上，性能一定比动态分配到堆上好。
 - 底层分配到堆，还是栈。实际上对你来说是透明的，不需要过度关心。
 - 每个 Go 版本的逃逸分析都会有所不同（会改变，会优化）。
-- 直接通过  `go build -gcflags '-m -l'`  就可以看到逃逸分析的过程和结果。
+- 直接通过 `go build -gcflags '-m -l'` 就可以看到逃逸分析的过程和结果。
 - 到处都用指针传递并不一定是最好的，要用对。
 
 ## Go Context
