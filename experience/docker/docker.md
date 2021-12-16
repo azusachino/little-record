@@ -41,3 +41,25 @@ docker run --name docker_nginx -d -p 80:80 -v /home/nginx/nginx.conf:/etc/nginx/
 ## docker 映射文件夹删除导致异常
 
 容器启动时会和映射的文件夹进行关联,产生句柄. 文件夹删除之后, 即使再新建相同名称的文件夹, 也已经不是同一个句柄了。故 io 操作会产生异常。
+
+## dockerd with new runtime
+
+```bash
+## make sure docker.service is stopped
+dockerd --experimental --add-runtime="youki=$(pwd)/target/x86_64-unknown-linux-gnu/debug/youki"
+
+docker run -it --rm --run-time youki busybox
+```
+
+## uninstall docker (centos)
+
+```bash
+# clean docker rpm
+yum remove docker-ce docker-ce-cli containerd.io
+
+## remove data rpm
+unmount /var/run/docker/netns/default
+
+rm -rf /var/run/docker
+rm -rf /var/lib/docker
+```
