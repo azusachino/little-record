@@ -19,7 +19,7 @@
 - [Collection](collection/README.md)
   - [2022](collection/2022.md)
 - [Coursera Lessons](coursera/README.md)
-  - [Algorithms](coursera/Algorithms/README.md)
+  - [Algorithm](coursera/Algorithm/README.md)
   - [Creative Thinking](coursera/CreativeThinking/README.md)
   - [Introduction of Philosophy](coursera/IntroductionPhilosophy/README.md)
   - [Learn how to learn](coursera/LearnHowToLearn/README.md)
