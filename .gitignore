@@ -1,1 +1,3 @@
 .vscode/
+# don't need compiled files
+book/
