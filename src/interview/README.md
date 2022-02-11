@@ -1,3 +1,3 @@
 # Section of Interview
 
-- [algorithm](algorithm.md)
+Work around

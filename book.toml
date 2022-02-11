@@ -1,5 +1,15 @@
 [book]
+title = "Little Record"
 authors = ["azusachino"]
+description = "Everything I want to learn"
 language = "en"
 multilingual = true
 src = "src"
+
+[build]
+create-missing = false           # whether or not to create missing pages
+use-default-preprocessors = true # use the default preprocessors
+
+[output.html]
+git-repository-url = "https://github.com/azusachino/little-record"
+git-repository-icon = "fa-github"

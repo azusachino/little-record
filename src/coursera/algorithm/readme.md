@@ -123,7 +123,7 @@ public void union(int p, int q) {
 }
 ```
 
-**path compression**
+**path compression**:
 
 - quick union with path compression
 
