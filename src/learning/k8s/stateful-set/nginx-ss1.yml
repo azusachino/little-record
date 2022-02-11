@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  serviceName: "nginx"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.20.0
+          ports:
+            - containerPort: 80
+              name: web
+          volumeMounts:
+            - name: local-volume-az
+              mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+    - metadata:
+        name: local-volume-az
+      spec:
+        accessModes:
+          - ReadWriteMany
+        storageClassName: "local-volume"
+        resources:
+          requests:
+            storage: 0.5Gi
+        selector:
+          matchLabels:
+            key: local-volume-az-0

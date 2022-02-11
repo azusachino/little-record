@@ -1,0 +1,5 @@
+[book]
+authors = ["azusachino"]
+language = "en"
+multilingual = true
+src = "src"
