@@ -2,7 +2,7 @@
 
 ## basic logic
 
-![basic](../resources/git/git.png)
+![basic](git.png)
 
 ```bash
 # 在当前目录新建一个Git代码库

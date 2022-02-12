@@ -20,6 +20,8 @@ cd /opt/bitnami/kafka/bin/
 ```java
 public class KafkaConfig implements InitializingBean {
 
+    private static final String NO_ACK = "0";
+
     @Resource
     private KafkaProperties kafkaProperties;
 
@@ -40,7 +42,7 @@ public class KafkaConfig implements InitializingBean {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         // 为提高性能，不接收partition leader的ack
-        props.put(ProducerConfig.ACKS_CONFIG, "0");
+        props.put(ProducerConfig.ACKS_CONFIG, NO_ACK);
         props.put(ProducerConfig.RETRIES_CONFIG, 3);
         //  16kb
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
@@ -58,7 +60,7 @@ public class KafkaConfig implements InitializingBean {
     }
 
     /**
-     * 自动生成主题 "scv-server", "scv-logging", "scv-event"
+     * 自动生成主题
      */
     @Override
     public void afterPropertiesSet() {

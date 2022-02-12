@@ -100,8 +100,8 @@ sudo yum-config-manager \
 
 ## sh 文件无法执行
 
-/bin/bash^M: bad interpreter: 没有那个文件或目录  
-问题在于，文件可能在 windows 环境下编辑过，产生了不兼容问题，解决方案：
+`/bin/bash^M`: bad interpreter: 没有那个文件或目录  
+问题在于，文件可能在 windows 环境下编辑过，产生了不兼容问题(换行符不一致)，解决方案：
 
 ```sh
 vim demo.sh
@@ -109,6 +109,9 @@ vim demo.sh
 :set fileformat=unix
 wq
 ```
+
+1. 尽量不在 windows 环境下编辑 shell 脚本文件
+2. 保证 GIT 会修复换行符
 
 ## Shell 变量 字符串截取
 
@@ -174,18 +177,17 @@ buffer,cached 的作用：
 - cache: 作为 page cache 的内存, 文件系统的 cache，包括读、写文件，如果 cache 的值很大，说明 cache 住的文件数很多。
 
 ```sh
-#常用方法是
-
+# 常用方法是
 sync
 
 echo 1 > /proc/sys/vm/drop_caches
 
-#清除后要还原系统默认配置：
+# 清除后要还原系统默认配置：
 echo 0 > /proc/sys/vm/drop_caches
 
-#查看设置
+# 查看设置
 sysctl -a | grep drop_caches
-补充： echo 字符串 > 文件 就是把字符串内容从定向到文件中
+# 补充： echo 字符串 > 文件 就是把字符串内容从定向到文件中
 ```
 
 ## 配置 SSH 链接(centos)
@@ -232,7 +234,6 @@ systemctl restart sshd.service
 who am i
 # 查看全部session
 w
-
 # 清退某个session
 pkill -kill -t pts/0
 ```

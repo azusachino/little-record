@@ -1,12 +1,10 @@
 # Golang 经验
 
-## $GOPATH/go.mod exists but should not
+## `$GOPATH/go.mod` exists but should not
 
-开启模块支持后，并不能与$GOPATH共存,所以把项目从$GOPATH 中移出即可
+开启模块支持后，并不能与 `$GOPATH` 共存,所以把项目从 `$GOPATH` 中移出即可
 
-解决办法：
-
-打开设置，将当前路径移出 Project GOPATH
+解决办法：打开 IDE 设置，将当前路径移出 Project GOPATH
 
 ## Go 内存泄漏
 
@@ -62,10 +60,6 @@ func main() {
 
 在运行一段时间后，利用 top 命令查看资源，可以看到当前 go 程序的内存占用达到了 10+G，并且还在持续增长。
 
-使用 **`go tool pprof`** 分析 go 工程中函数内存申请情况，如下图
-
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0d55a56a-817d-4405-9cee-3fa25f385666/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0d55a56a-817d-4405-9cee-3fa25f385666/Untitled.png)
-
 可以发现是不断地调用 `time.After`,从而导致计时器 `time.NewTimer` 不断创建和内存申请。
 
 原因在于 for+select，再加上 `time.After` 的组合会导致内存泄露。因为 for 在循环时，就会调用都 select 语句，因此在每次进行 select 时，都会重新初始化一个全新的计时器（Timer）。这个计时器，是在 3 分钟后才会被触发去执行某些事，但重点在于计时器激活后，却又发现和 select 之间没有引用关系了，因此很合理的也就被 GC 给清理掉了。被抛弃的 `time.After` 的定时任务还是在时间堆中等待触发，在定时任务未到期之前，是不会被 GC 清除的。
@@ -92,7 +86,7 @@ func main() {
 
 ### 泄露原因
 
-- Goroutine 内正在进行 channel/mutex 等读写操作，但由于逻辑问题，某些情况下会被一直阻塞。
+- Goroutine 内正在进行 `channel/mutex` 等读写操作，但由于逻辑问题，某些情况下会被一直阻塞。
 - Goroutine 内的业务逻辑进入死循环，资源一直无法释放。
 - Goroutine 内的业务逻辑进入长时间等待，有不断新增的 Goroutine 进入等待。
 
@@ -169,7 +163,7 @@ func main() {
 
 channel 如果忘记初始化，那么无论你是读，还是写操作，都会造成阻塞。
 
-奇怪的慢等待
+**奇怪的慢等待**
 
 ```go
 func main() {
@@ -206,7 +200,7 @@ httpClient := http.Client{
 }
 ```
 
-互斥锁忘记解锁
+**互斥锁忘记解锁**
 
 ```go
 func main() {
@@ -244,7 +238,7 @@ var mutex sync.Mutex
     }
 ```
 
-同步锁使用不当
+**同步锁使用不当**
 
 ```go
 func handle(v int) {
@@ -351,7 +345,7 @@ main 调用 `GetUserInfo` 后返回的 `&User{...}`。这个变量是分配到�
 
 答: `GetUserInfo()` 返回的是指针对象，引用被返回到了方法之外了。因此编译器会把该对象分配到堆上，而不是栈上。
 
-## **怎么确定是否逃逸**
+**怎么确定是否逃逸**
 
 第一，通过编译器命令，就可以看到详细的逃逸分析过程。而指令集 `-gcflags` 用于将标识参数传递给 Go 编译器，涉及如下：
 

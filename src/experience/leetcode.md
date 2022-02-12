@@ -1,6 +1,6 @@
 # Leetcode Exp
 
-## backtrack
+## backtrack cheat sheet
 
 ```java
 public List<List<Integer>> subsets(int[] nums) {

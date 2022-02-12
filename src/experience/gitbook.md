@@ -1,6 +1,6 @@
-# Gitbook 相关问题
+# GitBook 相关问题
 
-## 1. gitbook install failed
+## gitbook install failed
 
 国内博客上总结的办法:
 
@@ -15,7 +15,7 @@ cd /usr/local/lib/node_modules/gitbook-cli/node_modules/npm/node_modules/
 npm install graceful-fs@4.2.0 --save
 ```
 
-## 2. gitbook serve error
+## gitbook serve error
 
 gitbook 默认依赖了 cpr@1 导致某一行代码执行失败
 

@@ -1,10 +1,10 @@
-# Podman
+# Podman EXP
 
 ## Installation
 
 ### Ubuntu Wsl
 
-use ali-mirror instead of ustc mirror.
+use ali-mirror instead of USTC mirror.
 
 ```sh
 . /etc/os-release

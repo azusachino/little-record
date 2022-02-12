@@ -1,32 +1,32 @@
-# LittleRecord
+# Little Record
 
 一切都是为了更好的自己。
 
-## [系统架构设计师学习](examination/system-arch-design/README.md)
+## 系统架构设计师学习
 
 1. CS 整体能力
 2. 提高工资水平
 
-## [Collection](collection/README.md)
+## Collection
 
-用来收集很多很多内容，Full of possibility
+用来收集一些东西，Full of possibility (Somehow)
 
-## [Experience](experience/README.md)
+## Experience
 
-经验值 UP
+经验值 UP UP
 
-## [interview](interview/README.md)
+## interview
 
 面试相关的内容
 
-## [language](language/README.md)
+## language
 
 外语学习
 
-## [learning](learning/README.md)
+## learning
 
 CS 学习
 
-## [reading](reading/README.md)
+## reading
 
 读书学习

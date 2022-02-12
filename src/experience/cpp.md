@@ -1,3 +1,3 @@
-# C++ releate exp
+# C++ relate exp
 
-## Cmake 项目可以直接用 VSCode 打开
+啥也不会

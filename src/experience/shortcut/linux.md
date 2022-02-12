@@ -2,7 +2,7 @@
 
 ## Commands
 
-![commands](../resources/linux/linux_cmd.jpg)
+![commands](linux_cmd.jpg)
 
 ```shell
 sudo lsof -i -P -n | grep LISTEN

@@ -15,7 +15,7 @@ IdentityFile ~/.ssh/id_rsa
 Port 443
 ```
 
-## windows 环境下换行符导致.sh 脚本无法执行
+## windows 环境下换行符导致 shell 脚本无法执行
 
 git windows 安装之后，可以配置下面两个参数：
 
