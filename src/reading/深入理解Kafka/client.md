@@ -26,7 +26,7 @@
 
 ```java
 props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
-// set config correct ohterwise throws ConfigException
+// set config correct otherwise throws ConfigException
 // set retrys > 0
 // set ack "-1" or "all"
 ```

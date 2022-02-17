@@ -12,7 +12,7 @@
 
 ![.](https://res.weread.qq.com/wrepub/epub_25462424_433)
 
-**FetchRequest/FetchRespons**:
+**FetchRequest/FetchResponse**:
 
 ![.](https://res.weread.qq.com/wrepub/epub_25462424_435)
 
@@ -20,7 +20,7 @@
 
 ## Timing Wheel
 
-A circluar queue which saves scheduled tasks, implemented with array.
+A circular queue which saves scheduled tasks, implemented with array.
 
 ## Delayed Operation
 

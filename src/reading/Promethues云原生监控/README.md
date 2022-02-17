@@ -1,4 +1,4 @@
-# Promethues 云原生监控
+# Prometheus 云原生监控
 
 ## 何为监控
 
