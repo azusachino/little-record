@@ -25,13 +25,13 @@
 
 - Listens in on HTTP and translates queries to Thanos gRPC format
 - Aggregates the query result from different sources, and can read data from Sidecar and Store
-- In HA setup, Thanos Query even deduplicates the result
+- In HA setup, Thanos Query even de-duplicates the result
 
 ### Thanos compact
 
 - Applies the compaction procedure of the Prometheus 2.0 storage engine to block data in object storage
 - Generally not concurrent with safe semantics and must be deployed as a singleton against a bucket
-- Responsible for downsampling data: 5 minute downsampling after 40 hours and 1 hour downsampling after 10 days
+- Responsible for down sampling data: 5 minute down sampling after 40 hours and 1 hour down sampling after 10 days
 
 ### Thanos ruler
 

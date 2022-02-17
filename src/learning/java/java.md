@@ -792,7 +792,7 @@ Local variables, formal method parameters and exception handler parameters are n
 - Sequential consistency is a very strong guarantee
 - If a program has no data races, then all executions of the program will appear to be sequentially consistent (无数据竞争时)
 
-#### Synchrinization Order
+#### Synchronization Order
 
 the synchronization order of the synchronization actions in `t` is consistent with the program order of `t`.
 
