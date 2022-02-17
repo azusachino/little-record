@@ -19,7 +19,7 @@ The question of what it is that people are doing when they make moral judgements
 ### Challenges
 
 - Objectivism: Explain the difference in method of determining what the facts are
-- Relativism: Expalin the possibility of moral progress
+- Relativism: Explain the possibility of moral progress
 - Emotivism: Explain the possibility of using reason to answer moral questions
 
 ### What is knowledge? Do we have any?
@@ -35,15 +35,15 @@ Proposition
 
 One can know a proposition is true, only if:
 
-1. That propositon is true
+1. That proposition is true
 2. One believes that proposition
 3. One's belief is justified
 
 **No false lemmas' view**:
 
-One can know a propositon is true, only if:
+One can know a proposition is true, only if:
 
-1. That propositon is true
+1. That proposition is true
 2. One believes that proposition
 3. One's belief is justified
 4. One's belief is not based on any false assumptions (or lemmas)

@@ -1,5 +1,3 @@
 # The progress of learning japanese
 
-## Subtitle
-
-TODO
+君本当日本语上手。

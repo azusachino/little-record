@@ -1,3 +1,3 @@
 # General CS Learning
 
-This is a description.
+尚未分类的 CS 学习内容

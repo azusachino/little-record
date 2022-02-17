@@ -13,11 +13,3 @@
 ### VolumeFilterRule
 
 ### 检查调度 Pod 是否满足 Node 本身的某些条件
-
-### check affinity & non-affinity
-
-![.](https://img.luozhiyun.com/20200905190537.png)
-
-## 调度过程流程
-
-![.](https://img.luozhiyun.com/20200905190824.png)

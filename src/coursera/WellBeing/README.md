@@ -4,7 +4,7 @@
 
 ## Introduction
 
-## Misconceptions About Hapiness
+## Misconceptions About Happiness
 
 ## Why Our Expectations are so Bad
 
@@ -14,8 +14,8 @@
 
 ## Putting Strategies into Practice
 
-## Start your Final Rewirement Chanllenge
+## Start your Final Rewirement Challenge
 
 ## Continue Your Rewirement Challenge
 
-## Submit Your Final Assinment
+## Submit Your Final Assignment

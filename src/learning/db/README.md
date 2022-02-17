@@ -1,3 +1,3 @@
 # DB Learning
 
-No description here.
+数据库相关内容学习。

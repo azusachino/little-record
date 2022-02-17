@@ -1,5 +1,3 @@
 # Android 学习
 
-## 第一章
-
-[startup](01.startup.md)
+只是一时兴起，未有结果。

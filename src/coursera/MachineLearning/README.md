@@ -2,7 +2,7 @@
 
 [Coursera Link](https://www.coursera.org/learn/machine-learning)
 
-## Introducton
+## Introduction
 
 ### What is ML?
 

@@ -34,7 +34,7 @@ Deployment，是一个定义多副本应用的对象，Deployment 还负责在 P
 
 template 字段定义了这个 Deployment 管理的 Pod 应该是怎样的，具有怎样的属性；
 
-![pic](https://img.luozhiyun.com/20200726182710.png)
+![pic](./resource/deployment.png)
 
 ## ReplicaSet
 

@@ -2,35 +2,44 @@
 
 ## 数据结构与算法总览
 
-![data-structure](../../resources/algorithm/data-structure.png)
+![data-structure](./data-structure.png)
 
-![algorithm](../../resources/algorithm/algorithm.png)
+![algorithm](./algorithm.png)
 
-### 精通一个领域 (semantic tree)
+### 如何精通一个领域
 
-- chunk it up (chapter, part)
-- deliberately practicing (练五遍)
-- feedback (crack questions)
+- chunk it up (整理知识脉络)
+- deliberately practicing (刻意练习)
+- feedback (反馈，费曼学习法)
 
-### 1.数据结构
+---
 
-- 一维数据结构
-  - 基础: Array, LinkedList
-  - 高级: Stack, Queue, Dequeue, Set, Map
-- 二维数据结构
-  - 基础: Tree, Graph
-  - 高级: binary search tree(red-black, AVL), heap, disjoint set, Trie 字典树
-- 特殊数据结构
-  - 位运算 Bitwise, 步隆过滤器(Bloom Filter)
-  - LRU Cache
+### 数据结构
 
-### 2.算法
+**一维数据结构**
+
+- 基础: Array, LinkedList
+- 高级: Stack, Queue, Dequeue, Set, Map
+
+**二维数据结构**
+
+- 基础: Tree, Graph
+- 高级: binary search tree(red-black, AVL), heap, disjoint set, Trie 字典树
+
+**特殊数据结构**
+
+- 位运算 Bitwise, 步隆过滤器(Bloom Filter)
+- LRU Cache
+
+### 算法分类
+
+**简单算法**
 
 - if-else, switch -- branch
 - for,while loop -- iteration
 - 递归 Recursion(Divide & Conquer, Backtrace)
 
----
+**复杂算法**
 
 - Search: 深度优先搜索 Depth First Search, 广度优先搜索 Breadth First Search, A\*, etc
 - 动态规划 Dynamic Programming
@@ -38,7 +47,7 @@
 - 贪心 Greedy
 - 数学 Math, 几何 Geometry
 
-### 3.切题四件套
+### 切题四件套
 
 - Clarification
 - Possible Solutions
@@ -55,9 +64,14 @@
 - IDE 的快捷方式 熟练
 - 自顶向下的编程方式
 
+---
+
 ## 复杂度分析
 
 ### 空间复杂度
+
+- 一维数组：O(n)
+- 二维数组：O(n^2)
 
 ### 时间复杂度
 
@@ -65,7 +79,7 @@ O(1): Constant Complexity 常数复杂度
 
 ```java
 int n = 100;
-pring("your input is " + n);
+println("your input is " + n);
 ```
 
 O(log n): Logaithmic Complexity 对数复杂度
@@ -123,7 +137,7 @@ O(n!): Factorial 阶乘
 
 ### 主定理
 
-![master](../../resources/algorithm/master.png)
+![master](./master.png)
 
 ## 数组, 链表, 跳表
 
@@ -145,7 +159,7 @@ O(n!): Factorial 阶乘
   - lookup O(logn)
   - insert O(logn)
 
-### 1.实战解析: 移动零
+### 实战解析: 移动零
 
 1. 5-10 分钟: 读题和思考
 2. 有思路: 自己开始做和写代码; 不然, 马上看题解

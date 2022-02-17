@@ -1,3 +1,3 @@
-# Section of Interview
+# Things for Preparation
 
-Work around
+Just get ready for everything.

@@ -1,4 +1,4 @@
-# DATA Structure
+# 数据结构
 
 ## 平衡二叉树
 

@@ -1,4 +1,4 @@
-# RPC
+# gRPC
 
 RPC 是解决分布式系统通信的一大利器
 
@@ -29,7 +29,11 @@ RPC 的全称是 Remote Procedure Call, 即远程过程调用
 - 对象数据主要包括类名, 签名, 属性名, 属性类型及属性值
 - 存在对象引用, 继承的情况下, 递归遍历"写对象"逻辑
 
-### JDK, JSON, Hessian
+**常用序列化方式**
+
+- JDK (Serializable)
+- JSON
+- Hessian
 
 ### Protobuf
 
@@ -78,6 +82,6 @@ IO 多路复用更适合高并发的场景，可以用较少的进程（线程�
 
 ### Netty
 
-- Netty 提供了 CompositeByteBuf 类，它可以将多个 ByteBuf 合并为一个逻辑上的  ByteBuf，避免了各个 ByteBuf 之间的拷贝。
+- Netty 提供了 CompositeByteBuf 类，它可以将多个 ByteBuf 合并为一个逻辑上的 ByteBuf，避免了各个 ByteBuf 之间的拷贝。
 - ByteBuf 支持 slice 操作，因此可以将 ByteBuf 分解为多个共享同一个存储区域的 ByteBuf，避免了内存的拷贝。
-- 通过 wrap 操作，我们可以将 byte[] 数组、ByteBuf、ByteBuffer  等包装成一个 Netty ByteBuf 对象, 进而避免拷贝操作。
+- 通过 wrap 操作，我们可以将 byte[] 数组、ByteBuf、ByteBuffer 等包装成一个 Netty ByteBuf 对象, 进而避免拷贝操作。

@@ -17,14 +17,14 @@ Creativity is the ability to imagine or invent something new of value.
 
 ### Brainstorming Techniques
 
-- Flipchart
+- FlipChart
 - Post-its
-- Brainwriting
+- BrainWriting
 - Alphabet
 - Grid
 - Circle brainstorming
 
-### Brainstroming Principles
+### BrainStroming Principles
 
 - brainstorming should be a group activity undertaken by an interdisciplinary team;
 - there should be no more than ten people present;
@@ -58,7 +58,7 @@ Creativity is the ability to imagine or invent something new of value.
 - Creativity - The ability to imagine or invent something new of value
 - Creativity Tools - A means to augment innate generative activity
 - Idea - A formulated and considered thought
-- Memory - The abilitiy to store, retain and subsequently access information
+- Memory - The ability to store, retain and subsequently access information
 - Morphological Analysis - A matrix-based tool in which a problem is broken-down into component parts and a range of approaches suggested for each of these elements
 - Problem - A situation that needs to be addressed
 - SCAMPER - An acronym for subtitle, combine, adapt, modify, put to other uses, eliminate, rearrange

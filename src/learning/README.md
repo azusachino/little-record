@@ -1,6 +1,5 @@
-# Section of Learning
+# Learning Project
 
-- [algorithm](algorithm/algorithm.md)
-- [data-structure](algorithm/data-structure.md)
+学习 CS 相关内容的笔记。
 
-TODO
+结构比较乱，还在整理中。。
