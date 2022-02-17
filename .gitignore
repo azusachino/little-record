@@ -1,3 +1,5 @@
 .vscode/
 # don't need compiled files
 book/
+
+index.html

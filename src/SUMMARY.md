@@ -68,3 +68,5 @@
   - [Prometheus 云原生监控](reading/Promethues云原生监控/README.md)
   - [凤凰架构](reading/凤凰架构/README.md)
   - [深入理解 kafka](reading/深入理解Kafka/README.md)
+  - [CSAPP](reading/CSAPP/README.md)
+  - [经济常识一本通](reading/经济常识一本通/README.md)
