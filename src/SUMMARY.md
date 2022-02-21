@@ -152,3 +152,5 @@
     - [Topic Partition](reading/understand-kafka-better/topic-partition.md)
   - [CSAPP](reading/computer-science-app/README.md)
   - [经济常识一本通](reading/economy-common-sense/README.md)
+  - [Linux/Unix 系统编程手册](reading/linux-unix-handbook/README.md)
+    - [基本概念](reading/linux-unix-handbook/01.basic-concept.md)
