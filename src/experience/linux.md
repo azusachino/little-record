@@ -250,3 +250,36 @@ rpm -e xxx.xxx
 # 解决相互依赖问题
 rpm -e xxx.xxx --nodeps
 ```
+
+## Centos 配置时区
+
+查看当前时区
+
+```sh
+timedatectl
+## output
+               Local time: Tue 2022-02-22 17:12:59 CST
+           Universal time: Tue 2022-02-22 09:12:59 UTC
+                 RTC time: Tue 2022-02-22 09:12:59
+                Time zone: Asia/Shanghai (CST, +0800)
+System clock synchronized: yes
+              NTP service: active
+          RTC in local TZ: no
+```
+
+配置系统时区是通过创建 `/etc/localtime` 到 `/usr/share/zoneinfo` 目录中文件符号链接，通过该文件二进制时区标识符来设置。
+
+### timedatectl
+
+```sh
+sudo timedatectl list-timezones
+sudo timedatectl set-timezones Asia/Shanghai
+```
+
+### 创建软连接
+
+```sh
+sudo rm -rf /etc/localtime
+sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+date
+```

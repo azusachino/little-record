@@ -45,3 +45,13 @@ Content-Disposition: form-data; name="file"; filename="log5.txt"
 < C:\Users\ycpang\Desktop\log5.txt
 --WebAppBoundary--
 ```
+
+## IDE 中 GIT 相关操作执行慢
+
+删除掉 bin 目录中的 `runnerw.exe` 和 `runnerw64.exe` 即可。
+
+## VSCode Usage Problem
+
+### Please update includePath?
+
+After long time searching, figured out the problem was `configurationProvider` wrong. Remove this or use `ms-vscode.cpp-tools` instead.
