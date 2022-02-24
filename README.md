@@ -1,17 +1,12 @@
 # Little Record
 
-一切都是为了更好的自己。
+成长
 
-## 系统架构设计师学习
+## collection
 
-1. CS 整体能力
-2. 提高工资水平
+收集
 
-## Collection
-
-用来收集一些东西，Full of possibility (Somehow)
-
-## Experience
+## experience
 
 经验值 UP UP
 

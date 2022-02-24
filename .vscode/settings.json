@@ -1,0 +1,10 @@
+{
+    "C_Cpp.default.includePath": ["/usr/include"],
+    "C_Cpp.default.systemIncludePath": [],
+    "files.associations": {
+        "types.h": "c",
+        "signal.h": "c",
+        "unistd.h": "c",
+        "alt_functions.h": "c"
+    }
+}

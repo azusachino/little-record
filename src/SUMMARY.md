@@ -154,3 +154,5 @@
   - [经济常识一本通](reading/economy-common-sense/README.md)
   - [Linux/Unix 系统编程手册](reading/linux-unix-handbook/README.md)
     - [基本概念](reading/linux-unix-handbook/01.basic-concept.md)
+    - [系统调用概念](reading/linux-unix-handbook/02.syscall-concept.md)
+    - [通用 I/O 概念](reading/linux-unix-handbook/03.general-io-model.md)
