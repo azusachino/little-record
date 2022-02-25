@@ -881,3 +881,33 @@ public void doThisAsync(List<Data> data) {
     //do some blocking I/O on calling thread
 }
 ```
+
+## Spring Cloud with Spring Alibaba
+
+2021.0.0 版本的 SpringCloud + Spring Alibaba 2.2.7.RELEASE 版本不能很好的协调好。【alibaba 的 2.2.7 版本默认不使用 nacos 的 HTTP 端口，导致配置上很古怪，且没有相应的说明文档】
+
+### 缺少 LoadBalancer Bean
+
+自己实现或引入相关依赖
+
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-gateway</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+</dependency>
+```
+
+### 默认不读取 bootstap 文件
+
+引入依赖
+
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-bootstrap</artifactId>
+</dependency>
+```
