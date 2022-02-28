@@ -5,7 +5,8 @@
             "includePath": [
                 "/usr/include",
                 "/usr/local/include",
-                "${workspaceFolder}/code/linux-unix/lib"
+                "${workspaceFolder}/code/tlpi/lib",
+                "${workspaceFolder}/code/csapp/lib"
             ],
             "defines": [],
             "cStandard": "gnu17",

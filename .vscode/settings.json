@@ -5,6 +5,8 @@
         "types.h": "c",
         "signal.h": "c",
         "unistd.h": "c",
-        "alt_functions.h": "c"
+        "alt_functions.h": "c",
+        "cstdlib": "c",
+        "vec.h": "c"
     }
 }
