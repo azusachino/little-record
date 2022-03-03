@@ -7,6 +7,13 @@
         "unistd.h": "c",
         "alt_functions.h": "c",
         "cstdlib": "c",
-        "vec.h": "c"
+        "vec.h": "c",
+        "*.inc": "c",
+        "error_functions.h": "c",
+        "tlpi_hdr.h": "c",
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "cstdio": "c",
+        "setjmp.h": "c"
     }
 }
