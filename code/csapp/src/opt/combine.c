@@ -81,3 +81,87 @@ void combine4(vec_ptr v, data_t *dest)
 //   addq $8, %rbx                   Increment data+i
 //   cmpq %rax, %rdx                 Compare to data+length
 //   jne   .L25                      if !=, goto loop
+
+// 2X1 循环展开 (通过增加每次迭代计算的元素的数量，减少循环的迭代次数)
+void combine5(vec_ptr v, data_t *dest)
+{
+    long i;
+    long length = vec_length(v);
+    long limit = length - 1;
+    data_t *data = get_vec_start(v);
+    data_t acc = INDENT;
+
+    /* Combine 2 elements at a time */
+    for (i = 0; i < limit; i += 2)
+    {
+        acc = (acc OP data[i])OP data[i + 1];
+    }
+
+    for (; i < length; i++)
+    {
+        acc = acc OP data[i];
+    }
+    *dest = acc;
+}
+
+// 多个积累变量
+void combine6(vec_ptr v, data_t *dest)
+{
+    long i;
+    long length = vec_length(v);
+    long limit = length - 1;
+    data_t *data = get_vec_start(v);
+    data_t acc0 = INDENT;
+    data_t acc1 = INDENT;
+
+    /* Combine 2 elements at a time */
+    for (i = 0; i < limit; i += 2)
+    {
+        acc0 = acc0 OP data[i];
+        acc1 = acc1 OP data[i + 1];
+    }
+
+    for (; i < length; i++)
+    {
+        acc0 = acc0 OP data[i];
+    }
+    *dest = acc0 OP acc1;
+}
+
+// 重新结合变换
+void combine7(vec_ptr v, data_t *dest)
+{
+    long i;
+    long length = vec_length(v);
+    long limit = length - 1;
+    data_t *data = get_vec_start(v);
+    data_t acc = INDENT;
+
+    /* Combine 2 elements at a time */
+    for (i = 0; i < limit; i += 2)
+    {
+        acc = acc OP(data[i] OP data[i + 1]);
+    }
+
+    for (; i < length; i++)
+    {
+        acc = acc OP data[i];
+    }
+    *dest = acc;
+}
+
+void combine4b(vec_ptr v, data_t *dest)
+{
+    long i;
+    long length = vec_length(v);
+    data_t acc = INDENT;
+
+    for (i = 0; i < length; i++)
+    {
+        if (i >= 0 && i < v->len)
+        {
+            acc = acc OP v->data[i];
+        }
+    }
+    *dest = acc;
+}
