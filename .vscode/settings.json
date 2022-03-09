@@ -15,6 +15,10 @@
         "stdlib.h": "c",
         "cstdio": "c",
         "setjmp.h": "c",
-        "ugid_functions.h": "c"
+        "ugid_functions.h": "c",
+        "limits.h": "c",
+        "pwd.h": "c",
+        "grp.h": "c",
+        "shadow.h": "c"
     }
 }
