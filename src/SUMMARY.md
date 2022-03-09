@@ -163,3 +163,6 @@
     - [通用 I/O 概念](reading/the-linux-programming-interface/03.general-io-model.md)
     - [深入探究文件 I/O](reading/the-linux-programming-interface/04.understand-file-io.md)
     - [进程](reading/the-linux-programming-interface/05.process.md)
+    - [内存分配](reading/the-linux-programming-interface/06.memory-allocation.md)
+    - [用户和组](reading/the-linux-programming-interface/07.user-group.md)
+    - [进程凭证](reading/the-linux-programming-interface/08.process-certificate.md)
