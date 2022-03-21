@@ -20,6 +20,8 @@
         "pwd.h": "c",
         "grp.h": "c",
         "shadow.h": "c",
-        "times.h": "c"
+        "times.h": "c",
+        "ioctl.h": "c",
+        "fs.h": "c"
     }
 }

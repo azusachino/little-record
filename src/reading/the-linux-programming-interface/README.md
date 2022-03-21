@@ -84,3 +84,82 @@ Starts 2022.02.21
   - 更新系统时钟
   - 软件时钟
   - 进程时间
+- 系统限制与选项
+  - 系统限制
+  - 在运行时获取系统限制【选项】
+  - 运行时获取与文件相关的限制【选项】
+  - 不确定的限制
+  - 系统选项
+- 系统和进程信息
+  - `/proc` 文件系统
+    - 获取与进程有关的信息: `/proc/PID`
+    - `/proc` 目录下的系统信息
+    - 访问 `/proc` 文件
+  - 系统标识 `uname()`
+- 文件 I/O 缓冲
+  - 文件 I/O 的内核缓冲: 缓冲区高速缓存
+  - stdio 库的缓冲
+  - 控制文件 I/O 的内核缓冲
+  - 向内核提出 I/O 模式建议
+  - 绕过缓冲区高速缓存: 直接 I/O
+  - 混合使用库函数和系统调用进行文件 I/O
+- 系统编程概念
+  - 设备专用文件
+  - 磁盘和分区
+  - 文件系统
+  - inode
+  - 虚拟文件系统
+  - 日志文件系统
+  - 单根目录层级和挂载点
+  - 文件系统的挂载和卸载: mount, umount, umount2
+  - 高级挂载特性
+    - 在多个挂载点挂载文件系统
+    - 多次挂载同一挂载点
+    - 基于每次挂载的挂载标识
+    - 绑定挂载
+    - 递归绑定挂载
+  - 虚拟内存文件系统: tmpfs
+  - 获得与文件系统有关的信息: statvfs()
+- 文件属性
+  - 获取文件信息: stat
+  - 文件时间戳: utime, utimes, utimensat, futimens
+  - 文件属主: chown, fchown, lchown
+  - 文件权限
+    - 普通文件的权限
+    - 目录权限
+    - 权限检查算法
+    - 检查对文件的访问权限: access
+    - Set-User-ID, Set-Group-ID, Sticky 位
+    - 进程的文件模式创建掩码: umask
+    - 更改文件权限: chmod, fchmod
+  - Inode 标志
+- 扩展属性 (Extend Attribute)
+- 访问控制列表
+  - ACL 权限检查算法
+  - ACL 的长短文本格式
+  - ACL_mask 型 ACE 和 ACL 组分类
+  - getfacl 和 setfacl 命令
+  - 默认 ACL 与文件创建
+  - ACL 在实现上的限制
+  - ACL API
+- 目录与链接
+  - 目录与【硬】链接
+  - 符号【软】链接
+  - 创建和移除【硬】链接: link, unlink
+  - 更改文件名: rename
+  - 使用符号链接: symlink, readlink
+  - 创建和移除目录: mkdir, rmdir
+  - 移除一个文件或目录: remove
+  - 读目录: opendir, readdir
+  - 文件树遍历: nftw
+  - 进程的当前工作目录
+  - 针对目录文件描述符的相关操作
+  - 改变进程的根目录: chroot
+  - 解析路径名: realpath
+  - 解析路径名字符串: dirname, basename
+- 监控文件事件
+  - inotify API
+  - inotify 事件
+  - 读取 inotify 事件
+  - 队列限制和 `/proc` 文件
+  - 监控文件的就有系统: dnotify
