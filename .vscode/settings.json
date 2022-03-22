@@ -22,6 +22,7 @@
         "shadow.h": "c",
         "times.h": "c",
         "ioctl.h": "c",
-        "fs.h": "c"
+        "fs.h": "c",
+        "xattr.h": "c"
     }
 }
