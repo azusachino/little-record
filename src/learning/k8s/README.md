@@ -412,3 +412,44 @@ type Object interface {
     SetUID(uid types.UID)
 }
 ```
+
+## Status
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  // ...
+spec:
+  // ...
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: 2018-12-09T02:40:37Z
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: 2018-12-09T02:40:38Z
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: 2018-12-09T02:40:33Z
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://99f668a89db97342d7bd603471dfad5be262d7708b48cb6c5c8e374e9a13cf4f
+    image: busybox:latest
+    imageID: docker-pullable:/busybox@sha256:915f390a8912e16d4beb8689720a17348f3f6d1a7b659697df850ab625ea29d5
+    lastState: {}
+    name: busybox
+    ready: true
+    restartCount: 0
+    state:
+      running:
+        startedAt: 2018-12-09T02:40:37Z
+  hostIP: 10.128.0.18
+  phase: Running
+  podIP: 10.4.0.28
+  qosClass: Burstable
+  startTime: 2018-12-09T02:40:33Z
+```

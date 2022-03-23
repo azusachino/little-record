@@ -1,7 +1,8 @@
 #include <stdio.h>
+#include "tlpi_hdr.h"
 
-int main()
+int main(int argc, char *argv[], char **envp[])
 {
-    printf("hello linux\n");
-    return 0;
+    printf("Hello TLPI\n");
+    exit(EXIT_SUCCESS);
 }

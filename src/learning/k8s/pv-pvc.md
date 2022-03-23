@@ -2,6 +2,126 @@
 
 Kubernetes 引入了一组叫作 Persistent Volume Claim（PVC）和 Persistent Volume（PV）的 API 对象用于管理存储卷。
 
+## Sample Graph
+
+### apiserver with kubelet
+
+```mermaid
+graph LR
+    apiserver-.->u
+    u((updates))-.->kubelet
+    kubelet-.->podWorkers
+    podWorkers-.->worker1
+    podWorkers-.->worker2
+    style u fill:#fffede,stroke:#ebebb7
+```
+
+### podWorker timeline
+
+```mermaid
+sequenceDiagram
+    participant PW as PodWorker
+    participant K as Kubelet
+    participant VL as VolumeManager
+    participant DSOWP as DesiredStateOfWorldPopulator
+    participant ASOW as ActualStateOfWorld
+    PW->>+K: syncPod
+    K->>+VL: WaitForAttachAndMount
+    VL-xDSOWP: ReprocessPod
+    loop verifyVolumesMounted
+        VL->>+ASOW: getUnmountedVolumes
+        ASOW-->>-VL: Volumes
+    end
+    VL-->>-K: Attached/Timeout
+    K-->>-PW: return
+```
+
+### Volume Manager
+
+```mermaid
+graph TD
+    subgraph Node
+        VolumeManager-.->Kubelet
+        DesiredStateOfWorldPopulator-.->VolumeManager
+        Reconciler-.->VolumeManager
+    end
+```
+
+```mermaid
+graph LR
+    VM(VolumeManager)-. run .->R(Reconciler)
+    VM-. run .->DSWP(DesiredStateOfWorldPopulator)
+    DSWP-. update .->DSW[DesiredStateOfWorld]
+    ASW[ActualStateOfWorld]-. get .->DSWP
+    DSW-. get .->R
+    R-. update .->ASW
+    DSWP-. getpods .->PodManager
+    style ASW fill:#fffede,stroke:#ebebb7
+    style DSW fill:#fffede,stroke:#ebebb7
+```
+
+```mermaid
+sequenceDiagram
+    participant DSOWP as DesiredStateOfWorldPopulator
+    participant ASOW as ActualStateOfWorld
+    participant DSOW as DesiredStateOfWorld
+    participant PM as PodManager
+    participant VPM as VolumePluginManager
+    loop populatorLoop
+        DSOWP->>+DSOWP: findAndAddNewPods
+        DSOWP->>+ASOW: GetMountedVolumes
+        ASOW-->>-DSOWP: mountedVolume
+        DSOWP->>+PM: GetPods
+        PM-->>-DSOWP: pods
+        loop Every Pod
+            DSOWP->>+DSOW: AddPodToVolume
+            DSOW->>+VPM: FindPluginBySpec
+            VPM-->>-DSOW: volumePlugin
+            DSOW-->>-DSOWP: volumeName
+        end
+        deactivate DSOWP
+
+        DSOWP->>+DSOWP: findAndRemoveDeletedPods
+        DSOWP->>+DSOW: GetVolumesToMount
+        DSOW-->>-DSOWP: volumeToMount
+        loop Every Volume
+            DSOWP->>+PM: GetPodByUID
+            PM-->>-DSOWP: pods
+            DSOWP->>DSOW: DeletePodFromVolume
+        end
+        deactivate DSOWP
+    end
+```
+
+```mermaid
+sequenceDiagram
+    participant R as Reconciler
+    participant ASOW as ActualStateOfWorld
+    participant DSOW as DesiredStateOfWorld
+    participant OE as OperationExecutor
+    loop reconcile
+        R->>+ASOW: GetMountedVolumes
+        activate R
+        ASOW-->>-R: MountedVolumes
+        R->>DSOW: PodExistsInVolume
+        R->>OE: UnmountVolume
+        deactivate R
+
+        R->>+DSOW: GetVolumesToMount
+        activate R
+        DSOW-->>-R: volumeToMount
+        R->>ASOW: PodExistsInVolume
+        R->>OE: AttachVolume/MountVolume
+        deactivate R
+
+        R->>+ASOW: GetUnmountedVolumes
+        activate R
+        R->>DSOW: VolumeExists
+        R->>OE: UnmountDevice/DetachVolume
+        deactivate R
+    end
+```
+
 ## Sample
 
 PVC:
