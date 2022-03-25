@@ -23,6 +23,7 @@
         "times.h": "c",
         "ioctl.h": "c",
         "fs.h": "c",
-        "xattr.h": "c"
+        "xattr.h": "c",
+        "fcntl.h": "c"
     }
 }
