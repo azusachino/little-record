@@ -12,4 +12,8 @@ void multstore(long x, long y, long *dest)
 
 int main()
 {
+    long x = 2;
+    long y = 2;
+    long z;
+    multstore(x, y, &z);
 }
