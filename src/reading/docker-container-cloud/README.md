@@ -2,8 +2,6 @@
 
 ## Docker 核心原理
 
-这章可以仔细再看看
-
 ## Docker 高级实践
 
 ## Docker 云平台
