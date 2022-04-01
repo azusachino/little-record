@@ -178,3 +178,6 @@
     - [系统编程概念](reading/the-linux-programming-interface/14.file-system.md)
     - [文件属性](reading/the-linux-programming-interface/15.file-properties.md)
     - [扩展属性](reading/the-linux-programming-interface/16.ext-attribute.md)
+    - [Access Control Lists](reading/the-linux-programming-interface/17.access-control-list.md)
+    - [Directories and Links](reading/the-linux-programming-interface/18.directory-link.md)
+    - [Monitor File Events](reading/the-linux-programming-interface/19.monitor-file-event.md)
