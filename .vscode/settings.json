@@ -24,6 +24,7 @@
         "ioctl.h": "c",
         "fs.h": "c",
         "xattr.h": "c",
-        "fcntl.h": "c"
+        "fcntl.h": "c",
+        "signal_functions.h": "c"
     }
 }
