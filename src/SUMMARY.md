@@ -16,6 +16,8 @@
     - [Machine Level Programming Advance](course/cmu-15-213/09.machine-level-programming-advanced.md)
     - [Program Optimization](course/cmu-15-213/10.program-optimization.md)
     - [The Memory Hierarchy](course/cmu-15-213/11-12.memory-hierarchy.md)
+  - [CMU-645](course/cmu-15-645/README.md)
+    - [Introduction & Relational Model](course/cmu-15-645/01.course-intro-relational-model.md)
 - [Coursera Lessons](coursera/README.md)
   - [Introduction of Algorithm](coursera/Algorithm/README.md)
   - [Creative Thinking](coursera/CreativeThinking/README.md)
