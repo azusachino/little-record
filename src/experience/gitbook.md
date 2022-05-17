@@ -1,5 +1,16 @@
 # GitBook 相关问题
 
+## Gitbook Installation Steps
+
+```sh
+# 1. install nodeJs (v14, v16)
+# 2. set npm registry to cn mirror
+npm config set registry https://registry.npmmirror.com
+# 3. install gitbook-cli with npm
+npm i -g gitbook-cli
+# 4. follow steps below to solve problems
+```
+
 ## gitbook install failed
 
 国内博客上总结的办法:
@@ -19,7 +30,7 @@ npm install graceful-fs@4.2.0 --save
 
 gitbook 默认依赖了 cpr@1 导致某一行代码执行失败
 
-解决方案:
+解决方法:
 
 安装较新版本的 cpr
 
