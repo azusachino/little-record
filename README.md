@@ -1,27 +1,31 @@
 # Little Record
 
-成长
+成长例程
+
+## course
+
+网课
 
 ## collection
 
-收集
+不太好分类的一些收集内容
 
 ## experience
 
-经验值 UP UP
+工作和生活中的经验值
 
 ## interview
 
-面试相关的内容
+八股文
 
 ## language
 
-外语学习
+外语
 
 ## learning
 
-CS 学习
+学习
 
 ## reading
 
-读书学习
+读书
