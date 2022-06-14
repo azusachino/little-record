@@ -120,6 +120,7 @@
     - [Spring Boot 2.x](learning/java/spring-boot2.x.md)
     - [Spring Cloud](learning/java/spring-cloud.md)
     - [Spring](learning/java/spring.md)
+    - [JNI Entry](learning/java/jni.md)
   - [K8S](learning/k8s/README.md)
     - [DaemonSet](learning/k8s/daemon-set.md)
     - [Deployment](learning/k8s/deployment.md)
