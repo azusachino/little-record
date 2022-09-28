@@ -1,14 +1,15 @@
 # Little Record
 
-成长例程
+成长历程
 
 ## course
 
-网课
+- Coursera
+- High School Open Courses
 
 ## collection
 
-不太好分类的一些收集内容
+不知道该分到哪里
 
 ## experience
 
